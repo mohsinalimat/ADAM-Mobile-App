@@ -16,5 +16,5 @@ const String kLogoBlack = 'assets/logo/logoBlack.svg';
 const String kLogoA = 'assets/logo/logoA.svg';
 
 // text styles
-TextStyle kHintTextStyle = GoogleFonts.roboto(
-    fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);
+TextStyle kHintTextStyle =
+    TextStyle(fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);

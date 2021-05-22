@@ -10,7 +10,7 @@ class Auth {
     String email,
     String password,
     String phoneNumber,
-    DateTime dob,
+    String dob,
     String gender,
     String country,
     String city,

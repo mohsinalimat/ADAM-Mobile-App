@@ -1,6 +1,7 @@
 import 'package:adam/constants.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/loginView.dart';
+import 'package:adam/views/signUpView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +22,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         accentColor: kPrimaryBlueColor,
         primaryColor: kPrimaryBlueColor,
+        fontFamily: "Roboto",
       ),
-      home: ChangeNotifierProvider<BottomNavBarProvider>(
-        child: Login(),
-        create: (context) => BottomNavBarProvider(),
-      ),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => ChangeNotifierProvider<BottomNavBarProvider>(
+              child: LoginView(),
+              create: (context) => BottomNavBarProvider(),
+            ),
+        "/signUp": (context) => SignUpView(),
+      },
     );
   }
 }
