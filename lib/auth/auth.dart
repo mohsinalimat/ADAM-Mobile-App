@@ -69,10 +69,14 @@ class Auth {
   }
 
   Future forgotPassword(String email) async {
-    if (email.isEmpty) {
-      return "Enter email!";
+    try {
+      if (email.isEmpty) return "Email cannot be empty!";
+      await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
+    } catch (e) {
+      if (e.code == "user-not-found") {
+        return "Email does not exists!";
+      }
+      return null;
     }
-
-    _firebaseAuth.sendPasswordResetEmail(email: email.trim());
   }
 }

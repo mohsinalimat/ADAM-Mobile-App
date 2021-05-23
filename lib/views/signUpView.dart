@@ -28,6 +28,8 @@ class _SignUpViewState extends State<SignUpView> {
   String _country = "Pakistan";
   String _city = "Islamabad";
 
+  final _formKey = GlobalKey<FormState>();
+
   _clearController() {
     fullNameController.clear();
     emailController.clear();
@@ -59,379 +61,413 @@ class _SignUpViewState extends State<SignUpView> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: SafeArea(
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: BackButton(
-                    color: kPrimaryBlueColor,
-                    onPressed: () => Navigator.pop(context),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: BackButton(
+                      color: kPrimaryBlueColor,
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   ),
-                ),
-                SvgPicture.asset(
-                  "assets/logo/logoColor.svg",
-                  height: height * 0.07,
-                ),
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Text(
-                  "Automated Digital Assitant in Marketing",
-                  style: TextStyle(
-                    color: kPrimaryBlueColor,
-                    letterSpacing: 1.5,
+                  SvgPicture.asset(
+                    "assets/logo/logoColor.svg",
+                    height: height * 0.07,
                   ),
-                ),
-                SizedBox(
-                  height: height * 0.04,
-                ),
-                SizedBox(
-                  width: width * 0.9,
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: kPrimaryBlueColor,
-                            fontSize: height * 0.04,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "It's quick and easy",
-                          style: TextStyle(
+                  SizedBox(
+                    height: height * 0.02,
+                  ),
+                  Text(
+                    "Automated Digital Assitant in Marketing",
+                    style: TextStyle(
+                      color: kPrimaryBlueColor,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  SizedBox(
+                    height: height * 0.04,
+                  ),
+                  SizedBox(
+                    width: width * 0.9,
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
                               color: kPrimaryBlueColor,
-                              fontSize: height * 0.017),
+                              fontSize: height * 0.04,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        "_______________________________________________________\n",
-                        style: TextStyle(color: Colors.grey[300]),
-                      ),
-                      CustomTextField(
-                        textEditingController: fullNameController,
-                        textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.name,
-                        node: node,
-                        hintText: "Full Name",
-                        icon: Icons.person,
-                        onChangeFtn: (value) => print(value),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      CustomTextField(
-                        textEditingController: emailController,
-                        textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.emailAddress,
-                        node: node,
-                        hintText: "Email Address",
-                        icon: Icons.email,
-                        validatorFtn: (value) {
-                          bool emailValid = RegExp(
-                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                              .hasMatch(value);
+                        SizedBox(
+                          height: height * 0.01,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "It's quick and easy",
+                            style: TextStyle(
+                                color: kPrimaryBlueColor,
+                                fontSize: height * 0.017),
+                          ),
+                        ),
+                        SizedBox(height: height * 0.02),
+                        CustomTextField(
+                          textEditingController: fullNameController,
+                          textInputAction: TextInputAction.next,
+                          textInputType: TextInputType.name,
+                          node: node,
+                          hintText: "Full Name",
+                          icon: Icons.person,
+                          onChangeFtn: (value) => print(value),
+                          validatorFtn: (value) {
+                            if (value.isEmpty) {
+                              return "Name cannot be empty!";
+                            }
 
-                          if (!emailValid) {
-                            return "Invalid Email address!";
-                          }
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        CustomTextField(
+                          textEditingController: emailController,
+                          textInputAction: TextInputAction.next,
+                          textInputType: TextInputType.emailAddress,
+                          node: node,
+                          hintText: "Email Address",
+                          icon: Icons.email,
+                          validatorFtn: (value) {
+                            bool emailValid = RegExp(
+                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                .hasMatch(value);
 
-                          return null;
-                        },
-                        onChangeFtn: (value) => print(value),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      CustomTextField(
-                        textEditingController: phoneNumberController,
-                        textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.phone,
-                        node: node,
-                        hintText: "Phone Number",
-                        icon: Icons.phone,
-                        onChangeFtn: (value) => print(value),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      CustomTextField(
-                        textEditingController: passwordController,
-                        textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.text,
-                        node: node,
-                        isPassword: true,
-                        hintText: "Password",
-                        icon: Icons.lock_open,
-                        validatorFtn: (value) {
-                          bool passValid = RegExp(
-                                  r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
-                              .hasMatch(value);
-                          if (!passValid) {
-                            return "Uppercase, lowercase, number and special character is required!";
-                          } else if (value.length < 6) {
-                            return "Password must be greater than 6 characters!";
-                          }
-                          return null;
-                        },
-                        onChangeFtn: (value) => print(value),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      CustomTextField(
-                        textEditingController: confirmPasswordController,
-                        textInputAction: TextInputAction.next,
-                        textInputType: TextInputType.text,
-                        node: node,
-                        isPassword: true,
-                        hintText: "Confirm Password",
-                        icon: Icons.lock,
-                        validatorFtn: (value) {
-                          if (passwordController != confirmPasswordController) {
-                            return "Password Mismatch!";
-                          }
-                          return null;
-                        },
-                        onChangeFtn: (value) => print(value),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      DateTimeField(
-                        controller: dobController,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.date_range,
-                            color: kPrimaryBlueColor,
+                            if (value.isEmpty) {
+                              return "Email cannot be empty!";
+                            } else if (!emailValid) {
+                              return "Invalid Email address!";
+                            }
+
+                            return null;
+                          },
+                          onChangeFtn: (value) => print(value),
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        CustomTextField(
+                          textEditingController: phoneNumberController,
+                          textInputAction: TextInputAction.next,
+                          textInputType: TextInputType.phone,
+                          node: node,
+                          hintText: "Phone Number",
+                          icon: Icons.phone,
+                          onChangeFtn: (value) => print(value),
+                          validatorFtn: (value) {
+                            bool validPhone = RegExp(
+                                    r'^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$')
+                                .hasMatch(value);
+                            if (value.isEmpty) {
+                              return "Phone number cannot be empty!";
+                            } else if (!validPhone) {
+                              return "Invalid Phone Number!";
+                            }
+
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        CustomTextField(
+                          textEditingController: passwordController,
+                          textInputAction: TextInputAction.next,
+                          textInputType: TextInputType.text,
+                          node: node,
+                          isPassword: true,
+                          hintText: "Password",
+                          icon: Icons.lock_open,
+                          validatorFtn: (value) {
+                            bool passValid = RegExp(
+                                    r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
+                                .hasMatch(value);
+                            if (value.isEmpty) {
+                              return "Password cannot be empty!";
+                            } else if (!passValid) {
+                              return "Uppercase, lowercase, number and special character is required!";
+                            } else if (value.length < 6) {
+                              return "Password must be greater than 6 characters!";
+                            }
+                            return null;
+                          },
+                          onChangeFtn: (value) => print(value),
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        CustomTextField(
+                          textEditingController: confirmPasswordController,
+                          textInputAction: TextInputAction.next,
+                          textInputType: TextInputType.text,
+                          node: node,
+                          isPassword: true,
+                          hintText: "Confirm Password",
+                          icon: Icons.lock,
+                          validatorFtn: (value) {
+                            if (value.isEmpty) {
+                              return "Password cannot be empty!";
+                            } else if (value !=
+                                passwordController.text.trim()) {
+                              return "Password Mismatch!";
+                            }
+                            return null;
+                          },
+                          onChangeFtn: (value) => print(value),
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        DateTimeField(
+                          controller: dobController,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Date of birth is not selected!";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.date_range,
+                              color: kPrimaryBlueColor,
+                            ),
+                            contentPadding: const EdgeInsets.all(5.0),
+                            hintText: "Date of Birth",
+                            hintStyle: kHintTextStyle,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
-                          contentPadding: const EdgeInsets.all(5.0),
-                          hintText: "Date of Birth",
-                          hintStyle: kHintTextStyle,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                          format: format,
+                          onShowPicker: (context, currentValue) {
+                            return showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1980),
+                              lastDate: DateTime(2100),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Gender",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: height * 0.017,
+                            ),
                           ),
                         ),
-                        format: format,
-                        onShowPicker: (context, currentValue) {
-                          return showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1980),
-                            lastDate: DateTime(2100),
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Gender",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: height * 0.017,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Male"),
+                                Radio(
+                                  value: "Male",
+                                  groupValue: _gender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _gender = value;
+                                    });
+                                    print(_gender);
+                                  },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Female"),
+                                Radio(
+                                  value: "Female",
+                                  groupValue: _gender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _gender = value;
+                                    });
+                                    print(_gender);
+                                  },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Custom"),
+                                Radio(
+                                  value: "Custom",
+                                  groupValue: _gender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _gender = value;
+                                    });
+                                    print(_gender);
+                                  },
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * 0.01,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Address\n",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: height * 0.017,
+                            ),
                           ),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Male"),
-                              Radio(
-                                value: "Male",
-                                groupValue: _gender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _gender = value;
-                                  });
-                                  print(_gender);
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Female"),
-                              Radio(
-                                value: "Female",
-                                groupValue: _gender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _gender = value;
-                                  });
-                                  print(_gender);
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Custom"),
-                              Radio(
-                                value: "Custom",
-                                groupValue: _gender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _gender = value;
-                                  });
-                                  print(_gender);
-                                },
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Address\n",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: height * 0.017,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                            width: width * 0.42,
-                            height: height * 0.055,
-                            child: Material(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              elevation: 4.0,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    value: _country,
-                                    items: ["Pakistan", "USA", "Canada"]
-                                        .map(
-                                          (e) => DropdownMenuItem(
-                                            child: Text(e),
-                                            value: e,
-                                          ),
-                                        )
-                                        .toList(),
-                                    onChanged: (value) {
-                                      _country = value;
-                                      print(_country);
-                                    },
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SizedBox(
+                              width: width * 0.42,
+                              height: height * 0.055,
+                              child: Material(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                elevation: 4.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      value: _country,
+                                      items: ["Pakistan", "USA", "Canada"]
+                                          .map(
+                                            (e) => DropdownMenuItem(
+                                              child: Text(e),
+                                              value: e,
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (value) {
+                                        _country = value;
+                                        print(_country);
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: width * 0.42,
-                            height: height * 0.055,
-                            child: Material(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              elevation: 4.0,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    value: _city,
-                                    items: ["Islamabad", "Lahore", "Karachi"]
-                                        .map(
-                                          (e) => DropdownMenuItem(
-                                            child: Text(e),
-                                            value: e,
-                                          ),
-                                        )
-                                        .toList(),
-                                    onChanged: (value) {
-                                      _city = value;
-                                      print(_city);
-                                    },
+                            SizedBox(
+                              width: width * 0.42,
+                              height: height * 0.055,
+                              child: Material(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                elevation: 4.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      isExpanded: true,
+                                      value: _city,
+                                      items: ["Islamabad", "Lahore", "Karachi"]
+                                          .map(
+                                            (e) => DropdownMenuItem(
+                                              child: Text(e),
+                                              value: e,
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (value) {
+                                        _city = value;
+                                        print(_city);
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: height * 0.03,
-                      ),
-                      CustomButton(
-                        btnWidth: width * 0.8,
-                        btnHeight: height * 0.055,
-                        btnOnPressed: () async {
-                          var result = await _auth.signUp(
-                            fullNameController.text.trim(),
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                            phoneNumberController.text.trim(),
-                            dobController.text,
-                            _gender,
-                            _country,
-                            _city,
-                          );
-                          if (result is String) {
-                            var snackBar = SnackBar(
-                              content: Text(result,
-                                  style: TextStyle(color: Colors.white)),
-                              backgroundColor: Colors.red[900],
-                              behavior: SnackBarBehavior.floating,
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          } else {
-                            var snackBar = SnackBar(
-                              content: Text("Account Created Successfully!",
-                                  style: TextStyle(color: Colors.white)),
-                              backgroundColor: kLightGreenColor,
-                              behavior: SnackBarBehavior.floating,
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                            Navigator.pop(context);
-                            _clearController();
-                          }
-                        },
-                        btnColor: kLightGreenColor,
-                        btnText: "Sign Up",
-                      ),
-                      Text(
-                          "\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: kPrimaryBlueColor,
-                            fontSize: height * 0.015,
-                          )),
-                      SizedBox(
-                        height: height * 0.03,
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * 0.03,
+                        ),
+                        CustomButton(
+                          btnWidth: width * 0.8,
+                          btnHeight: height * 0.055,
+                          btnOnPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              var result = await _auth.signUp(
+                                fullNameController.text.trim(),
+                                emailController.text.trim(),
+                                passwordController.text.trim(),
+                                phoneNumberController.text.trim(),
+                                dobController.text,
+                                _gender,
+                                _country,
+                                _city,
+                              );
+                              if (result is String) {
+                                var snackBar = SnackBar(
+                                  content: Text(result,
+                                      style: TextStyle(color: Colors.white)),
+                                  backgroundColor: Colors.red[900],
+                                  behavior: SnackBarBehavior.floating,
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else {
+                                var snackBar = SnackBar(
+                                  content: Text("Account Created Successfully!",
+                                      style: TextStyle(color: Colors.white)),
+                                  backgroundColor: kSecondaryBlueColor,
+                                  behavior: SnackBarBehavior.floating,
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                Navigator.pop(context);
+                                _clearController();
+                              }
+                            }
+                          },
+                          btnColor: kLightGreenColor,
+                          btnText: "Sign Up",
+                        ),
+                        Text(
+                            "\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: kPrimaryBlueColor,
+                              fontSize: height * 0.015,
+                            )),
+                        SizedBox(
+                          height: height * 0.03,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
