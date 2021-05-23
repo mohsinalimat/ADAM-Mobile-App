@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
   final double btnHeight;
   final FocusScopeNode node;
   final Function btnOnPressed;
-  final String btnText;
+  final Widget btnText;
   final Color btnColor;
 
   @override
@@ -25,15 +25,7 @@ class CustomButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         color: btnColor,
         onPressed: btnOnPressed,
-        child: Text(
-          btnText,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            letterSpacing: 1.2,
-            fontSize: MediaQuery.of(context).size.height * 0.022,
-          ),
-        ),
+        child: btnText,
       ),
     );
   }

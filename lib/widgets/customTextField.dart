@@ -23,7 +23,7 @@ class CustomTextField extends StatefulWidget {
     @required this.textEditingController,
     @required this.textInputAction,
     @required this.textInputType,
-    @required this.node,
+    this.node,
     @required this.hintText,
     @required this.icon,
     this.isPassword = false,

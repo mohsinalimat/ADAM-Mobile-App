@@ -20,6 +20,8 @@ class _LoginViewState extends State<LoginView> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool _isLoading = false;
+
   @override
   void dispose() {
     emailTextController.dispose();
@@ -114,24 +116,43 @@ class _LoginViewState extends State<LoginView> {
                     btnHeight: height * 0.055,
                     node: node,
                     btnColor: kPrimaryBlueColor,
-                    btnText: "Login",
+                    btnText: _isLoading
+                        ? kLoader
+                        : Text("Login", style: kBtnTextStyle),
                     btnOnPressed: () async {
                       if (_formKey.currentState.validate()) {
-                        var value = await _auth.login(
-                            emailTextController.text.trim(),
-                            passwordTextController.text.trim());
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        var value = await _auth
+                            .login(emailTextController.text.trim(),
+                                passwordTextController.text.trim())
+                            .whenComplete(() {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        });
                         if (value is String) {
                           print("Error: " + value);
                           var snackBar = SnackBar(
-                            content: Text(
-                              value,
-                              style: TextStyle(color: Colors.white),
+                            content: Row(
+                              children: [
+                                Icon(
+                                  Icons.info,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  " $value",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
                             ),
                             backgroundColor: Colors.red[900],
                             behavior: SnackBarBehavior.floating,
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         } else {
+                          print("USER LOGIN ID: " + value.uid);
                           Navigator.push(context,
                               MaterialPageRoute(builder: (_) => MainView()));
                           emailTextController.clear();
@@ -144,98 +165,8 @@ class _LoginViewState extends State<LoginView> {
                     },
                   ),
                   TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    height: height * 0.01,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Forgot Password?",
-                                      style: TextStyle(
-                                          color: kPrimaryBlueColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: height * 0.04),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: height * 0.01,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Reset link will be sent to your email.",
-                                      style: TextStyle(
-                                        color: kPrimaryBlueColor,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: height * 0.035,
-                                  ),
-                                  CustomTextField(
-                                    textEditingController:
-                                        forgorEmailTextController,
-                                    textInputAction: TextInputAction.done,
-                                    textInputType: TextInputType.emailAddress,
-                                    node: node,
-                                    hintText: "Enter Email",
-                                    icon: Icons.email,
-                                  ),
-                                  SizedBox(
-                                    height: height * 0.02,
-                                  ),
-                                  CustomButton(
-                                    btnWidth: width * 0.5,
-                                    btnHeight: height * 0.055,
-                                    btnOnPressed: () async {
-                                      var value = await _auth.forgotPassword(
-                                          forgorEmailTextController.text
-                                              .trim());
-                                      if (value is String) {
-                                        print("VALUEEE: " + value.toString());
-                                        var snackBar = SnackBar(
-                                            backgroundColor: Colors.red[900],
-                                            behavior: SnackBarBehavior.floating,
-                                            content: Text(
-                                              value,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ));
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                        forgorEmailTextController.clear();
-                                      } else {
-                                        forgorEmailTextController.clear();
-                                        var snackBar = SnackBar(
-                                            backgroundColor:
-                                                kSecondaryBlueColor,
-                                            behavior: SnackBarBehavior.floating,
-                                            content: Text(
-                                                "Instructions has been sent to your email address."));
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      }
-                                    },
-                                    btnColor: kPrimaryBlueColor,
-                                    btnText: "Get Link",
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/forgotPassword"),
                       child: Text("Forgot Password?")),
                   Text(
                     "_________________________________________\n",
@@ -246,7 +177,7 @@ class _LoginViewState extends State<LoginView> {
                     btnHeight: height * 0.055,
                     btnOnPressed: () => Navigator.pushNamed(context, "/signUp"),
                     btnColor: kLightGreenColor,
-                    btnText: "Create New Account",
+                    btnText: Text("Create New Account", style: kBtnTextStyle),
                   ),
                 ],
               ),

@@ -30,6 +30,8 @@ class _SignUpViewState extends State<SignUpView> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool _isLoading = false;
+
   _clearController() {
     fullNameController.clear();
     emailController.clear();
@@ -207,6 +209,7 @@ class _SignUpViewState extends State<SignUpView> {
                             return null;
                           },
                           onChangeFtn: (value) => print(value),
+                          onFieldSubmit: (value) => node.nextFocus(),
                         ),
                         SizedBox(
                           height: height * 0.02,
@@ -229,6 +232,7 @@ class _SignUpViewState extends State<SignUpView> {
                             return null;
                           },
                           onChangeFtn: (value) => print(value),
+                          onFieldSubmit: (value) => node.nextFocus(),
                         ),
                         SizedBox(
                           height: height * 0.02,
@@ -413,11 +417,15 @@ class _SignUpViewState extends State<SignUpView> {
                           height: height * 0.03,
                         ),
                         CustomButton(
-                          btnWidth: width * 0.8,
+                          btnWidth: width * 0.9,
                           btnHeight: height * 0.055,
                           btnOnPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              var result = await _auth.signUp(
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              var result = await _auth
+                                  .signUp(
                                 fullNameController.text.trim(),
                                 emailController.text.trim(),
                                 passwordController.text.trim(),
@@ -426,7 +434,12 @@ class _SignUpViewState extends State<SignUpView> {
                                 _gender,
                                 _country,
                                 _city,
-                              );
+                              )
+                                  .whenComplete(() {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              });
                               if (result is String) {
                                 var snackBar = SnackBar(
                                   content: Text(result,
@@ -438,8 +451,17 @@ class _SignUpViewState extends State<SignUpView> {
                                     .showSnackBar(snackBar);
                               } else {
                                 var snackBar = SnackBar(
-                                  content: Text("Account Created Successfully!",
-                                      style: TextStyle(color: Colors.white)),
+                                  content: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.done_rounded,
+                                        color: Colors.white,
+                                      ),
+                                      Text(" Account Created Successfully!",
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ],
+                                  ),
                                   backgroundColor: kSecondaryBlueColor,
                                   behavior: SnackBarBehavior.floating,
                                 );
@@ -451,17 +473,19 @@ class _SignUpViewState extends State<SignUpView> {
                             }
                           },
                           btnColor: kLightGreenColor,
-                          btnText: "Sign Up",
+                          btnText: _isLoading
+                              ? kLoader
+                              : Text("Sign Up", style: kBtnTextStyle),
                         ),
                         Text(
-                            "\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
+                            "\n\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: kPrimaryBlueColor,
                               fontSize: height * 0.015,
                             )),
                         SizedBox(
-                          height: height * 0.03,
+                          height: height * 0.05,
                         ),
                       ],
                     ),
