@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // Colors
 const Color kLightGreenColor = Color(0xff5bdb5b);
@@ -18,3 +17,14 @@ const String kLogoA = 'assets/logo/logoA.svg';
 // text styles
 TextStyle kHintTextStyle =
     TextStyle(fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);
+
+const TextStyle kBtnTextStyle =
+    TextStyle(color: Colors.white, letterSpacing: 1.2, fontSize: 14.0);
+
+const Widget kLoader = SizedBox(
+  height: 25,
+  width: 25,
+  child: CircularProgressIndicator(
+    valueColor: AlwaysStoppedAnimation<Color>(kLightGreenColor),
+  ),
+);
