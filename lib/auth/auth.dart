@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -16,16 +17,22 @@ class Auth {
     String city,
   ) async {
     try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
       User user = (await _firebaseAuth.createUserWithEmailAndPassword(
-              email: email, password: password))
+        email: email,
+        password: password,
+      ))
           .user;
 
       if (user == null) {
         return null;
       }
+      pref.setString("userId", user.uid);
+      await user.updateProfile(
+        displayName: fullName,
+      );
 
       firebaseFirestore.collection('user').doc(user.uid).set({
-        "fullName": fullName,
         "phoneNumber": phoneNumber,
         "dob": dob,
         "gender": gender,
@@ -49,22 +56,56 @@ class Auth {
 
   Future login(String email, String password) async {
     try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
       User user = (await _firebaseAuth.signInWithEmailAndPassword(
               email: email, password: password))
           .user;
       if (user == null) {
         return null;
       }
-      print("User login: " + user.email);
+      pref.setString("userId: ", user.uid);
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         return "Account does not exists!";
       } else if (e.code == "wrong-password") {
         return "Invalid Password!";
+      } else if (e.code == "too-many-requests") {
+        return "Too many requests. Please wait!";
       } else {
         return "Unidentified Error, Try again!";
       }
+    }
+  }
+
+  Future updateUserProfile(
+      User user, String userName, Map<String, Object> data) async {
+    await FirebaseFirestore.instance
+        .collection("user")
+        .doc(user.uid)
+        .update(data);
+    await user.updateProfile(displayName: userName);
+    // await updateEmail(data["newEmail"], user);
+  }
+
+  updateEmail(String updatedEmail, User user) async {
+    try {
+      await user.updateEmail(updatedEmail);
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: updatedEmail,
+        password: "Hamza@6",
+      );
+      await user
+          .reauthenticateWithCredential(credential)
+          .then((value) => print("Updated email"))
+          .catchError((err) => print(err));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "invalid-email") {
+        return "Invalid email!";
+      } else if (e.code == "email-already-in-use") {
+        return "Email already in use";
+      }
+      return null;
     }
   }
 
