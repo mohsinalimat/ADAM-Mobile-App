@@ -79,8 +79,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
           contentPadding: const EdgeInsets.all(5.0),
           hintText: widget.hintText,
           hintStyle: kHintTextStyle,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+          fillColor: Colors.grey[200],
+          filled: true,
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent)),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
           ),
         ),
         validator: widget.validatorFtn,
