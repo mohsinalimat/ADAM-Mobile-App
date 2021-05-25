@@ -33,155 +33,157 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: BackButton(
-                        color: kPrimaryBlueColor,
-                        onPressed: () => Navigator.pop(context),
+        body: AbsorbPointer(
+          absorbing: _isLoading,
+          child: SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: BackButton(
+                          color: kPrimaryBlueColor,
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: height * 0.05,
-                    ),
-                    SvgPicture.asset(
-                      'assets/forgot.svg',
-                      height: 100.0,
-                      // height: height * 0.2,
-                    ),
-                    SizedBox(
-                      height: height * 0.03,
-                    ),
-                    Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        color: kPrimaryBlueColor,
-                        fontWeight: FontWeight.bold,
-                        // fontSize: height * 0.04,
-                        fontSize: 28.0
+                      SizedBox(
+                        height: height * 0.05,
                       ),
-                    ),
-                    SizedBox(
-                      height: height * 0.01,
-                    ),
-                    Text(
-                      "Reset link will be sent to your email.",
-                      style: TextStyle(
-                        color: kPrimaryBlueColor,
+                      SvgPicture.asset(
+                        'assets/forgot.svg',
+                        height: 100.0,
+                        // height: height * 0.2,
                       ),
-                    ),
-                    SizedBox(height: height * 0.1),
-                    CustomTextField(
-                      textEditingController: forgorEmailTextController,
-                      textInputAction: TextInputAction.done,
-                      textInputType: TextInputType.emailAddress,
-                      node: node,
-                      hintText: "Enter Email",
-                      icon: Icons.email,
-                      validatorFtn: (value) {
-                        bool emailValid = RegExp(
-                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                            .hasMatch(value);
+                      SizedBox(
+                        height: height * 0.03,
+                      ),
+                      Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                            color: kPrimaryBlueColor,
+                            fontWeight: FontWeight.bold,
+                            // fontSize: height * 0.04,
+                            fontSize: 28.0),
+                      ),
+                      SizedBox(
+                        height: height * 0.01,
+                      ),
+                      Text(
+                        "Reset link will be sent to your email.",
+                        style: TextStyle(
+                          color: kPrimaryBlueColor,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.1),
+                      CustomTextField(
+                        textEditingController: forgorEmailTextController,
+                        textInputAction: TextInputAction.done,
+                        textInputType: TextInputType.emailAddress,
+                        node: node,
+                        hintText: "Enter Email",
+                        icon: Icons.email,
+                        validatorFtn: (value) {
+                          bool emailValid = RegExp(
+                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                              .hasMatch(value);
 
-                        if (!emailValid) {
-                          return "Invalid Email address!";
-                        }
+                          if (!emailValid) {
+                            return "Invalid Email address!";
+                          }
 
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: height * 0.05,
-                    ),
-                    CustomButton(
-                      btnWidth: width * 0.6,
-                      // btnHeight: height * 0.055,
-                      btnHeight: 40.0,
-                      btnOnPressed: () async {
-                        FocusScope.of(context).unfocus();
-                        if (_formKey.currentState.validate()) {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          var value = await _auth
-                              .forgotPassword(
-                                  forgorEmailTextController.text.trim())
-                              .whenComplete(() {
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: height * 0.05,
+                      ),
+                      CustomButton(
+                        btnWidth: width * 0.6,
+                        // btnHeight: height * 0.055,
+                        btnHeight: 40.0,
+                        btnOnPressed: () async {
+                          FocusScope.of(context).unfocus();
+                          if (_formKey.currentState.validate()) {
                             setState(() {
-                              _isLoading = false;
+                              _isLoading = true;
                             });
-                          });
-                          if (value is String) {
-                            print("Valueeee: " + value.toString());
-                            var snackBar = SnackBar(
-                                backgroundColor: Colors.red[900],
-                                behavior: SnackBarBehavior.floating,
-                                content: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.info,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      " $value",
-                                      style: TextStyle(
+                            var value = await _auth
+                                .forgotPassword(
+                                    forgorEmailTextController.text.trim())
+                                .whenComplete(() {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            });
+                            if (value is String) {
+                              print("Valueeee: " + value.toString());
+                              var snackBar = SnackBar(
+                                  backgroundColor: Colors.red[900],
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.info,
                                         color: Colors.white,
                                       ),
-                                    ),
-                                  ],
-                                ));
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          } else {
-                            forgorEmailTextController.clear();
-                            var snackBar = SnackBar(
-                                backgroundColor: kSecondaryBlueColor,
-                                behavior: SnackBarBehavior.floating,
-                                content: Row(
-                                  children: [
-                                    Icon(Icons.send, color: Colors.white),
-                                    Expanded(
-                                      child: Text(
-                                        " Reset link has been sent to your Email",
+                                      Text(
+                                        " $value",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ));
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
+                                    ],
+                                  ));
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            } else {
+                              forgorEmailTextController.clear();
+                              var snackBar = SnackBar(
+                                  backgroundColor: kSecondaryBlueColor,
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Row(
+                                    children: [
+                                      Icon(Icons.send, color: Colors.white),
+                                      Expanded(
+                                        child: Text(
+                                          " Reset link has been sent to your Email",
+                                        ),
+                                      ),
+                                    ],
+                                  ));
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
 
-                            Future.delayed(Duration(seconds: 2), () {
-                              Navigator.pop(context);
-                            });
+                              Future.delayed(Duration(seconds: 2), () {
+                                Navigator.pop(context);
+                              });
+                            }
                           }
-                        }
-                      },
-                      btnColor: kPrimaryBlueColor,
-                      btnText: _isLoading
-                          ? kLoader
-                          : Text("Send", style: kBtnTextStyle),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Remember Password?",
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text("Login"),
-                        )
-                      ],
-                    ),
-                  ],
+                        },
+                        btnColor: kPrimaryBlueColor,
+                        btnText: _isLoading
+                            ? kLoader
+                            : Text("Send", style: kBtnTextStyle),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Remember Password?",
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("Login"),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

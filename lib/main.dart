@@ -1,5 +1,7 @@
 import 'package:adam/constants.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/providers/currentUserProvider.dart';
+import 'package:adam/views/editProfileView.dart';
 import 'package:adam/views/forgotPasswordView.dart';
 import 'package:adam/views/loginView.dart';
 import 'package:adam/views/mainView.dart';
@@ -28,7 +30,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final bool userLoggedIn;
 
-  const MyApp({Key key, @required this.userLoggedIn}) : super(key: key);
+  const MyApp({Key key, this.userLoggedIn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,22 +38,29 @@ class MyApp extends StatelessWidget {
       title: 'ADAM',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.lightBlue,
         accentColor: kPrimaryBlueColor,
         primaryColor: kPrimaryBlueColor,
         fontFamily: "Roboto",
       ),
-      // home: _userLoginCheck(),
-      // home: userLoggedIn ? MainView() : LoginView(),
       initialRoute: userLoggedIn ? "/mainView" : "/",
       routes: {
         "/": (context) => LoginView(),
         "/signUp": (context) => SignUpView(),
         "/forgotPassword": (context) => ForgotPasswordView(),
-        "/mainView": (context) => ChangeNotifierProvider(
-              create: (context) => BottomNavBarProvider(),
-              child: MainView(),
+        "/mainView": (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  builder: (context, child) => MainView(),
+                  create: (context) => BottomNavBarProvider(),
+                ),
+                ChangeNotifierProvider(
+                  builder: (context, child) => MainView(),
+                  create: (context) => CurrentUserProvider(),
+                ),
+              ],
             ),
+        "/editProfile": (context) => EditProfileView(),
       },
     );
   }

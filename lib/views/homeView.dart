@@ -1,54 +1,40 @@
 import 'package:adam/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeView extends StatelessWidget {
+  final _firebaseAuth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    LogoDisplay(),
-                    CircleAvatar(
-                      radius: 34.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              kLightGreenColor,
-                              kMediumGreenColor,
-                              kLightBlueColor,
-                              kMediumBlueColor,
-                              kPrimaryBlueColor,
-                            ],
-                          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      LogoDisplay(),
+                      CircleAvatar(
+                        radius: 34.0,
+                        backgroundColor: kLightGreenColor,
+                        child: CircleAvatar(
+                          radius: 32.0,
+                          backgroundImage:
+                              NetworkImage(_firebaseAuth.currentUser.photoURL),
                         ),
-                        child: Image.asset('assets/me.png'),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(
-          Icons.add,
         ),
       ),
     );

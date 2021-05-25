@@ -4,9 +4,9 @@ import 'package:adam/views/homeView.dart';
 import 'package:adam/views/profileView.dart';
 import 'package:adam/views/settingsView.dart';
 import 'package:adam/views/statsView.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 
 class MainView extends StatefulWidget {
   @override
@@ -14,79 +14,104 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  PageController _pageController;
-
   final _views = [
     HomeView(),
     StatsView(),
-    ProfileView(),
     SettingsView(),
+    ProfileView(),
   ];
 
-  final _bottomBarItems = [
-    BottomNavyBarItem(
-      icon: Icon(Icons.home),
-      title: Text("Home"),
-      activeColor: kPrimaryBlueColor,
-      inactiveColor: Colors.grey[400],
-      textAlign: TextAlign.center,
-    ),
-    BottomNavyBarItem(
-      icon: Icon(Icons.auto_graph),
-      title: Text("Stats"),
-      activeColor: kPrimaryBlueColor,
-      inactiveColor: Colors.grey[400],
-      textAlign: TextAlign.center,
-    ),
-    BottomNavyBarItem(
-      icon: Icon(Icons.person),
-      title: Text("Account"),
-      activeColor: kPrimaryBlueColor,
-      inactiveColor: Colors.grey[400],
-      textAlign: TextAlign.center,
-    ),
-    BottomNavyBarItem(
-      icon: Icon(Icons.settings),
-      title: Text("Settings"),
-      activeColor: kPrimaryBlueColor,
-      inactiveColor: Colors.grey[400],
-      textAlign: TextAlign.center,
-    ),
+  final _bottomIcons = [
+    Icons.home,
+    Icons.auto_graph,
+    Icons.settings,
   ];
-
-  @override
-  void initState() {
-    _pageController = PageController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final _bottomBarProviders = Provider.of<BottomNavBarProvider>(context);
 
     return Scaffold(
-      body: SizedBox.expand(
-          child: PageView(
-        controller: _pageController,
-        children: _views,
-        onPageChanged: (index) => _bottomBarProviders.currentIndex = index,
-      )),
-      bottomNavigationBar: BottomNavyBar(
-        itemCornerRadius: 8.0,
-        items: _bottomBarItems,
-        selectedIndex: _bottomBarProviders.currentIndex,
-        onItemSelected: (index) {
-          _bottomBarProviders.currentIndex = index;
-          _pageController.jumpToPage(index);
-        },
-        showElevation: false,
+      body: _views[_bottomBarProviders.currentIndex],
+      floatingActionButton: _bottomBarProviders.currentIndex == 0
+          ? FloatingActionButton(
+              onPressed: () {},
+              child: Icon(Icons.add),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomSheet: Container(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            for (int i = 0; i < _views.length - 1; i++)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () => _bottomBarProviders.currentIndex = i,
+                    icon: Icon(
+                      _bottomIcons[i],
+                      size: _bottomBarProviders.currentIndex == i ? 28.0 : 23.0,
+                      color: _bottomBarProviders.currentIndex == i
+                          ? kPrimaryBlueColor
+                          : Colors.grey[400],
+                    ),
+                  ),
+                  _bottomBarProviders.currentIndex == i
+                      ? Container(
+                          height: 5.0,
+                          width: 5.0,
+                          decoration: BoxDecoration(
+                            color: kPrimaryBlueColor,
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      : Container()
+                ],
+              ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () => _bottomBarProviders.currentIndex = 3,
+                  icon: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        FirebaseAuth.instance.currentUser.photoURL),
+                  ),
+                ),
+                _bottomBarProviders.currentIndex == 3
+                    ? Container(
+                        height: 5.0,
+                        width: 5.0,
+                        decoration: BoxDecoration(
+                          color: kPrimaryBlueColor,
+                          shape: BoxShape.circle,
+                        ),
+                      )
+                    : Container()
+              ],
+            ),
+          ],
+        ),
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: _bottomNavBar,
+      //   currentIndex: _bottomBarProviders.currentIndex,
+      //   onTap: (index) => _bottomBarProviders.currentIndex = index,
+      //   selectedItemColor: kPrimaryBlueColor,
+      //   unselectedItemColor: Colors.grey[400],
+      //   elevation: 0.0,
+      //   showSelectedLabels: false,
+      //   selectedIconTheme: IconThemeData(size: 30.0),
+      // ),
+      // bottomNavigationBar: BottomNavyBar(
+      //   items: _bottomBarItems,
+      //   selectedIndex: _bottomBarProviders.currentIndex,
+      //   onItemSelected: (index) => _bottomBarProviders.currentIndex = index,
+      //   showElevation: false,
+      // ),
     );
   }
 }
