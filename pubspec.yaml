@@ -35,6 +35,9 @@ dependencies:
   bottom_navy_bar: ^6.0.0
   datetime_picker_formfield: ^2.0.0
   shared_preferences: ^2.0.5
+  progress_indicators: ^1.0.0
+
+  image_picker: ^0.7.5+3
   
   # State management
   provider: ^5.0.0
@@ -43,6 +46,7 @@ dependencies:
   firebase_auth: ^1.2.0
   firebase_core: ^1.2.0
   cloud_firestore: ^2.2.0
+  firebase_storage: ^8.1.0
 
 
 dev_dependencies:
