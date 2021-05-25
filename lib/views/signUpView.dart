@@ -76,7 +76,8 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                   SvgPicture.asset(
                     "assets/logo/logoColor.svg",
-                    height: height * 0.07,
+                    // height: height * 0.07,
+                    height: 40.0,
                   ),
                   SizedBox(
                     height: height * 0.02,
@@ -101,7 +102,8 @@ class _SignUpViewState extends State<SignUpView> {
                             "Sign Up",
                             style: TextStyle(
                               color: kPrimaryBlueColor,
-                              fontSize: height * 0.04,
+                              // fontSize: height * 0.04,
+                              fontSize: 24.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -114,8 +116,9 @@ class _SignUpViewState extends State<SignUpView> {
                           child: Text(
                             "It's quick and easy",
                             style: TextStyle(
-                                color: kPrimaryBlueColor,
-                                fontSize: height * 0.017),
+                                color: kPrimaryBlueColor, fontSize: 14.0
+                                // fontSize: height * 0.017,
+                                ),
                           ),
                         ),
                         SizedBox(height: height * 0.02),
@@ -275,9 +278,9 @@ class _SignUpViewState extends State<SignUpView> {
                           child: Text(
                             "Gender",
                             style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: height * 0.017,
-                            ),
+                                color: Colors.grey[600],
+                                // fontSize: height * 0.017,
+                                fontSize: 14.0),
                           ),
                         ),
                         Row(
@@ -341,9 +344,9 @@ class _SignUpViewState extends State<SignUpView> {
                           child: Text(
                             "Address\n",
                             style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: height * 0.017,
-                            ),
+                                color: Colors.grey[600],
+                                // fontSize: height * 0.017,
+                                fontSize: 14.0),
                           ),
                         ),
                         Row(
@@ -351,7 +354,8 @@ class _SignUpViewState extends State<SignUpView> {
                           children: [
                             SizedBox(
                               width: width * 0.42,
-                              height: height * 0.055,
+                              height: 40.0,
+                              // height: height * 0.055,
                               child: Material(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0)),
@@ -382,7 +386,8 @@ class _SignUpViewState extends State<SignUpView> {
                             ),
                             SizedBox(
                               width: width * 0.42,
-                              height: height * 0.055,
+                              // height: height * 0.055,
+                              height: 40.0,
                               child: Material(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0)),
@@ -418,7 +423,8 @@ class _SignUpViewState extends State<SignUpView> {
                         ),
                         CustomButton(
                           btnWidth: width * 0.9,
-                          btnHeight: height * 0.055,
+                          // btnHeight: height * 0.055,
+                          btnHeight: 40.0,
                           btnOnPressed: () async {
                             if (_formKey.currentState.validate()) {
                               setState(() {
@@ -481,9 +487,9 @@ class _SignUpViewState extends State<SignUpView> {
                             "\n\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: kPrimaryBlueColor,
-                              fontSize: height * 0.015,
-                            )),
+                                color: kPrimaryBlueColor,
+                                // fontSize: height * 0.015,
+                                fontSize: 12.0)),
                         SizedBox(
                           height: height * 0.05,
                         ),

@@ -53,7 +53,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     ),
                     SvgPicture.asset(
                       'assets/forgot.svg',
-                      height: height * 0.2,
+                      height: 100.0,
+                      // height: height * 0.2,
                     ),
                     SizedBox(
                       height: height * 0.03,
@@ -63,7 +64,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       style: TextStyle(
                         color: kPrimaryBlueColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: height * 0.04,
+                        // fontSize: height * 0.04,
+                        fontSize: 28.0
                       ),
                     ),
                     SizedBox(
@@ -100,7 +102,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     ),
                     CustomButton(
                       btnWidth: width * 0.6,
-                      btnHeight: height * 0.055,
+                      // btnHeight: height * 0.055,
+                      btnHeight: 40.0,
                       btnOnPressed: () async {
                         FocusScope.of(context).unfocus();
                         if (_formKey.currentState.validate()) {

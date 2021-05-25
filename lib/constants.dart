@@ -25,6 +25,7 @@ const Widget kLoader = SizedBox(
   height: 25,
   width: 25,
   child: CircularProgressIndicator(
+    strokeWidth: 1.5,
     valueColor: AlwaysStoppedAnimation<Color>(kLightGreenColor),
   ),
 );

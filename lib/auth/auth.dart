@@ -74,7 +74,7 @@ class Auth {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
     } catch (e) {
       if (e.code == "user-not-found") {
-        return "Email does not exists!";
+        return "Account does not exists with this email!";
       }
       return null;
     }

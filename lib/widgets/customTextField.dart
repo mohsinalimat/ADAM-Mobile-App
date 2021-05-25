@@ -72,6 +72,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   icon: Icon(
                     showPass ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
                     color: kPrimaryBlueColor,
+                    size: 20.0,
                   ),
                 )
               : null,
