@@ -23,8 +23,11 @@ class SettingsView extends StatelessWidget {
                     Icons.info,
                     color: Colors.white,
                   ),
+                  SizedBox(
+                    width: 8.0,
+                  ),
                   Text(
-                    " Sign Out Successful!",
+                    "Sign Out Successful!",
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -34,7 +37,7 @@ class SettingsView extends StatelessWidget {
             ),
           );
           preferences.remove("userId");
-          Navigator.pop(context);
+          Navigator.popUntil(context, (route) => route.settings.name == "/");
         },
       )),
     );

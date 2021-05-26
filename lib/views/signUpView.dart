@@ -474,9 +474,13 @@ class _SignUpViewState extends State<SignUpView> {
                                           Icons.done_rounded,
                                           color: Colors.white,
                                         ),
-                                        Text(" Account Created Successfully!",
-                                            style:
-                                                TextStyle(color: Colors.white)),
+                                        SizedBox(width: 8.0),
+                                        Expanded(
+                                          child: Text(
+                                              "Account Created Successfully. Check your email!",
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ),
                                       ],
                                     ),
                                     backgroundColor: kSecondaryBlueColor,

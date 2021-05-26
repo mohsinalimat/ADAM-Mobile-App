@@ -26,7 +26,11 @@ class HomeView extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 32.0,
                           backgroundImage:
-                              NetworkImage(_firebaseAuth.currentUser.photoURL),
+                              _firebaseAuth.currentUser.photoURL == null
+                                  ? AssetImage('assets/dp.png')
+                                  : NetworkImage(
+                                      _firebaseAuth.currentUser.photoURL,
+                                    ),
                         ),
                       ),
                     ],

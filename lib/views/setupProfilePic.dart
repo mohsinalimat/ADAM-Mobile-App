@@ -21,9 +21,13 @@ class _SetupProfilePicState extends State<SetupProfilePic> {
   String photoUrl = "";
 
   bool _photoSet = false;
+  bool _uploading = false;
 
   uploadPic() async {
     try {
+      setState(() {
+        _uploading = true;
+      });
       final file = await imgPicker.getImage(
         source: ImageSource.gallery,
       );
@@ -38,109 +42,129 @@ class _SetupProfilePicState extends State<SetupProfilePic> {
       ref.putFile(image).whenComplete(() {
         print("Pic Uploaded Successfully!");
         setState(() {
-          _photoSet = true;
+          _uploading = false;
         });
+        getUploadedPic();
       });
-
-      photoUrl = await firebaseStorage
-          .ref("${_firebaseAuth.currentUser.uid}/dp")
-          .getDownloadURL()
-          .whenComplete(() => print("URL UPLOADED AT: $photoUrl"));
-
-      await _firebaseAuth.currentUser
-          .updateProfile(photoURL: photoUrl)
-          .whenComplete(() => print("PHOTO URL SET FOR THE CURRENT USER"));
     } catch (e) {
       print(e);
     }
   }
 
+  getUploadedPic() async {
+    photoUrl = await firebaseStorage
+        .ref("${_firebaseAuth.currentUser.uid}/dp")
+        .getDownloadURL()
+        .whenComplete(() => print("URL UPLOADED AT: $photoUrl"));
+
+    await _firebaseAuth.currentUser
+        .updateProfile(
+      photoURL: photoUrl,
+    )
+        .whenComplete(() {
+      print("PHOTO URL SET FOR THE CURRENT USER $photoUrl");
+      setState(() {
+        _photoSet = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-            child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.07,
-              ),
-              LogoDisplay(),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-              ),
-              Text(
-                "Upload Profile Photo",
-                style: TextStyle(
-                  color: kPrimaryBlueColor,
-                  fontSize: 24.0,
+      body: AbsorbPointer(
+        absorbing: _uploading,
+        child: SafeArea(
+          child: SingleChildScrollView(
+              child: Center(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.07,
                 ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              CircleAvatar(
-                radius: 70.0,
-                backgroundColor: kLightGreenColor,
-                child: CircleAvatar(
-                  radius: 68,
-                  backgroundColor: Colors.white,
-                  child: _photoSet
-                      ? CircleAvatar(
-                          radius: 65.0,
-                          backgroundImage: NetworkImage(
-                            photoUrl,
+                LogoDisplay(),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                ),
+                Text(
+                  "Upload Profile Photo",
+                  style: TextStyle(
+                    color: kPrimaryBlueColor,
+                    fontSize: 24.0,
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                CircleAvatar(
+                  radius: 70.0,
+                  backgroundColor: kLightGreenColor,
+                  child: CircleAvatar(
+                    radius: 68,
+                    backgroundColor: Colors.white,
+                    child: _photoSet
+                        ? CircleAvatar(
+                            radius: 65.0,
+                            backgroundImage: NetworkImage(
+                              photoUrl,
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 65.0,
+                            backgroundImage: AssetImage('assets/dp.png'),
                           ),
-                        )
-                      : CircleAvatar(
-                          radius: 65.0,
-                          backgroundImage: AssetImage('assets/dp.png'),
-                        ),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 30.0,
-              ),
-              CustomButton(
-                btnWidth: 200.0,
-                btnHeight: 40.0,
-                btnOnPressed: () {
-                  uploadPic();
-                },
-                btnColor: kPrimaryBlueColor,
-                btnText: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.add_a_photo,
-                      color: Colors.white,
-                      size: 20.0,
-                    ),
-                    SizedBox(
-                      width: 8.0,
-                    ),
-                    Text(
-                      _photoSet ? "Upload Again" : "Uplaod Photo",
-                      style: kBtnTextStyle,
-                    ),
-                  ],
+                SizedBox(
+                  height: 30.0,
                 ),
-              ),
-              _photoSet
-                  ? TextButton(
-                      onPressed: () {
-                        print("URL: $photoUrl");
-                      },
-                      child: Text("Next"),
-                    )
-                  : TextButton(
-                      onPressed: () {},
-                      child: Text("Skip"),
-                    )
-            ],
-          ),
-        )),
+                CustomButton(
+                  btnWidth: 200.0,
+                  btnHeight: 40.0,
+                  btnOnPressed: () {
+                    uploadPic();
+                  },
+                  btnColor: kPrimaryBlueColor,
+                  btnText: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.add_a_photo,
+                        color: Colors.white,
+                        size: 20.0,
+                      ),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      _uploading
+                          ? kLoader
+                          : Text(
+                              _photoSet ? "Upload Again" : "Uplaod Photo",
+                              style: kBtnTextStyle,
+                            ),
+                    ],
+                  ),
+                ),
+                _photoSet
+                    ? TextButton(
+                        onPressed: () async {
+                          print("URL: $photoUrl");
+                          Navigator.pushNamed(context, "/mainView");
+                          await _firebaseAuth.currentUser.reload();
+                        },
+                        child: Text("Next"),
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          Navigator.pushNamed(context, "/mainView");
+                          await _firebaseAuth.currentUser.reload();
+                        },
+                        child: Text("Skip"),
+                      )
+              ],
+            ),
+          )),
+        ),
       ),
     );
   }
