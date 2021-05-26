@@ -1,6 +1,8 @@
 import 'package:adam/constants.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/providers/currentUserProvider.dart';
+import 'package:adam/views/changePasswordView.dart';
+import 'package:adam/views/deleteAccountView.dart';
 import 'package:adam/views/editProfileView.dart';
 import 'package:adam/views/forgotPasswordView.dart';
 import 'package:adam/views/loginView.dart';
@@ -61,6 +63,8 @@ class MyApp extends StatelessWidget {
               ],
             ),
         "/editProfile": (context) => EditProfileView(),
+        "/deleteAccount": (context) => DeleteAccountView(),
+        "/changePassword": (context) => ChangePasswordView(),
       },
     );
   }

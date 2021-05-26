@@ -1,5 +1,7 @@
+import 'package:adam/widgets/customTextField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth {
@@ -40,10 +42,17 @@ class Auth {
         "city": city,
       });
 
+      if (!user.emailVerified) {
+        await user.sendEmailVerification();
+        print("EMAIL VERIFICATION SENT!");
+      }
+
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
         return "Email already in use, Try with different Email";
+      } else if (e.code == "invalid-email") {
+        return "Invalid email!";
       } else if (e.code == "account-exists-with-different-credential") {
         return "Account already logged in";
       } else if (e.code == "weak-password") {
@@ -119,5 +128,74 @@ class Auth {
       }
       return null;
     }
+  }
+
+  Future deleteAccount() async {
+    await _firebaseAuth.currentUser.delete();
+  }
+
+  Future changePassword(String newPassword) async {
+    try {
+      await _firebaseAuth.currentUser.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "requires-recent-login") {
+        return "For changing the password your account needs to be logged in recently. Please re-login!";
+      } else {
+        return "Unidentified error!";
+      }
+    }
+  }
+
+  Future verifyPhoneNumber(
+    String phoneNumber,
+    BuildContext context,
+    TextEditingController textEditingController,
+  ) async {
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential phoneCred) {},
+      verificationFailed: (FirebaseAuthException e) {
+        if (e.code == 'invalid-phone-number') {
+          print('The provided phone number is not valid.');
+        }
+      },
+      codeSent: (String verificationId, int resendToken) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Phone Verification"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomTextField(
+                  textEditingController: textEditingController,
+                  textInputAction: TextInputAction.done,
+                  textInputType: TextInputType.number,
+                  hintText: "6-Digit Code",
+                  icon: Icons.phone,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  String code = textEditingController.text.trim();
+
+                  PhoneAuthProvider.credential(
+                    verificationId: verificationId,
+                    smsCode: code,
+                  );
+                },
+                child: Text("Confirm"),
+              ),
+            ],
+          ),
+        );
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        
+      },
+      timeout: Duration(seconds: 60),
+    );
   }
 }

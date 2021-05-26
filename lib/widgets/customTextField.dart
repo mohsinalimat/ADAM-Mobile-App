@@ -11,6 +11,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final bool isPassword;
   final IconData icon;
+  final Color iconColor;
 
   final Function(String) onChangeFtn;
   final Function onEditComplete;
@@ -26,6 +27,7 @@ class CustomTextField extends StatefulWidget {
     this.node,
     @required this.hintText,
     @required this.icon,
+    this.iconColor = kPrimaryBlueColor,
     this.isPassword = false,
     this.onChangeFtn,
     this.onEditComplete,
@@ -64,7 +66,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           errorText: widget.errorText,
           prefixIcon: Icon(
             widget.icon,
-            color: kPrimaryBlueColor,
+            color: widget.iconColor,
           ),
           suffixIcon: widget.isPassword
               ? IconButton(
@@ -85,6 +87,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderSide: BorderSide(color: Colors.transparent)),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.transparent),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red[700]),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red[700]),
           ),
         ),
         validator: widget.validatorFtn,
