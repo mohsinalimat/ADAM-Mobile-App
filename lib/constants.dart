@@ -21,6 +21,12 @@ TextStyle kHintTextStyle =
 const TextStyle kBtnTextStyle =
     TextStyle(color: Colors.white, letterSpacing: 1.2, fontSize: 14.0);
 
+const TextStyle kHeadingStyle = TextStyle(
+    color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 28.0);
+
+const TextStyle kSubHeadingStyle = TextStyle(
+    color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 18.0);
+
 const Widget kLoader = SizedBox(
   height: 25,
   width: 25,

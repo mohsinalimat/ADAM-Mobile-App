@@ -19,10 +19,12 @@ void main() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   String user = pref.getString("userId");
   if (user == null) {
+    print("No user logged in!");
     runApp(MyApp(
       userLoggedIn: false,
     ));
   } else {
+    print("User already logged in!");
     runApp(MyApp(
       userLoggedIn: true,
     ));
