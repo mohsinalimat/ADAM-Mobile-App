@@ -12,6 +12,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final IconData icon;
   final Color iconColor;
+  final Color passIconColor;
 
   final Function(String) onChangeFtn;
   final Function onEditComplete;
@@ -28,6 +29,7 @@ class CustomTextField extends StatefulWidget {
     @required this.hintText,
     @required this.icon,
     this.iconColor = kPrimaryBlueColor,
+    this.passIconColor = kPrimaryBlueColor,
     this.isPassword = false,
     this.onChangeFtn,
     this.onEditComplete,
@@ -73,7 +75,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   onPressed: _showPass,
                   icon: Icon(
                     showPass ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
-                    color: kPrimaryBlueColor,
+                    color: widget.passIconColor,
                     size: 20.0,
                   ),
                 )

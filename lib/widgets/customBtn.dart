@@ -22,7 +22,7 @@ class CustomButton extends StatelessWidget {
       width: btnWidth,
       height: btnHeight,
       child: MaterialButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
         color: btnColor,
         onPressed: btnOnPressed,
         child: btnText,
