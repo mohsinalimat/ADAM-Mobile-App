@@ -1,6 +1,7 @@
 import 'package:adam/widgets/customTextField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +20,6 @@ class Auth {
     String city,
   ) async {
     try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
       User user = (await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -29,7 +29,6 @@ class Auth {
       if (user == null) {
         return null;
       }
-      pref.setString("userId", user.uid);
       await user.updateProfile(
         displayName: fullName,
       );
@@ -65,14 +64,12 @@ class Auth {
 
   Future login(String email, String password) async {
     try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
       User user = (await _firebaseAuth.signInWithEmailAndPassword(
               email: email, password: password))
           .user;
       if (user == null) {
         return null;
       }
-      pref.setString("userId: ", user.uid);
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -131,7 +128,22 @@ class Auth {
   }
 
   Future deleteAccount() async {
-    await _firebaseAuth.currentUser.delete();
+    try {
+      await _firebaseAuth.currentUser.delete();
+      await FirebaseFirestore.instance
+          .collection("user")
+          .doc(_firebaseAuth.currentUser.uid)
+          .delete();
+      await FirebaseStorage.instance
+          .ref(_firebaseAuth.currentUser.uid)
+          .delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "requires-recent-login") {
+        return "For changing the password your account needs to be logged in recently. Please re-login!";
+      } else {
+        return "Unidentified error!";
+      }
+    }
   }
 
   Future changePassword(String newPassword) async {
@@ -192,9 +204,7 @@ class Auth {
           ),
         );
       },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        
-      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
       timeout: Duration(seconds: 60),
     );
   }
