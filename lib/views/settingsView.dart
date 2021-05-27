@@ -15,7 +15,7 @@ class SettingsView extends StatelessWidget {
           FirebaseAuth.instance.signOut();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: kSecondaryBlueColor,
+              backgroundColor: kMediumGreenColor,
               behavior: SnackBarBehavior.floating,
               content: Row(
                 children: [

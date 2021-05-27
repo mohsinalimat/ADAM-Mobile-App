@@ -104,12 +104,7 @@ class _SignUpViewState extends State<SignUpView> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "Sign Up",
-                              style: TextStyle(
-                                color: kPrimaryBlueColor,
-                                // fontSize: height * 0.04,
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: kHeadingStyle,
                             ),
                           ),
                           SizedBox(
@@ -483,7 +478,7 @@ class _SignUpViewState extends State<SignUpView> {
                                         ),
                                       ],
                                     ),
-                                    backgroundColor: kSecondaryBlueColor,
+                                    backgroundColor: kMediumGreenColor,
                                     behavior: SnackBarBehavior.floating,
                                   );
                                   ScaffoldMessenger.of(context)
@@ -499,7 +494,7 @@ class _SignUpViewState extends State<SignUpView> {
                                 }
                               }
                             },
-                            btnColor: kLightGreenColor,
+                            btnColor: kMediumGreenColor,
                             btnText: _isLoading
                                 ? SizedBox(
                                     height: 25,

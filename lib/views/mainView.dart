@@ -3,12 +3,16 @@ import 'dart:io';
 import 'package:adam/constants.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/homeView.dart';
+import 'package:adam/views/phoneVerificationView.dart';
 import 'package:adam/views/profileView.dart';
 import 'package:adam/views/settingsView.dart';
 import 'package:adam/views/statsView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainView extends StatefulWidget {
   @override
@@ -16,7 +20,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  final _firebaseAuth = FirebaseAuth.instance;
+  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _views = [
     HomeView(),
     StatsView(),
@@ -29,6 +33,12 @@ class _MainViewState extends State<MainView> {
     Icons.auto_graph,
     Icons.settings,
   ];
+
+  void _storingUserIdinLocalStoraget() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString("userId", _firebaseAuth.currentUser.uid);
+    print("ID STORED: ${_firebaseAuth.currentUser.uid}");
+  }
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
@@ -48,7 +58,8 @@ class _MainViewState extends State<MainView> {
                   ),
                 ),
                 onPressed: () {
-                  exit(0);
+                  // exit(0);
+                  SystemNavigator.pop();
                 },
               ),
               TextButton(
@@ -61,6 +72,12 @@ class _MainViewState extends State<MainView> {
           ),
         )) ??
         false;
+  }
+
+  @override
+  void initState() {
+    _storingUserIdinLocalStoraget();
+    super.initState();
   }
 
   @override

@@ -63,11 +63,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       ),
                       Text(
                         "Forgot Password?",
-                        style: TextStyle(
-                            color: kPrimaryBlueColor,
-                            fontWeight: FontWeight.bold,
-                            // fontSize: height * 0.04,
-                            fontSize: 28.0),
+                        style: kHeadingStyle,
                       ),
                       SizedBox(
                         height: height * 0.01,

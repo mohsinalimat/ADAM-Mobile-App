@@ -145,11 +145,7 @@ class _ProfileViewState extends State<ProfileView> {
                         children: [
                           Text(
                             _firebaseAuth.currentUser.displayName,
-                            style: TextStyle(
-                                color: kPrimaryBlueColor,
-                                fontSize: 30.0,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5),
+                            style: kHeadingStyle,
                           ),
                           FloatingActionButton(
                             heroTag: "editButton",
@@ -302,7 +298,7 @@ class _ProfileViewState extends State<ProfileView> {
                       btnHeight: 35,
                       btnOnPressed: () =>
                           Navigator.pushNamed(context, '/changePassword'),
-                      btnColor: kLightGreenColor,
+                      btnColor: kMediumGreenColor,
                       btnText: Text(
                         "Change Password",
                         style: kBtnTextStyle,

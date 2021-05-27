@@ -193,7 +193,7 @@ class _LoginViewState extends State<LoginView> {
                         // btnHeight: height * 0.055,
                         btnOnPressed: () =>
                             Navigator.pushNamed(context, "/signUp"),
-                        btnColor: kLightGreenColor,
+                        btnColor: kMediumGreenColor,
                         btnText:
                             Text("Create New Account", style: kBtnTextStyle),
                       ),

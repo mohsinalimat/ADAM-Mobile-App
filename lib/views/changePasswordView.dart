@@ -67,11 +67,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   ),
                   Text(
                     "Change Password!",
-                    style: TextStyle(
-                        color: kPrimaryBlueColor,
-                        fontWeight: FontWeight.bold,
-                        // fontSize: height * 0.04,
-                        fontSize: 28.0),
+                    style: kHeadingStyle,
                   ),
                   SizedBox(
                     height: height * 0.01,
@@ -161,7 +157,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         } else {
                           var snackBar = SnackBar(
                             behavior: SnackBarBehavior.floating,
-                            backgroundColor: kSecondaryBlueColor,
+                            backgroundColor: kMediumGreenColor,
                             content: Row(
                               children: [
                                 Icon(Icons.check, color: Colors.white),

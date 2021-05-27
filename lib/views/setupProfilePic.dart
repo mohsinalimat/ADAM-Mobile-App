@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
-import 'package:adam/views/homeView.dart';
+import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
