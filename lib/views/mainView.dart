@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/homeView.dart';
@@ -10,6 +11,7 @@ import 'package:adam/views/statsView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,14 +32,19 @@ class _MainViewState extends State<MainView> {
 
   final _bottomIcons = [
     Icons.home,
+    // "assets/stats.svg",
     Icons.auto_graph,
     Icons.settings,
   ];
 
   void _storingUserIdinLocalStoraget() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString("userId", _firebaseAuth.currentUser.uid);
-    print("ID STORED: ${_firebaseAuth.currentUser.uid}");
+    if (pref.getString("userId") == null) {
+      pref.setString("userId", _firebaseAuth.currentUser.uid);
+      print("ID STORED: ${_firebaseAuth.currentUser.uid}");
+    } else {
+      print("ID ALREADY STORED: ${pref.getString("userId")}");
+    }
   }
 
   Future<bool> _onWillPop() async {
@@ -90,7 +97,7 @@ class _MainViewState extends State<MainView> {
         body: _views[_bottomBarProviders.currentIndex],
         floatingActionButton: _bottomBarProviders.currentIndex == 0
             ? FloatingActionButton(
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(context, "/services"),
                 child: Icon(Icons.add),
               )
             : null,
@@ -106,22 +113,35 @@ class _MainViewState extends State<MainView> {
                   children: [
                     IconButton(
                       onPressed: () => _bottomBarProviders.currentIndex = i,
-                      icon: Icon(
-                        _bottomIcons[i],
-                        size:
-                            _bottomBarProviders.currentIndex == i ? 28.0 : 23.0,
-                        color: _bottomBarProviders.currentIndex == i
-                            ? kPrimaryBlueColor
-                            : Colors.grey[400],
-                      ),
+                      icon: i == 1
+                          ? SvgPicture.asset(
+                              'assets/stats.svg',
+                              height: _bottomBarProviders.currentIndex == i
+                                  ? 28.0
+                                  : 23.0,
+                              color: _bottomBarProviders.currentIndex == i
+                                  ? kPrimaryBlueColor
+                                  : Colors.grey[400],
+                            )
+                          : Icon(
+                              _bottomIcons[i],
+                              size: _bottomBarProviders.currentIndex == i
+                                  ? 28.0
+                                  : 23.0,
+                              color: _bottomBarProviders.currentIndex == i
+                                  ? kPrimaryBlueColor
+                                  : Colors.grey[400],
+                            ),
                     ),
                     _bottomBarProviders.currentIndex == i
-                        ? Container(
-                            height: 5.0,
-                            width: 5.0,
-                            decoration: BoxDecoration(
-                              color: kPrimaryBlueColor,
-                              shape: BoxShape.circle,
+                        ? WidgetAnimator(
+                            child: Container(
+                              height: 5.0,
+                              width: 5.0,
+                              decoration: BoxDecoration(
+                                color: kPrimaryBlueColor,
+                                shape: BoxShape.circle,
+                              ),
                             ),
                           )
                         : Container()
@@ -140,12 +160,14 @@ class _MainViewState extends State<MainView> {
                     ),
                   ),
                   _bottomBarProviders.currentIndex == 3
-                      ? Container(
-                          height: 5.0,
-                          width: 5.0,
-                          decoration: BoxDecoration(
-                            color: kPrimaryBlueColor,
-                            shape: BoxShape.circle,
+                      ? WidgetAnimator(
+                          child: Container(
+                            height: 5.0,
+                            width: 5.0,
+                            decoration: BoxDecoration(
+                              color: kPrimaryBlueColor,
+                              shape: BoxShape.circle,
+                            ),
                           ),
                         )
                       : Container()

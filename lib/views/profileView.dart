@@ -1,12 +1,16 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
+import 'package:adam/views/changeEmailView.dart';
 import 'package:adam/views/editProfileView.dart';
+import 'package:adam/views/phoneVerificationView.dart';
 import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -22,6 +26,7 @@ class _ProfileViewState extends State<ProfileView> {
   File image;
   String photoUrl = "";
   bool _uploading = false;
+
   uploadPic() async {
     try {
       setState(() {
@@ -91,12 +96,12 @@ class _ProfileViewState extends State<ProfileView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Align(
-                    //   alignment: Alignment.centerLeft,
-                    //   child: LogoDisplay(),
-                    // ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: LogoDisplay(),
+                    ),
                     SizedBox(
-                      height: 8.0,
+                      height: 15.0,
                     ),
                     Align(
                       alignment: Alignment.center,
@@ -138,6 +143,9 @@ class _ProfileViewState extends State<ProfileView> {
                         ],
                       )),
                     ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
                     Align(
                       alignment: Alignment.center,
                       child: Row(
@@ -147,38 +155,43 @@ class _ProfileViewState extends State<ProfileView> {
                             _firebaseAuth.currentUser.displayName,
                             style: kHeadingStyle,
                           ),
-                          FloatingActionButton(
-                            heroTag: "editButton",
-                            elevation: 2.0,
-                            backgroundColor: Colors.white,
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => EditProfileView(
+                          CustomEditBtn(
+                            heroTag: "editBtn",
+                            onBtnPress: () => Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      Duration(milliseconds: 750),
+                                  reverseTransitionDuration:
+                                      Duration(milliseconds: 750),
+                                  transitionsBuilder:
+                                      (context, ani1, ani2, child) {
+                                    return FadeTransition(
+                                      child: child,
+                                      opacity: ani1,
+                                    );
+                                  },
+                                  pageBuilder: (context, a1, a2) =>
+                                      EditProfileView(
                                     user: _firebaseAuth.currentUser,
                                     snapshot: snapshot.data,
-                                    refreshCallBack: callBack),
-                              ),
-                            ),
-                            mini: true,
-                            child: Icon(
-                              Icons.edit,
-                              color: kPrimaryBlueColor,
-                            ),
-                          ),
+                                    refreshCallBack: callBack,
+                                  ),
+                                )
+                                // MaterialPageRoute(
+                                //   builder: (_) => EditProfileView(
+                                //     user: _firebaseAuth.currentUser,
+                                //     snapshot: snapshot.data,
+                                //     refreshCallBack: callBack,
+                                //   ),
+                                // ),
+                                ),
+                          )
                         ],
                       ),
                     ),
                     SizedBox(
                       height: 30.0,
-                    ),
-                    ProfileInfoWidget(
-                      icon: Icons.phone,
-                      info: snapshot.data["phoneNumber"],
-                      infoTitle: "Phone",
-                    ),
-                    SizedBox(
-                      height: 20.0,
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -242,9 +255,17 @@ class _ProfileViewState extends State<ProfileView> {
                                             showDialog(
                                               context: context,
                                               builder: (context) => AlertDialog(
-                                                title: Text("Email Sent!"),
+                                                title: Row(
+                                                  children: [
+                                                    Icon(Icons.email),
+                                                    SizedBox(
+                                                      width: 8.0,
+                                                    ),
+                                                    Text("Email Sent!"),
+                                                  ],
+                                                ),
                                                 content: Text(
-                                                    "Please login again after verification :)"),
+                                                    "Please re-login after verification of your new email."),
                                               ),
                                             );
                                           },
@@ -259,6 +280,90 @@ class _ProfileViewState extends State<ProfileView> {
                                   color: Colors.yellow[600],
                                 ),
                               ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: ProfileInfoWidget(
+                            icon: Icons.phone,
+                            info: snapshot.data["phoneNumber"],
+                            infoTitle: "Phone",
+                          ),
+                        ),
+                        snapshot.data['phoneVerify']
+                            ? InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Row(
+                                        children: [
+                                          Icon(Icons.verified,
+                                              color: kLightBlueColor),
+                                          SizedBox(
+                                            width: 8.0,
+                                          ),
+                                          Text("Phone Verification"),
+                                        ],
+                                      ),
+                                      content: Text(
+                                          "Congratulations!\nYour phone number is verified."),
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.verified,
+                                  color: kLightBlueColor,
+                                ),
+                              )
+                            : InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Row(
+                                        children: [
+                                          Icon(Icons.verified,
+                                              color: Colors.grey),
+                                          SizedBox(
+                                            width: 8.0,
+                                          ),
+                                          Text("Phone Verification"),
+                                        ],
+                                      ),
+                                      content: Text(
+                                          "Opss!\nYour phone is not verified!"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    PhoneVerificationView(
+                                                  phoneNumber: snapshot
+                                                      .data['phoneNumber'],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Text("Verify Now!"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.info,
+                                  color: Colors.yellow[600],
+                                ),
+                              )
                       ],
                     ),
                     SizedBox(
@@ -289,72 +394,82 @@ class _ProfileViewState extends State<ProfileView> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    ProfileInfoWidget(
-                      icon: Icons.lock,
-                      infoTitle: "Password",
-                    ),
-                    CustomButton(
-                      btnWidth: 170,
-                      btnHeight: 35,
-                      btnOnPressed: () =>
-                          Navigator.pushNamed(context, '/changePassword'),
-                      btnColor: kMediumGreenColor,
-                      btnText: Text(
-                        "Change Password",
-                        style: kBtnTextStyle,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ProfileInfoWidget(
+                            icon: Icons.lock,
+                            infoTitle: "Password",
+                            info: "* * * * * * * *",
+                          ),
+                        ),
+                        CustomEditBtn(
+                          heroTag: "editPassbtn",
+                          onBtnPress: () =>
+                              Navigator.pushNamed(context, '/changePassword'),
+                        )
+                      ],
                     ),
                     SizedBox(
-                      height: 20.0,
+                      height: 40.0,
                     ),
-                    ProfileInfoWidget(
-                      icon: Icons.person,
-                      infoTitle: "Account",
-                    ),
-                    CustomButton(
-                      btnWidth: 170,
-                      btnHeight: 35,
-                      btnOnPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Row(
-                              children: [
-                                Icon(
-                                  Icons.info,
-                                  color: Colors.red[900],
+                    Align(
+                      alignment: Alignment.center,
+                      child: CustomButton(
+                        btnWidth: 170,
+                        btnHeight: 35,
+                        btnOnPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info,
+                                    color: Colors.red[700],
+                                  ),
+                                  SizedBox(width: 8.0),
+                                  Text("Delete Account!"),
+                                ],
+                              ),
+                              content: Text(
+                                "You are about to delete your account. Please note that this process is irreversible and all your data will be lost!\n\nDo you want to continue?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.pushNamed(
+                                        context, "/deleteAccount");
+                                  },
+                                  child: Text(
+                                    "Yes, I'm sure",
+                                    style: TextStyle(color: Colors.red[700]),
+                                  ),
                                 ),
-                                SizedBox(width: 8.0),
-                                Text("Delete Account!"),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text("No, Cancel it"),
+                                ),
                               ],
                             ),
-                            content: Text(
-                              "You are about to delete your account. Please note that this process is irreversible and all your data will be lost!\n\nDo you want to continue?",
+                          );
+                        },
+                        btnColor: Colors.red[700],
+                        btnText: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: 20.0,
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushNamed(
-                                      context, "/deleteAccount");
-                                },
-                                child: Text(
-                                  "Yes, I'm sure",
-                                  style: TextStyle(color: Colors.red[900]),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text("No, Cancel it"),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      btnColor: Colors.red[700],
-                      btnText: Text(
-                        "Delete Account",
-                        style: kBtnTextStyle,
+                            Text(
+                              "Delete Account",
+                              style: kBtnTextStyle,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

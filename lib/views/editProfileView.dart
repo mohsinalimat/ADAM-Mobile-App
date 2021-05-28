@@ -1,5 +1,6 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/views/changeEmailView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/editableCustomTextField.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -31,22 +32,28 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   final format = DateFormat("dd-MM-yyyy");
 
-  String _gender = "Male";
-  String _country = "Pakistan";
-  String _city = "Islamabad";
+  String _gender = "";
+  String _country = "";
+  String _city = "";
 
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
+  String _oldPhone = "";
+  String _oldEmail = "";
 
   void fetchingInfo() {
     fullNameController.text = widget.user.displayName;
-    emailController.text = widget.user.email;
     phoneNumberController.text = widget.snapshot["phoneNumber"];
     dobController.text = widget.snapshot['dob'];
+    emailController.text = widget.user.email;
     _gender = widget.snapshot["gender"];
     _city = widget.snapshot['city'];
     _country = widget.snapshot['country'];
+
+    // saving old data
+    _oldPhone = widget.snapshot["phoneNumber"];
+    _oldEmail = widget.user.email;
   }
 
   @override
@@ -115,6 +122,36 @@ class _EditProfileViewState extends State<EditProfileView> {
                         textInputAction: TextInputAction.done,
                         textInputType: TextInputType.name,
                         icon: Icons.person,
+                        validatorFtn: (value) {
+                          if (value.isEmpty) {
+                            return "Name cannot be empty!";
+                          }
+
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      EditableCustomTextField(
+                        labelText: "Email Address",
+                        textEditingController: emailController,
+                        textInputAction: TextInputAction.done,
+                        textInputType: TextInputType.emailAddress,
+                        icon: Icons.email,
+                        validatorFtn: (value) {
+                          bool emailValid = RegExp(
+                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                              .hasMatch(value);
+
+                          if (value.isEmpty) {
+                            return "Email cannot be empty!";
+                          } else if (!emailValid) {
+                            return "Invalid Email address!";
+                          }
+
+                          return null;
+                        },
                       ),
                       SizedBox(
                         height: 15.0,
@@ -125,6 +162,18 @@ class _EditProfileViewState extends State<EditProfileView> {
                         textInputAction: TextInputAction.done,
                         textInputType: TextInputType.phone,
                         icon: Icons.phone,
+                        validatorFtn: (value) {
+                          bool validPhone = RegExp(
+                                  r'^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$')
+                              .hasMatch(value);
+                          if (value.isEmpty) {
+                            return "Phone number cannot be empty!";
+                          } else if (!validPhone) {
+                            return "Invalid Phone Number!";
+                          }
+
+                          return null;
+                        },
                       ),
                       SizedBox(
                         height: 15.0,
@@ -134,45 +183,45 @@ class _EditProfileViewState extends State<EditProfileView> {
                         style: TextStyle(color: Colors.grey[500]),
                       ),
                       SizedBox(height: 10.0),
-                      SizedBox(
-                        height: 40.0,
-                        child: DateTimeField(
-                          controller: dobController,
-                          validator: (value) {
-                            if (value == null) {
-                              return "Date of birth is not selected!";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                              fillColor: Colors.grey[100],
-                              filled: true,
-                              prefixIcon: Icon(
-                                Icons.date_range,
-                                color: kPrimaryBlueColor,
-                              ),
-                              contentPadding: const EdgeInsets.all(5.0),
-                              hintStyle: kHintTextStyle,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              )),
-                          format: format,
-                          onShowPicker: (context, currentValue) {
-                            return showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1980),
-                              lastDate: DateTime(2100),
-                            );
-                          },
+                      DateTimeField(
+                        controller: dobController,
+                        decoration: InputDecoration(
+                          fillColor: Colors.grey[100],
+                          filled: true,
+                          prefixIcon: Hero(
+                            tag: Icons.date_range.toString(),
+                            child: Icon(
+                              Icons.date_range,
+                              color: kPrimaryBlueColor,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.all(5.0),
+                          hintStyle: kHintTextStyle,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                            ),
+                          ),
                         ),
+                        format: format,
+                        onShowPicker: (context, currentValue) {
+                          return showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1980),
+                            lastDate: DateTime(2100),
+                          );
+                        },
                       ),
                       SizedBox(
                         height: 15.0,
@@ -323,71 +372,97 @@ class _EditProfileViewState extends State<EditProfileView> {
                           btnWidth: screenSize.width * 0.9,
                           btnHeight: 40.0,
                           btnOnPressed: () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            Map<String, Object> newData = {
-                              "phoneNumber": phoneNumberController.text.trim(),
-                              "gender": _gender,
-                              "country": _country,
-                              "city": _city,
-                              "dob": dobController.text.trim(),
-                            };
-                            var value = await _auth
-                                .updateUserProfile(
-                              widget.user,
-                              fullNameController.text.trim(),
-                              newData,
-                            )
-                                .whenComplete(() {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                            });
-                            print("VALUE: $value");
+                            if (_formKey.currentState.validate()) {
+                              // data updated
+                              Map<String, Object> newData = {
+                                "phoneNumber":
+                                    phoneNumberController.text.trim(),
+                                "gender": _gender,
+                                "country": _country,
+                                "city": _city,
+                                "dob": dobController.text.trim(),
+                                "phoneVerify": _oldPhone !=
+                                        phoneNumberController.text.trim()
+                                    ? false
+                                    : widget.snapshot['phoneVerify'],
+                              };
 
-                            if (value is String) {
-                              var snackBar = SnackBar(
-                                content: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.info,
-                                      color: Colors.white,
+                              // in case email is updated then move to password verification
+                              if (_oldEmail != emailController.text.trim()) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ChangeEmailView(
+                                      refreshEmailCallBack:
+                                          widget.refreshCallBack,
+                                      fullName: fullNameController.text.trim(),
+                                      updatedData: newData,
+                                      updatedEmail: emailController.text.trim(),
                                     ),
-                                    SizedBox(width: 8.0),
-                                    Text(
-                                      value,
-                                      style: TextStyle(color: Colors.white),
+                                  ),
+                                );
+                              } else {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+
+                                var value = await _auth
+                                    .updateData(
+                                  widget.user,
+                                  fullNameController.text.trim(),
+                                  newData,
+                                )
+                                    .whenComplete(() {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                });
+                                print("VALUE: $value");
+
+                                if (value is String) {
+                                  var snackBar = SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.info,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          value,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                backgroundColor: Colors.red[900],
-                                behavior: SnackBarBehavior.floating,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                            } else {
-                              var snackBar = SnackBar(
-                                content: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.check,
-                                      color: Colors.white,
+                                    backgroundColor: Colors.red[900],
+                                    behavior: SnackBarBehavior.floating,
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                } else {
+                                  var snackBar = SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          "Profile Updated!",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(width: 8.0),
-                                    Text(
-                                      "Profile Updated!",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                backgroundColor: kSecondaryBlueColor,
-                                behavior: SnackBarBehavior.floating,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                              Navigator.pop(context);
-                              widget.refreshCallBack(true);
+                                    backgroundColor: kSecondaryBlueColor,
+                                    behavior: SnackBarBehavior.floating,
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                  Navigator.pop(context);
+                                  widget.refreshCallBack(true);
+                                }
+                              }
                             }
                           },
                           btnColor: kLightGreenColor,

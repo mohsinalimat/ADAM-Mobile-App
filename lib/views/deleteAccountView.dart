@@ -5,6 +5,7 @@ import 'package:adam/widgets/customTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeleteAccountView extends StatefulWidget {
   @override
@@ -111,8 +112,13 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                         setState(() {
                           _deleting = true;
                         });
-                        var value =
-                            await _auth.deleteAccount().whenComplete(() {
+                        var value = await _auth
+                            .deleteAccount(
+                          _firebaseAuth.currentUser.email,
+                          _passwordController.text.trim(),
+                          _firebaseAuth.currentUser.uid,
+                        )
+                            .whenComplete(() {
                           setState(() {
                             _deleting = false;
                           });
@@ -122,7 +128,18 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text("Security Check!"),
+                              title: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info,
+                                    color: Colors.red[700],
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text("Security Check!"),
+                                ],
+                              ),
                               content: Text(value),
                               actions: [
                                 TextButton(
@@ -151,7 +168,9 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                               ],
                             ),
                           );
-                          await _firebaseAuth.signOut();
+                          SharedPreferences pref =
+                              await SharedPreferences.getInstance();
+                          pref.remove('userId');
                           Navigator.popUntil(
                               context, (route) => route.settings.name == "/");
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);

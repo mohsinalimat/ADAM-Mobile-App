@@ -65,8 +65,8 @@ class _SignUpViewState extends State<SignUpView> {
       child: AbsorbPointer(
         absorbing: _isLoading,
         child: Scaffold(
-          body: SingleChildScrollView(
-            child: SafeArea(
+          body: SafeArea(
+            child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -478,7 +478,7 @@ class _SignUpViewState extends State<SignUpView> {
                                         ),
                                       ],
                                     ),
-                                    backgroundColor: kMediumGreenColor,
+                                    backgroundColor: kSecondaryBlueColor,
                                     behavior: SnackBarBehavior.floating,
                                   );
                                   ScaffoldMessenger.of(context)
@@ -494,7 +494,7 @@ class _SignUpViewState extends State<SignUpView> {
                                 }
                               }
                             },
-                            btnColor: kMediumGreenColor,
+                            btnColor: kLightGreenColor,
                             btnText: _isLoading
                                 ? SizedBox(
                                     height: 25,
