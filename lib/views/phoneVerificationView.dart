@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:adam/constants.dart';
 import 'package:adam/widgets/customBtn.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -17,9 +19,12 @@ class PhoneVerificationView extends StatefulWidget {
 }
 
 class _PhoneVerificationViewState extends State<PhoneVerificationView> {
+  final _firebaseAuth = FirebaseAuth.instance;
+  final _codeController = TextEditingController();
+
   Timer _timer;
   int _start = 59;
-  final _codeController = TextEditingController();
+  String _verificationId;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -39,9 +44,122 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
     );
   }
 
+  Future verifyPhoneNumber(String phoneNumber, BuildContext context) async {
+    String newPhone = phoneNumber;
+
+    // Incase there is no country code +92 in front of the number
+    if (phoneNumber.substring(0, 1) != "+") {
+      String tempPhone = phoneNumber.substring(1, phoneNumber.length);
+      newPhone = "+92$tempPhone";
+    }
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: newPhone,
+      verificationCompleted: (PhoneAuthCredential phoneCred) {
+        print("Phone number verified!");
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("EXCEPTION: ${e.code}");
+        var snackBar = SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red[700],
+          content: Row(
+            children: [
+              Icon(Icons.check, color: Colors.white),
+              SizedBox(
+                width: 8.0,
+              ),
+              Text(
+                "Verification failed: ${e.code}",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        return e.code;
+      },
+      codeSent: (String verificationId, int resendToken) {
+        print("CODE SENT!");
+        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+          verificationId: verificationId,
+          smsCode: _codeController.text.trim(),
+        );
+        _verificationId = verificationId;
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(_firebaseAuth.currentUser.uid)
+            .update({
+          "phoneVerify": true,
+        });
+        var snackBar = SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: kMediumBlueColor,
+          content: Row(
+            children: [
+              Icon(Icons.check, color: Colors.white),
+              SizedBox(
+                width: 8.0,
+              ),
+              Text(
+                "Phone Number Verified successfully!",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        );
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        print(phoneAuthCredential);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        return _verificationId = verificationId;
+      },
+      timeout: Duration(seconds: 60),
+    );
+  }
+
+  _verifyCode() {
+    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+      verificationId: _verificationId,
+      smsCode: _codeController.text.trim(),
+    );
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(_firebaseAuth.currentUser.uid)
+        .update({
+      "phoneVerify": true,
+    });
+    var snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: kMediumBlueColor,
+      content: Row(
+        children: [
+          Icon(Icons.check, color: Colors.white),
+          SizedBox(
+            width: 8.0,
+          ),
+          Text(
+            "Phone Number Verified successfully!",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    print(phoneAuthCredential);
+  }
+
   @override
   void initState() {
     startTimer();
+    verifyPhoneNumber(widget.phoneNumber, context);
     super.initState();
   }
 
@@ -126,7 +244,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: "Timout: ",
+                        text: "Timeout: ",
                         style: TextStyle(color: kPrimaryBlueColor)),
                     TextSpan(
                         text: _start == 0 ? "Code Expired!" : "00:$_start",
@@ -141,7 +259,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
                 CustomButton(
                   btnWidth: width * 0.8,
                   btnHeight: 40.0,
-                  btnOnPressed: () {},
+                  btnOnPressed: () => _verifyCode(),
                   btnColor: kMediumGreenColor,
                   btnText: Text(
                     "Verify",
