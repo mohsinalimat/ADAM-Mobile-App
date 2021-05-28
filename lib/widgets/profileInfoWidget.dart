@@ -21,7 +21,9 @@ class ProfileInfoWidget extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: kPrimaryBlueColor, size: 20),
+            Hero(
+                tag: icon.toString(),
+                child: Icon(icon, color: kPrimaryBlueColor, size: 20)),
             SizedBox(width: 8.0),
             Text(
               infoTitle,

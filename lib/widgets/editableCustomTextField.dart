@@ -74,9 +74,12 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
                 filled: true,
                 fillColor: Colors.grey[100],
                 errorText: widget.errorText,
-                prefixIcon: Icon(
-                  widget.icon,
-                  color: kPrimaryBlueColor,
+                prefixIcon: Hero(
+                  tag: widget.icon.toString(),
+                  child: Icon(
+                    widget.icon,
+                    color: kPrimaryBlueColor,
+                  ),
                 ),
                 suffixIcon: widget.isPassword
                     ? IconButton(

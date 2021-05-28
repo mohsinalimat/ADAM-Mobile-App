@@ -1,3 +1,4 @@
+import 'package:adam/constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -26,6 +27,35 @@ class CustomButton extends StatelessWidget {
         color: btnColor,
         onPressed: btnOnPressed,
         child: btnText,
+      ),
+    );
+  }
+}
+
+class CustomEditBtn extends StatelessWidget {
+  final Function onBtnPress;
+  final String heroTag;
+
+  const CustomEditBtn({
+    Key key,
+    this.onBtnPress,
+    @required this.heroTag,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 30.0,
+      child: FloatingActionButton(
+        heroTag: this.heroTag,
+        elevation: 1,
+        backgroundColor: Colors.white,
+        onPressed: onBtnPress,
+        mini: true,
+        child: Icon(
+          Icons.edit,
+          color: kPrimaryBlueColor,
+          size: 20.0,
+        ),
       ),
     );
   }
