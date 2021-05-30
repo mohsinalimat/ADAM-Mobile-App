@@ -35,3 +35,31 @@ const Widget kLoader = SizedBox(
     valueColor: AlwaysStoppedAnimation<Color>(kLightGreenColor),
   ),
 );
+
+var paymentSuccessful = Row(
+  children: [
+    Icon(
+      Icons.check_circle,
+      color: Colors.green,
+    ),
+    SizedBox(width: 8),
+    Text("Payment Successful!"),
+  ],
+);
+
+var paymentCanceled = Row(
+  children: [
+    Icon(
+      Icons.cancel,
+      color: Colors.red,
+    ),
+    SizedBox(width: 8),
+    Text("Payment Canceled!"),
+  ],
+);
+
+// API STRIPE KEY
+const String apiKey =
+    'pk_test_51IP4cYA0otFr5s95f3vXRDX2brIA2URgIykWst0rwxbYZifDk9lY4bMwtHJTE8mdPay2GeLhW2wlmy3WnlyMjk5n00w5VNeT0N';
+
+const String secretKey = "sk_test_51IP4cYA0otFr5s95LfrEMzPlF7jRc7NB4Ivj8zUqs2uJIs6yKPGsyMSSMXcZOB4iRzlQZKvQfaWEvPACpi64XX3800ZKcjxiQf";

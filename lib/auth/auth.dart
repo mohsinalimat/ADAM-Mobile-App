@@ -1,5 +1,5 @@
 import 'package:adam/database/databaseService.dart';
-import 'package:adam/views/phoneVerificationView.dart';
+import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

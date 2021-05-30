@@ -1,23 +1,28 @@
 import 'package:adam/constants.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/providers/currentUserProvider.dart';
-import 'package:adam/views/changeEmailView.dart';
-import 'package:adam/views/changePasswordView.dart';
-import 'package:adam/views/deleteAccountView.dart';
-import 'package:adam/views/editProfileView.dart';
-import 'package:adam/views/forgotPasswordView.dart';
-import 'package:adam/views/loginView.dart';
+import 'package:adam/views/chat/chatView.dart';
+import 'package:adam/views/profile/changeEmailView.dart';
+import 'package:adam/views/profile/changePasswordView.dart';
+import 'package:adam/views/profile/deleteAccountView.dart';
+import 'package:adam/views/profile/editProfileView.dart';
+import 'package:adam/views/login/forgotPasswordView.dart';
+import 'package:adam/views/login/loginView.dart';
 import 'package:adam/views/mainView.dart';
-import 'package:adam/views/phoneVerificationView.dart';
-import 'package:adam/views/servicesView.dart';
-import 'package:adam/views/signUpView.dart';
+import 'package:adam/views/profile/phoneVerificationView.dart';
+import 'package:adam/views/services/servicesView.dart';
+import 'package:adam/views/signup/signUpView.dart';
+import 'package:adam/views/subscriptionHistory/subscriptionHistoryView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  // Stripe.publishableKey = apiKey;
   await Firebase.initializeApp();
   SharedPreferences pref = await SharedPreferences.getInstance();
   String user = pref.getString("userId");
@@ -55,24 +60,18 @@ class MyApp extends StatelessWidget {
         "/": (context) => LoginView(),
         "/signUp": (context) => SignUpView(),
         "/forgotPassword": (context) => ForgotPasswordView(),
-        "/mainView": (context) => MultiProvider(
-              providers: [
-                ChangeNotifierProvider(
-                  builder: (context, child) => MainView(),
-                  create: (context) => BottomNavBarProvider(),
-                ),
-                ChangeNotifierProvider(
-                  builder: (context, child) => MainView(),
-                  create: (context) => CurrentUserProvider(),
-                ),
-              ],
+        "/mainView": (context) => ChangeNotifierProvider(
+              builder: (context, child) => MainView(),
+              create: (context) => BottomNavBarProvider(),
             ),
         "/editProfile": (context) => EditProfileView(),
         "/deleteAccount": (context) => DeleteAccountView(),
         "/changePassword": (context) => ChangePasswordView(),
         "/changeEmail": (context) => ChangeEmailView(),
         "/services": (context) => ServicesView(),
-        "/phoneVerify": (context) => PhoneVerificationView()
+        "/phoneVerify": (context) => PhoneVerificationView(),
+        "/chat": (context) => ChatView(),
+        "/subscriptionHistory": (context) => SubscriptionHistoryView(),
       },
     );
   }
