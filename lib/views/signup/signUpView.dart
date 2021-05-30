@@ -1,6 +1,6 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/views/setupProfilePic.dart';
+import 'package:adam/views/signup/setupProfilePic.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';

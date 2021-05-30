@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
-import 'package:adam/views/changeEmailView.dart';
-import 'package:adam/views/editProfileView.dart';
-import 'package:adam/views/phoneVerificationView.dart';
+import 'package:adam/views/profile/changeEmailView.dart';
+import 'package:adam/views/profile/editProfileView.dart';
+import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
@@ -411,7 +411,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ],
                     ),
                     SizedBox(
-                      height: 40.0,
+                      height: 30.0,
                     ),
                     Align(
                       alignment: Alignment.center,
@@ -471,6 +471,9 @@ class _ProfileViewState extends State<ProfileView> {
                           ],
                         ),
                       ),
+                    ),
+                     SizedBox(
+                      height: 20.0,
                     ),
                   ],
                 ),

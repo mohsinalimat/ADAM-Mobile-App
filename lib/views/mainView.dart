@@ -1,18 +1,19 @@
-import 'dart:io';
-
 import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/views/homeView.dart';
-import 'package:adam/views/phoneVerificationView.dart';
-import 'package:adam/views/profileView.dart';
-import 'package:adam/views/settingsView.dart';
-import 'package:adam/views/statsView.dart';
+import 'package:adam/views/home/homeView.dart';
+import 'package:adam/views/profile/profileView.dart';
+import 'package:adam/views/settings/settingsView.dart';
+import 'package:adam/views/stats/statsView.dart';
+import 'package:adam/widgets/expandableFabBtn.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,10 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  PushNotificationsManager pushNotificationsManager =
+      PushNotificationsManager();
+
   final _views = [
     HomeView(),
     StatsView(),
@@ -32,7 +37,6 @@ class _MainViewState extends State<MainView> {
 
   final _bottomIcons = [
     Icons.home,
-    // "assets/stats.svg",
     Icons.auto_graph,
     Icons.settings,
   ];
@@ -44,6 +48,24 @@ class _MainViewState extends State<MainView> {
       print("ID STORED: ${_firebaseAuth.currentUser.uid}");
     } else {
       print("ID ALREADY STORED: ${pref.getString("userId")}");
+    }
+  }
+
+  void _getToken() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userNotificationToken = sharedPreferences.getString("notifyToken");
+    if (userNotificationToken != null) {
+      print("TOKEN ALREADY THERE!");
+    } else {
+      print("NEW TOKEN HAS BEEN GENERATED!");
+      userNotificationToken = await _firebaseMessaging.getToken();
+      sharedPreferences.setString("notifyToken", userNotificationToken);
+      FirebaseFirestore.instance
+          .collection("notificationsToken")
+          .doc(_firebaseAuth.currentUser.uid)
+          .set({
+        "token": userNotificationToken,
+      });
     }
   }
 
@@ -84,6 +106,11 @@ class _MainViewState extends State<MainView> {
   @override
   void initState() {
     _storingUserIdinLocalStoraget();
+    // _getToken();
+    // Future.delayed(Duration(seconds: 3), () {
+    //   pushNotificationsManager.init();
+    // });
+
     super.initState();
   }
 
@@ -96,14 +123,45 @@ class _MainViewState extends State<MainView> {
       child: Scaffold(
         body: _views[_bottomBarProviders.currentIndex],
         floatingActionButton: _bottomBarProviders.currentIndex == 0
-            ? FloatingActionButton(
-                onPressed: () => Navigator.pushNamed(context, "/services"),
-                child: Icon(Icons.add),
+            ? WidgetAnimator(
+                child: ExpandableFab(
+                  distance: 85.0,
+                  children: [
+                    ActionButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/services"),
+                    ),
+                    ActionButton(
+                      icon: Icon(Icons.history),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/subscriptionHistory"),
+                    ),
+                    ActionButton(
+                      icon: Icon(Icons.chat),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/chat"),
+                    ),
+                  ],
+                ),
               )
             : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: Container(
           padding: const EdgeInsets.all(8.0),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18.0),
+              topRight: Radius.circular(18.0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0, -1),
+                blurRadius: 8.0,
+              ),
+            ],
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -117,8 +175,8 @@ class _MainViewState extends State<MainView> {
                           ? SvgPicture.asset(
                               'assets/stats.svg',
                               height: _bottomBarProviders.currentIndex == i
-                                  ? 28.0
-                                  : 23.0,
+                                  ? 24.0
+                                  : 22.0,
                               color: _bottomBarProviders.currentIndex == i
                                   ? kPrimaryBlueColor
                                   : Colors.grey[400],
@@ -126,7 +184,7 @@ class _MainViewState extends State<MainView> {
                           : Icon(
                               _bottomIcons[i],
                               size: _bottomBarProviders.currentIndex == i
-                                  ? 28.0
+                                  ? 25.0
                                   : 23.0,
                               color: _bottomBarProviders.currentIndex == i
                                   ? kPrimaryBlueColor
@@ -176,22 +234,6 @@ class _MainViewState extends State<MainView> {
             ],
           ),
         ),
-        // bottomNavigationBar: BottomNavigationBar(
-        //   items: _bottomNavBar,
-        //   currentIndex: _bottomBarProviders.currentIndex,
-        //   onTap: (index) => _bottomBarProviders.currentIndex = index,
-        //   selectedItemColor: kPrimaryBlueColor,
-        //   unselectedItemColor: Colors.grey[400],
-        //   elevation: 0.0,
-        //   showSelectedLabels: false,
-        //   selectedIconTheme: IconThemeData(size: 30.0),
-        // ),
-        // bottomNavigationBar: BottomNavyBar(
-        //   items: _bottomBarItems,
-        //   selectedIndex: _bottomBarProviders.currentIndex,
-        //   onItemSelected: (index) => _bottomBarProviders.currentIndex = index,
-        //   showElevation: false,
-        // ),
       ),
     );
   }

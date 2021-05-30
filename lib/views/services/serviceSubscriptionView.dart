@@ -1,9 +1,20 @@
+import 'dart:convert';
+
 import 'package:adam/constants.dart';
+import 'package:adam/views/mainView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:adam/views/stripe/stripePayment.dart';
+import 'package:adam/views/stripe/stripeServer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:stripe_payment/stripe_payment.dart';
+import 'package:http/http.dart' as http;
 
-class ServiceSubscriptionView extends StatelessWidget {
+class ServiceSubscriptionView extends StatefulWidget {
   final String serviceName;
   final IconData iconData;
   final Color colorTheme;
@@ -16,6 +27,52 @@ class ServiceSubscriptionView extends StatelessWidget {
     this.iconData,
     this.colorTheme,
   }) : super(key: key);
+
+  @override
+  _ServiceSubscriptionViewState createState() =>
+      _ServiceSubscriptionViewState();
+}
+
+class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+
+    _flutterLocalNotificationsPlugin.initialize(
+      initSetttings,
+      onSelectNotification: (payload) {
+        return Navigator.pushNamed(context, "/mainView");
+      },
+    );
+    super.initState();
+  }
+
+  showNotification() async {
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.high, importance: Importance.max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(
+      android: android,
+      iOS: iOS,
+    );
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      widget.serviceName,
+      'Service has been subscribed successfully!',
+      platform,
+      payload: 'Welcome to the Local Notification demo',
+    );
+  }
 
   final _standardFeatures = [
     ServiceFeatureWidget(
@@ -87,6 +144,41 @@ class ServiceSubscriptionView extends StatelessWidget {
     ),
   ];
 
+  void sendNotification() async {
+    print("SENDING NOTIFICATIONS...!!");
+    final postNotificationURL = "https://fcm.googleapis.com/fcm/send";
+    final headers = {
+      'content-type': 'application/json',
+      'Authorization': dotenv.env["authServerKeyFirebase"]
+    };
+    QuerySnapshot qnSnapshot =
+        await FirebaseFirestore.instance.collection('notificationsToken').get();
+
+    for (int i = 0; i < qnSnapshot.docs.length; i++) {
+      print("TOKEN SENDING TOOO: " + qnSnapshot.docs[i]['token']);
+      final body = {
+        "to": qnSnapshot.docs[i]['token'],
+        "mutable_content": true,
+        "priority": "high",
+        "notification": {
+          "title": widget.serviceName,
+          "body": "New service has been subscribed",
+        },
+        "data": {
+          "body": "body",
+          "title": "title",
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        }
+      };
+      await http.post(
+        Uri.parse(postNotificationURL),
+        headers: headers,
+        body: json.encode(body),
+        encoding: Encoding.getByName('utf-8'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,9 +193,9 @@ class ServiceSubscriptionView extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: FloatingActionButton(
                     elevation: 0.0,
-                    backgroundColor: colorTheme,
+                    backgroundColor: widget.colorTheme,
                     mini: true,
-                    heroTag: iconData.toString(),
+                    heroTag: widget.iconData.toString(),
                     onPressed: () => Navigator.pop(context),
                     child: Icon(
                       Icons.arrow_back,
@@ -117,16 +209,16 @@ class ServiceSubscriptionView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      serviceName,
+                      widget.serviceName,
                       style: TextStyle(
-                          color: colorTheme,
+                          color: widget.colorTheme,
                           fontWeight: FontWeight.bold,
                           fontSize: 30.0),
                     ),
                     Text(
                       "Campaign",
                       style: TextStyle(
-                        color: colorTheme,
+                        color: widget.colorTheme,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -134,7 +226,7 @@ class ServiceSubscriptionView extends StatelessWidget {
                       height: 20.0,
                     ),
                     Text(
-                      serviceDesc,
+                      widget.serviceDesc,
                       style: TextStyle(
                         color: Colors.black87,
                       ),
@@ -145,22 +237,144 @@ class ServiceSubscriptionView extends StatelessWidget {
                   height: 30.0,
                 ),
                 StandardServiceSubscriptionCard(
-                  colorTheme: colorTheme,
-                  iconData: iconData,
+                  colorTheme: widget.colorTheme,
+                  iconData: widget.iconData,
                   standardFeatures: _standardFeatures,
+                  subcribe: showNotification,
+                  // subcribe: _subscribe,
                 ),
                 SizedBox(
                   height: 40.0,
                 ),
                 PremiumServiceSubscriptionCard(
-                  colorTheme: colorTheme,
-                  iconData: iconData,
+                  colorTheme: widget.colorTheme,
+                  iconData: widget.iconData,
                   standardFeatures: _premiumFeatures,
+                  subcribe: showNotification,
+                  // subcribe: _subscribe,
                 ),
+                SizedBox(
+                  height: 40.0,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Ratings and reviews",
+                    style: kSubHeadingStyle,
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "4.7",
+                      style: kHeadingStyle,
+                    ),
+                    Expanded(child: Container()),
+                    for (int i = 0; i < 4; i++)
+                      Icon(
+                        Icons.star_rounded,
+                        color: kPrimaryBlueColor,
+                        size: 30.0,
+                      ),
+                    Icon(
+                      Icons.star_half_rounded,
+                      color: kPrimaryBlueColor,
+                      size: 30.0,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                for (int i = 0; i < 3; i++) FeedbackCard(),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "See all reviews",
+                  ),
+                )
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FeedbackCard extends StatelessWidget {
+  const FeedbackCard({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180,
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage('assets/dp.png'),
+                        ),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Text(
+                          "John Doe",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16.0),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Row(
+                      children: List.generate(
+                        5,
+                        (index) => Icon(
+                          Icons.star_rounded,
+                          color: kPrimaryBlueColor,
+                          size: 15.0,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Expanded(child: Container()),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.more_vert_outlined,
+                    color: kPrimaryBlueColor,
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          Expanded(
+            child: Text(
+              "Really helpful, got my business started with this service. I am glad I found this on internet. Really afforadable and awesome results! 100% recommended!",
+            ),
+          )
+        ],
       ),
     );
   }
@@ -172,12 +386,42 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
     @required this.colorTheme,
     @required this.iconData,
     @required List<ServiceFeatureWidget> standardFeatures,
+    this.subcribe,
   })  : _standardFeatures = standardFeatures,
         super(key: key);
 
   final Color colorTheme;
   final IconData iconData;
   final List<ServiceFeatureWidget> _standardFeatures;
+  final Function subcribe;
+
+  // void _subscribe() async {
+  //   final sessionId = await StripeServer(
+  //     serviceName: "Service Name",
+  //     price: 3000,
+  //   ).createCheckout();
+
+  //   print("SESSION ID $sessionId");
+
+  //   final result = await Navigator.of(context).push(
+  //     MaterialPageRoute(
+  //       builder: (_) => StripePaymentCheckout(
+  //         sessionId: sessionId,
+  //       ),
+  //     ),
+  //   );
+  //   SnackBar snackbar;
+  //   if (result == "success") {
+  //     snackbar = SnackBar(
+  //       content: paymentSuccessful,
+  //     );
+  //   } else {
+  //     snackbar = SnackBar(
+  //       content: paymentCanceled,
+  //     );
+  //   }
+  //   ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -190,10 +434,8 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            colorTheme == kMediumGreenColor
-                ? kMediumBlueColor
-                : kMediumGreenColor,
-            colorTheme,
+            kMediumBlueColor,
+            kMediumGreenColor,
           ],
         ),
       ),
@@ -218,7 +460,7 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
           CustomButton(
             btnWidth: MediaQuery.of(context).size.width,
             btnHeight: 40.0,
-            btnOnPressed: () {},
+            btnOnPressed: subcribe,
             btnColor: kLightBlueColor,
             btnText: Text(
               "Subscribe",
@@ -236,6 +478,7 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
     Key key,
     @required this.colorTheme,
     @required this.iconData,
+    this.subcribe,
     @required List<ServiceFeatureWidget> standardFeatures,
   })  : _standardFeatures = standardFeatures,
         super(key: key);
@@ -243,6 +486,7 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
   final Color colorTheme;
   final IconData iconData;
   final List<ServiceFeatureWidget> _standardFeatures;
+  final Function subcribe;
 
   @override
   Widget build(BuildContext context) {
@@ -255,10 +499,8 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            colorTheme == kMediumGreenColor
-                ? kMediumBlueColor
-                : kMediumGreenColor,
-            colorTheme,
+            kMediumBlueColor,
+            kMediumGreenColor,
           ],
         ),
       ),
@@ -284,7 +526,7 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
           CustomButton(
             btnWidth: MediaQuery.of(context).size.width,
             btnHeight: 40.0,
-            btnOnPressed: () {},
+            btnOnPressed: subcribe,
             btnColor: kLightBlueColor,
             btnText: Text(
               "Subscribe",

@@ -1,6 +1,6 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/views/changeEmailView.dart';
+import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/editableCustomTextField.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
