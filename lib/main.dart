@@ -1,4 +1,6 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/darkModeController/themeStyles.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/chat/chatView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
@@ -15,6 +17,7 @@ import 'package:adam/views/subscriptionHistory/subscriptionHistoryView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,40 +42,57 @@ void main() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool userLoggedIn;
 
-  const MyApp({Key key, this.userLoggedIn}) : super(key: key);
+  MyApp({Key key, this.userLoggedIn}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeProvider _themeProvider = ThemeProvider();
+
+  void getCurrentAppTheme() async {
+    _themeProvider.darkTheme = await _themeProvider.darkThemePref.getTheme();
+  }
+
+  @override
+  void initState() {
+    getCurrentAppTheme();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ADAM',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-        accentColor: kPrimaryBlueColor,
-        primaryColor: kPrimaryBlueColor,
-        fontFamily: "Roboto",
+    return ChangeNotifierProvider(
+      create: (context) => _themeProvider,
+      child: Consumer<ThemeProvider>(
+        builder: (context, value, child) => MaterialApp(
+          title: 'ADAM',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeStyles.themeData(_themeProvider.darkTheme, context),
+          initialRoute: widget.userLoggedIn ? "/mainView" : "/",
+          routes: {
+            "/": (context) => LoginView(),
+            "/signUp": (context) => SignUpView(),
+            "/forgotPassword": (context) => ForgotPasswordView(),
+            "/mainView": (context) => ChangeNotifierProvider(
+                  builder: (context, child) => MainView(),
+                  create: (context) => BottomNavBarProvider(),
+                ),
+            "/editProfile": (context) => EditProfileView(),
+            "/deleteAccount": (context) => DeleteAccountView(),
+            "/changePassword": (context) => ChangePasswordView(),
+            "/changeEmail": (context) => ChangeEmailView(),
+            "/services": (context) => ServicesView(),
+            "/phoneVerify": (context) => PhoneVerificationView(),
+            "/chat": (context) => ChatView(),
+            "/subscriptionHistory": (context) => SubscriptionHistoryView(),
+          },
+        ),
       ),
-      initialRoute: userLoggedIn ? "/mainView" : "/",
-      routes: {
-        "/": (context) => LoginView(),
-        "/signUp": (context) => SignUpView(),
-        "/forgotPassword": (context) => ForgotPasswordView(),
-        "/mainView": (context) => ChangeNotifierProvider(
-              builder: (context, child) => MainView(),
-              create: (context) => BottomNavBarProvider(),
-            ),
-        "/editProfile": (context) => EditProfileView(),
-        "/deleteAccount": (context) => DeleteAccountView(),
-        "/changePassword": (context) => ChangePasswordView(),
-        "/changeEmail": (context) => ChangeEmailView(),
-        "/services": (context) => ServicesView(),
-        "/phoneVerify": (context) => PhoneVerificationView(),
-        "/chat": (context) => ChatView(),
-        "/subscriptionHistory": (context) => SubscriptionHistoryView(),
-      },
     );
   }
 }

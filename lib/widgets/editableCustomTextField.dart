@@ -1,6 +1,8 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class EditableCustomTextField extends StatefulWidget {
   final TextEditingController textEditingController;
@@ -51,6 +53,7 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,13 +75,17 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
             onEditingComplete: widget.onEditComplete,
             decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: _themeProvider.darkTheme
+                    ? Colors.black12
+                    : Colors.grey[100],
                 errorText: widget.errorText,
                 prefixIcon: Hero(
                   tag: widget.icon.toString(),
                   child: Icon(
                     widget.icon,
-                    color: kPrimaryBlueColor,
+                    color: _themeProvider.darkTheme
+                        ? Colors.grey
+                        : kPrimaryBlueColor,
                   ),
                 ),
                 suffixIcon: widget.isPassword

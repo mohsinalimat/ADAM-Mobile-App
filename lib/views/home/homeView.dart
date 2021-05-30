@@ -1,4 +1,5 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -6,6 +7,7 @@ import 'package:carousel_slider/carousel_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -61,6 +63,8 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -77,10 +81,14 @@ class _HomeViewState extends State<HomeView> {
                       LogoDisplay(),
                       CircleAvatar(
                         radius: 35.0,
-                        backgroundColor: kLightGreenColor,
+                        backgroundColor: _themeProvider.darkTheme
+                            ? kMediumGreenColor
+                            : kLightGreenColor,
                         child: CircleAvatar(
                           radius: 34.0,
-                          backgroundColor: Colors.white,
+                          backgroundColor: _themeProvider.darkTheme
+                              ? Colors.grey[800]
+                              : Colors.white,
                           child: CircleAvatar(
                             radius: 32.0,
                             backgroundImage:
@@ -100,7 +108,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 Text(
                   "Your Services",
-                  style: kHeadingStyle,
+                  style: Theme.of(context).textTheme.headline1,
                 ),
                 SizedBox(
                   height: 20.0,
@@ -108,14 +116,15 @@ class _HomeViewState extends State<HomeView> {
                 CarouselSlider(
                   items: _yourServices,
                   options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      viewportFraction: 1,
-                      height: 330.0,
-                      onPageChanged: (index, reas) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      }),
+                    enlargeCenterPage: true,
+                    viewportFraction: 1,
+                    height: 330.0,
+                    onPageChanged: (index, reas) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(
                   height: 10.0,
@@ -135,7 +144,9 @@ class _HomeViewState extends State<HomeView> {
                           // shape: BoxShape.circle,
                           color: _currentIndex == index
                               ? kMediumBlueColor
-                              : kLightBlueColor.withAlpha(100),
+                              : _themeProvider.darkTheme
+                                  ? Colors.white
+                                  : kLightBlueColor.withAlpha(100),
                         ),
                       );
                     }).toList())

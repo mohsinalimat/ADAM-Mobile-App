@@ -1,5 +1,7 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileInfoWidget extends StatelessWidget {
   const ProfileInfoWidget({
@@ -21,14 +23,9 @@ class ProfileInfoWidget extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Hero(
-                tag: icon.toString(),
-                child: Icon(icon, color: kPrimaryBlueColor, size: 20)),
+            Hero(tag: icon.toString(), child: Icon(icon, size: 20)),
             SizedBox(width: 8.0),
-            Text(
-              infoTitle,
-              style: TextStyle(fontSize: 14.0, color: kPrimaryBlueColor),
-            )
+            Text(infoTitle)
           ],
         ),
         SizedBox(height: 5.0),
@@ -36,7 +33,12 @@ class ProfileInfoWidget extends StatelessWidget {
             ? Container()
             : Text(
                 info,
-                style: TextStyle(fontSize: 18.0),
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Provider.of<ThemeProvider>(context).darkTheme
+                      ? Colors.white
+                      : Colors.black,
+                ),
               )
       ],
     );

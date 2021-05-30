@@ -181,6 +181,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
   @override
   Widget build(BuildContext context) {
+    final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -208,29 +209,12 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      widget.serviceName,
-                      style: TextStyle(
-                          color: widget.colorTheme,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30.0),
-                    ),
-                    Text(
-                      "Campaign",
-                      style: TextStyle(
-                        color: widget.colorTheme,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(widget.serviceName, style: _textTheme.headline1),
+                    Text("Campaign"),
                     SizedBox(
                       height: 20.0,
                     ),
-                    Text(
-                      widget.serviceDesc,
-                      style: TextStyle(
-                        color: Colors.black87,
-                      ),
-                    ),
+                    Text(widget.serviceDesc),
                   ],
                 ),
                 SizedBox(
@@ -260,7 +244,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Ratings and reviews",
-                    style: kSubHeadingStyle,
+                    style: _textTheme.headline2,
                   ),
                 ),
                 SizedBox(
@@ -270,18 +254,18 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                   children: [
                     Text(
                       "4.7",
-                      style: kHeadingStyle,
+                      style: _textTheme.headline1,
                     ),
                     Expanded(child: Container()),
                     for (int i = 0; i < 4; i++)
                       Icon(
                         Icons.star_rounded,
-                        color: kPrimaryBlueColor,
+                        // color: kPrimaryBlueColor,
                         size: 30.0,
                       ),
                     Icon(
                       Icons.star_half_rounded,
-                      color: kPrimaryBlueColor,
+                      // color: kPrimaryBlueColor,
                       size: 30.0,
                     )
                   ],
@@ -333,11 +317,7 @@ class FeedbackCard extends StatelessWidget {
                         SizedBox(
                           width: 8.0,
                         ),
-                        Text(
-                          "John Doe",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16.0),
-                        )
+                        Text("John Doe")
                       ],
                     ),
                     SizedBox(
@@ -348,7 +328,6 @@ class FeedbackCard extends StatelessWidget {
                         5,
                         (index) => Icon(
                           Icons.star_rounded,
-                          color: kPrimaryBlueColor,
                           size: 15.0,
                         ),
                       ),
@@ -358,10 +337,7 @@ class FeedbackCard extends StatelessWidget {
                 Expanded(child: Container()),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(
-                    Icons.more_vert_outlined,
-                    color: kPrimaryBlueColor,
-                  ),
+                  icon: Icon(Icons.more_vert_outlined),
                 )
               ],
             ),

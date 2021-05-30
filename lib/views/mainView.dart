@@ -1,5 +1,6 @@
 import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/home/homeView.dart';
@@ -117,6 +118,7 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     final _bottomBarProviders = Provider.of<BottomNavBarProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -139,8 +141,7 @@ class _MainViewState extends State<MainView> {
                     ),
                     ActionButton(
                       icon: Icon(Icons.chat),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, "/chat"),
+                      onPressed: () => Navigator.pushNamed(context, "/chat"),
                     ),
                   ],
                 ),
@@ -148,8 +149,8 @@ class _MainViewState extends State<MainView> {
             : null,
         bottomNavigationBar: Container(
           padding: const EdgeInsets.all(8.0),
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            color: _themeProvider.darkTheme ? Colors.grey[900] : Colors.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(18.0),
               topRight: Radius.circular(18.0),
@@ -178,7 +179,9 @@ class _MainViewState extends State<MainView> {
                                   ? 24.0
                                   : 22.0,
                               color: _bottomBarProviders.currentIndex == i
-                                  ? kPrimaryBlueColor
+                                  ? _themeProvider.darkTheme
+                                      ? Colors.white
+                                      : kPrimaryBlueColor
                                   : Colors.grey[400],
                             )
                           : Icon(
@@ -187,7 +190,9 @@ class _MainViewState extends State<MainView> {
                                   ? 25.0
                                   : 23.0,
                               color: _bottomBarProviders.currentIndex == i
-                                  ? kPrimaryBlueColor
+                                  ? _themeProvider.darkTheme
+                                      ? Colors.white
+                                      : kPrimaryBlueColor
                                   : Colors.grey[400],
                             ),
                     ),
@@ -197,7 +202,9 @@ class _MainViewState extends State<MainView> {
                               height: 5.0,
                               width: 5.0,
                               decoration: BoxDecoration(
-                                color: kPrimaryBlueColor,
+                                color: _themeProvider.darkTheme
+                                    ? Colors.white
+                                    : kPrimaryBlueColor,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -223,7 +230,9 @@ class _MainViewState extends State<MainView> {
                             height: 5.0,
                             width: 5.0,
                             decoration: BoxDecoration(
-                              color: kPrimaryBlueColor,
+                              color: _themeProvider.darkTheme
+                                  ? Colors.white
+                                  : kPrimaryBlueColor,
                               shape: BoxShape.circle,
                             ),
                           ),

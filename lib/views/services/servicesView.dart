@@ -93,6 +93,7 @@ class _ServicesViewState extends State<ServicesView> {
 
   @override
   Widget build(BuildContext context) {
+    final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -103,7 +104,7 @@ class _ServicesViewState extends State<ServicesView> {
               Row(
                 children: [
                   BackButton(
-                    color: kPrimaryBlueColor,
+                    // color: kPrimaryBlueColor,
                     onPressed: () => Navigator.pop(context),
                   ),
                   Expanded(
@@ -142,7 +143,7 @@ class _ServicesViewState extends State<ServicesView> {
               _filterService.length == 0
                   ? Text(
                       "Find What You Want!",
-                      style: kHeadingStyle,
+                      style: _textTheme.headline1,
                     )
                   : Container(),
               _filterService.length == 0
@@ -153,9 +154,6 @@ class _ServicesViewState extends State<ServicesView> {
               _filterService.length == 0
                   ? Text(
                       "Subscribe and get started right away!",
-                      style: TextStyle(
-                        color: kPrimaryBlueColor,
-                      ),
                     )
                   : Container(),
               SizedBox(

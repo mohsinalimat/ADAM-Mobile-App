@@ -1,5 +1,6 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/views/signup/setupProfilePic.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpView extends StatefulWidget {
@@ -57,6 +59,7 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     final node = FocusScope.of(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -74,7 +77,7 @@ class _SignUpViewState extends State<SignUpView> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: BackButton(
-                        color: kPrimaryBlueColor,
+                        // color: kPrimaryBlueColor,
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -89,7 +92,7 @@ class _SignUpViewState extends State<SignUpView> {
                     Text(
                       "Automated Digital Assitant in Marketing",
                       style: TextStyle(
-                        color: kPrimaryBlueColor,
+                        // color: kPrimaryBlueColor,
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -104,7 +107,7 @@ class _SignUpViewState extends State<SignUpView> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "Sign Up",
-                              style: kHeadingStyle,
+                              style: Theme.of(context).textTheme.headline1,
                             ),
                           ),
                           SizedBox(
@@ -114,10 +117,7 @@ class _SignUpViewState extends State<SignUpView> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "It's quick and easy",
-                              style: TextStyle(
-                                  color: kPrimaryBlueColor, fontSize: 14.0
-                                  // fontSize: height * 0.017,
-                                  ),
+                              style: TextStyle(fontSize: 14.0),
                             ),
                           ),
                           SizedBox(height: height * 0.02),
@@ -248,7 +248,9 @@ class _SignUpViewState extends State<SignUpView> {
                               return null;
                             },
                             decoration: InputDecoration(
-                              fillColor: Colors.grey[200],
+                              fillColor: _themeProvider.darkTheme
+                                  ? Colors.black12
+                                  : Colors.grey[100],
                               filled: true,
                               enabledBorder: OutlineInputBorder(
                                   borderSide:
@@ -257,13 +259,20 @@ class _SignUpViewState extends State<SignUpView> {
                                 borderSide:
                                     BorderSide(color: Colors.transparent),
                               ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.red,
+                                ),
+                              ),
                               prefixIcon: Icon(
                                 Icons.date_range,
-                                color: kPrimaryBlueColor,
+                                color: _themeProvider.darkTheme
+                                    ? Colors.white
+                                    : kPrimaryBlueColor,
                               ),
                               contentPadding: const EdgeInsets.all(5.0),
                               hintText: "Date of Birth",
-                              hintStyle: kHintTextStyle,
+                              hintStyle: Theme.of(context).textTheme.caption,
                             ),
                             format: format,
                             onShowPicker: (context, currentValue) {
@@ -503,15 +512,18 @@ class _SignUpViewState extends State<SignUpView> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : Text("Sign Up", style: kBtnTextStyle),
+                                : Text(
+                                    "Sign Up",
+                                    style: kBtnTextStyle,
+                                  ),
                           ),
                           Text(
-                              "\n\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: kPrimaryBlueColor,
-                                  // fontSize: height * 0.015,
-                                  fontSize: 12.0)),
+                            "\n\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
                           SizedBox(
                             height: height * 0.05,
                           ),

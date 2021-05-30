@@ -1,7 +1,9 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class YourServiceCard extends StatelessWidget {
   const YourServiceCard({
@@ -17,6 +19,8 @@ class YourServiceCard extends StatelessWidget {
   final String serviceTitle;
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _textTheme = Theme.of(context).textTheme;
     return SizedBox(
       // height: 350,
       width: 260,
@@ -35,12 +39,19 @@ class YourServiceCard extends StatelessWidget {
                 child: Container(
                   height: 30.0,
                   width: 150,
-                  color: isPremium ? kLightGreenColor : kLightBlueColor,
+                  color: isPremium
+                      ? _themeProvider.darkTheme
+                          ? kMediumGreenColor
+                          : kLightGreenColor
+                      : _themeProvider.darkTheme
+                          ? kMediumBlueColor
+                          : kLightBlueColor,
                   child: Center(
-                      child: Text(
-                    isPremium ? "Premium" : "Standard",
-                    style: TextStyle(color: Colors.white),
-                  )),
+                    child: Text(
+                      isPremium ? "Premium" : "Standard",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -54,7 +65,7 @@ class YourServiceCard extends StatelessWidget {
                   Expanded(
                     child: Icon(
                       serviceIcon,
-                      color: kPrimaryBlueColor,
+                      // color: kPrimaryBlueColor,
                       size: 60.0,
                     ),
                   ),
@@ -63,14 +74,9 @@ class YourServiceCard extends StatelessWidget {
                   ),
                   Text(
                     serviceTitle,
-                    style: kSubHeadingStyle,
+                    style: _textTheme.headline2,
                   ),
-                  Text(
-                    "Campaign",
-                    style: TextStyle(
-                      color: kPrimaryBlueColor,
-                    ),
-                  ),
+                  Text("Campaign"),
                 ],
               ),
             ),
@@ -89,14 +95,17 @@ class YourServiceCard extends StatelessWidget {
                           children: [
                             Text(
                               "In Progress...",
-                              style: TextStyle(color: kPrimaryBlueColor),
+                              // style: _textTheme.bodyText1,
+                              // style: TextStyle(color: kPrimaryBlueColor),
                             ),
                             SizedBox(
                               height: 8.0,
                             ),
                             Expanded(
                               child: LinearProgressIndicator(
-                                color: kLightGreenColor,
+                                color: _themeProvider.darkTheme
+                                    ? kMediumGreenColor
+                                    : kLightGreenColor,
                               ),
                             ),
                           ],
@@ -106,10 +115,7 @@ class YourServiceCard extends StatelessWidget {
                   : Center(
                       child: Text(
                         "Serivce Not Running!",
-                        style: TextStyle(
-                          color: kPrimaryBlueColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        // style: _textTheme.bodyText2,
                       ),
                     ),
             ),
@@ -118,7 +124,9 @@ class YourServiceCard extends StatelessWidget {
               btnWidth: 200,
               btnHeight: 40.0,
               btnOnPressed: () {},
-              btnColor: kPrimaryBlueColor,
+              btnColor: _themeProvider.darkTheme
+                  ? kMediumBlueColor
+                  : kPrimaryBlueColor,
               btnText: Text(
                 "Details",
                 style: kBtnTextStyle,
@@ -171,7 +179,7 @@ class MoreServiceCard extends StatelessWidget {
                   SizedBox(height: 8.0),
                   Text(
                     serviceTitle,
-                    style: kSubHeadingStyle,
+                    // style: kSubHeadingStyle,
                   ),
                   Text(
                     "Campaign",
@@ -221,7 +229,7 @@ class MoreServiceCard extends StatelessWidget {
               btnColor: kPrimaryBlueColor,
               btnText: Text(
                 "Subscribe",
-                style: kBtnTextStyle,
+                // style: kBtnTextStyle,
               ),
             ),
             SizedBox(height: 30.0),

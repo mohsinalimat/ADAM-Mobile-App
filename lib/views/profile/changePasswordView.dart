@@ -1,11 +1,13 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class ChangePasswordView extends StatefulWidget {
   @override
@@ -49,7 +51,6 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: BackButton(
-                      color: kPrimaryBlueColor,
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -64,18 +65,13 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   SizedBox(
                     height: height * 0.03,
                   ),
-                  Text(
-                    "Change Password!",
-                    style: kHeadingStyle,
-                  ),
+                  Text("Change Password!",
+                      style: Theme.of(context).textTheme.headline1),
                   SizedBox(
                     height: height * 0.01,
                   ),
                   Text(
                     "Make sure to login after changing password.",
-                    style: TextStyle(
-                      color: kPrimaryBlueColor,
-                    ),
                   ),
                   SizedBox(height: height * 0.1),
                   CustomTextField(
@@ -184,7 +180,9 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         }
                       }
                     },
-                    btnColor: kPrimaryBlueColor,
+                    btnColor: Provider.of<ThemeProvider>(context).darkTheme
+                        ? kMediumBlueColor
+                        : kPrimaryBlueColor,
                     btnText: _updatingPass
                         ? kLoader
                         : Text(

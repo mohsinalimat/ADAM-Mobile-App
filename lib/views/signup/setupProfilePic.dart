@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class SetupProfilePic extends StatefulWidget {
   @override
@@ -89,7 +91,6 @@ class _SetupProfilePicState extends State<SetupProfilePic> {
                 Text(
                   "Upload Profile Photo",
                   style: TextStyle(
-                    color: kPrimaryBlueColor,
                     fontSize: 24.0,
                   ),
                 ),
@@ -98,10 +99,15 @@ class _SetupProfilePicState extends State<SetupProfilePic> {
                 ),
                 CircleAvatar(
                   radius: 70.0,
-                  backgroundColor: kLightGreenColor,
+                  backgroundColor: Provider.of<ThemeProvider>(context).darkTheme
+                      ? kMediumGreenColor
+                      : kLightGreenColor,
                   child: CircleAvatar(
                     radius: 68,
-                    backgroundColor: Colors.white,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context).darkTheme
+                            ? Colors.grey[800]
+                            : Colors.white,
                     child: _photoSet
                         ? CircleAvatar(
                             radius: 65.0,
@@ -124,7 +130,9 @@ class _SetupProfilePicState extends State<SetupProfilePic> {
                   btnOnPressed: () {
                     uploadPic();
                   },
-                  btnColor: kPrimaryBlueColor,
+                  btnColor: Provider.of<ThemeProvider>(context).darkTheme
+                      ? kMediumBlueColor
+                      : kPrimaryBlueColor,
                   btnText: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

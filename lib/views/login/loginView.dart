@@ -1,11 +1,12 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/views/signup/setupProfilePic.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -34,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final node = FocusScope.of(context);
-
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
@@ -66,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
                       Text(
                         "Automated Digital Assitant in Marketing",
                         style: TextStyle(
-                          color: kPrimaryBlueColor,
+                          // color: kPrimaryBlueColor,
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -100,6 +101,7 @@ class _LoginViewState extends State<LoginView> {
                       CustomTextField(
                         hintText: "Enter Password",
                         icon: Icons.lock,
+                        passIconColor: kPrimaryBlueColor,
                         isPassword: true,
                         node: node,
                         onChangeFtn: (value) => print(value),
@@ -122,11 +124,16 @@ class _LoginViewState extends State<LoginView> {
                         // btnHeight: height * 0.055,
                         btnHeight: 40,
                         node: node,
-                        btnColor: kPrimaryBlueColor,
+                        btnColor: _themeProvider.darkTheme
+                            ? kMediumBlueColor
+                            : kPrimaryBlueColor,
                         // btnText: Text("Login", style: kBtnTextStyle),
                         btnText: _isLoading
                             ? kLoader
-                            : Text("Login", style: kBtnTextStyle),
+                            : Text(
+                                "Login",
+                                style: kBtnTextStyle,
+                              ),
                         btnOnPressed: () async {
                           if (_formKey.currentState.validate()) {
                             setState(() {
@@ -194,8 +201,10 @@ class _LoginViewState extends State<LoginView> {
                         btnOnPressed: () =>
                             Navigator.pushNamed(context, "/signUp"),
                         btnColor: kLightGreenColor,
-                        btnText:
-                            Text("Create New Account", style: kBtnTextStyle),
+                        btnText: Text(
+                          "Create New Account",
+                          style: kBtnTextStyle,
+                        ),
                       ),
                     ],
                   ),

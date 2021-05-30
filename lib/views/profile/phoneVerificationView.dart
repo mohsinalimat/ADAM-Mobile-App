@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 
 class PhoneVerificationView extends StatefulWidget {
   final String phoneNumber;
@@ -213,7 +215,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
                         text: "Enter 6-Digit Code sent to ",
                         style: TextStyle(color: kPrimaryBlueColor)),
                     TextSpan(
-                        text: "+923460159889",
+                        text: widget.phoneNumber,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: kPrimaryBlueColor)),
@@ -225,7 +227,12 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
                 PinCodeTextField(
                   controller: _codeController,
                   keyboardType: TextInputType.number,
-                  textStyle: TextStyle(fontSize: 14.0),
+                  textStyle: Provider.of<ThemeProvider>(context).darkTheme
+                      ? TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.black,
+                        )
+                      : TextStyle(fontSize: 14.0),
                   appContext: context,
                   length: 6,
                   onChanged: (value) {},

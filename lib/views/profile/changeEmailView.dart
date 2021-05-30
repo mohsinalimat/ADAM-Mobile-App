@@ -1,10 +1,12 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class ChangeEmailView extends StatefulWidget {
   final Function(bool) refreshEmailCallBack;
@@ -56,7 +58,6 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: BackButton(
-                        color: kPrimaryBlueColor,
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -71,10 +72,8 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
                     SizedBox(
                       height: height * 0.03,
                     ),
-                    Text(
-                      "Email Updated!",
-                      style: kHeadingStyle,
-                    ),
+                    Text("Email Updated!",
+                        style: Theme.of(context).textTheme.headline1),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -83,13 +82,11 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
                       children: [
                         Icon(
                           Icons.info,
-                          color: kPrimaryBlueColor,
                           size: 20.0,
                         ),
                         SizedBox(width: 5.0),
                         Text(
                           "Enter Password for verification!",
-                          style: TextStyle(color: kPrimaryBlueColor),
                         ),
                       ],
                     ),
@@ -196,7 +193,9 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
                           }
                         }
                       },
-                      btnColor: kPrimaryBlueColor,
+                      btnColor: Provider.of<ThemeProvider>(context).darkTheme
+                          ? kMediumBlueColor
+                          : kPrimaryBlueColor,
                       btnText: _isUpdating
                           ? kLoader
                           : Text(

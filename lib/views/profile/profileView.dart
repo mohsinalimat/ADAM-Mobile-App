@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
@@ -13,6 +14,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ProfileView extends StatefulWidget {
   @override
@@ -81,6 +83,8 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    final _textTheme = Theme.of(context).textTheme;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -110,10 +114,14 @@ class _ProfileViewState extends State<ProfileView> {
                         children: [
                           CircleAvatar(
                             radius: 70.0,
-                            backgroundColor: kLightGreenColor,
+                            backgroundColor: _themeProvider.darkTheme
+                                ? kMediumGreenColor
+                                : kLightGreenColor,
                             child: CircleAvatar(
                               radius: 68,
-                              backgroundColor: Colors.white,
+                              backgroundColor: _themeProvider.darkTheme
+                                  ? Colors.grey[800]
+                                  : Colors.white,
                               child: CircleAvatar(
                                 radius: 65.0,
                                 backgroundImage:
@@ -129,14 +137,18 @@ class _ProfileViewState extends State<ProfileView> {
                             right: 0,
                             child: FloatingActionButton(
                               heroTag: "profilePicBtn",
-                              backgroundColor: Colors.white,
+                              backgroundColor: _themeProvider.darkTheme
+                                  ? Colors.grey[900]
+                                  : Colors.white,
                               onPressed: () => _uploading ? null : uploadPic(),
                               mini: true,
                               child: _uploading
                                   ? kLoader
                                   : Icon(
                                       Icons.camera_alt,
-                                      color: kPrimaryBlueColor,
+                                      color: _themeProvider.darkTheme
+                                          ? Colors.white
+                                          : kPrimaryBlueColor,
                                     ),
                             ),
                           )
@@ -151,10 +163,8 @@ class _ProfileViewState extends State<ProfileView> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _firebaseAuth.currentUser.displayName,
-                            style: kHeadingStyle,
-                          ),
+                          Text(_firebaseAuth.currentUser.displayName,
+                              style: _textTheme.headline1),
                           CustomEditBtn(
                             heroTag: "editBtn",
                             onBtnPress: () => Navigator.push(
@@ -472,7 +482,7 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                       ),
                     ),
-                     SizedBox(
+                    SizedBox(
                       height: 20.0,
                     ),
                   ],

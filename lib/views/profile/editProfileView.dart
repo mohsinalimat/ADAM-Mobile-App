@@ -1,5 +1,6 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/editableCustomTextField.dart';
@@ -7,6 +8,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileView extends StatefulWidget {
   final User user;
@@ -74,6 +76,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: AbsorbPointer(
@@ -99,7 +102,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             // backgroundColor: Colors.white,
                             icon: Icon(
                               Icons.arrow_back,
-                              color: kPrimaryBlueColor,
+                              // color: kPrimaryBlueColor,
                               // size: 17.0,
                             ),
                           ),
@@ -108,7 +111,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             style: TextStyle(
                               fontSize: 32.0,
                               fontWeight: FontWeight.bold,
-                              color: kPrimaryBlueColor,
+                              // color: kPrimaryBlueColor,
                             ),
                           ),
                         ],
@@ -186,17 +189,21 @@ class _EditProfileViewState extends State<EditProfileView> {
                       DateTimeField(
                         controller: dobController,
                         decoration: InputDecoration(
-                          fillColor: Colors.grey[100],
+                          fillColor: _themeProvider.darkTheme
+                              ? Colors.black12
+                              : Colors.grey[100],
                           filled: true,
                           prefixIcon: Hero(
                             tag: Icons.date_range.toString(),
                             child: Icon(
                               Icons.date_range,
-                              color: kPrimaryBlueColor,
+                              color: _themeProvider.darkTheme
+                                  ? Colors.grey
+                                  : kPrimaryBlueColor,
                             ),
                           ),
                           contentPadding: const EdgeInsets.all(5.0),
-                          hintStyle: kHintTextStyle,
+                          // hintStyle: kHintTextStyle,
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.transparent,

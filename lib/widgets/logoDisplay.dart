@@ -1,6 +1,8 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class LogoDisplay extends StatelessWidget {
   const LogoDisplay({
@@ -9,6 +11,7 @@ class LogoDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -22,7 +25,10 @@ class LogoDisplay extends StatelessWidget {
         ),
         Text(
           "Uplift your Marketing Game",
-          style: TextStyle(color: kPrimaryBlueColor, fontSize: 12.0),
+          style: TextStyle(
+              color:
+                  _themeProvider.darkTheme ? Colors.white : kPrimaryBlueColor,
+              fontSize: 12.0),
         )
       ],
     );

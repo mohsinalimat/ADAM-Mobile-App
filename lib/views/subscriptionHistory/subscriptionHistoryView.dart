@@ -1,9 +1,9 @@
-import 'package:adam/constants.dart';
 import 'package:flutter/material.dart';
 
 class SubscriptionHistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -15,7 +15,6 @@ class SubscriptionHistoryView extends StatelessWidget {
                 Align(
                   alignment: Alignment.topLeft,
                   child: BackButton(
-                    color: kPrimaryBlueColor,
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -24,7 +23,7 @@ class SubscriptionHistoryView extends StatelessWidget {
                 ),
                 Text(
                   "Subscription History",
-                  style: kHeadingStyle,
+                  style: _textTheme.headline1,
                 )
               ],
             ),

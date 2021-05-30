@@ -1,4 +1,3 @@
-import 'package:adam/constants.dart';
 import 'package:flutter/material.dart';
 
 class ChatView extends StatelessWidget {
@@ -15,7 +14,6 @@ class ChatView extends StatelessWidget {
                 Align(
                   alignment: Alignment.topLeft,
                   child: BackButton(
-                    color: kPrimaryBlueColor,
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -24,7 +22,7 @@ class ChatView extends StatelessWidget {
                 ),
                 Text(
                   "Live Chat",
-                  style: kHeadingStyle,
+                  style: Theme.of(context).textTheme.headline1,
                 )
               ],
             ),

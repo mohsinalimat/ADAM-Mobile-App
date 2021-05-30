@@ -1,9 +1,11 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   @override
@@ -29,6 +31,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -46,7 +49,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: BackButton(
-                          color: kPrimaryBlueColor,
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -63,17 +65,12 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       ),
                       Text(
                         "Forgot Password?",
-                        style: kHeadingStyle,
+                        style: Theme.of(context).textTheme.headline1,
                       ),
                       SizedBox(
                         height: height * 0.01,
                       ),
-                      Text(
-                        "Reset link will be sent to your email.",
-                        style: TextStyle(
-                          color: kPrimaryBlueColor,
-                        ),
-                      ),
+                      Text("Reset link will be sent to your email."),
                       SizedBox(height: height * 0.1),
                       CustomTextField(
                         textEditingController: forgorEmailTextController,
@@ -160,10 +157,15 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             }
                           }
                         },
-                        btnColor: kPrimaryBlueColor,
+                        btnColor: _themeProvider.darkTheme
+                            ? kMediumBlueColor
+                            : kPrimaryBlueColor,
                         btnText: _isLoading
                             ? kLoader
-                            : Text("Send", style: kBtnTextStyle),
+                            : Text(
+                                "Send",
+                                style: kBtnTextStyle,
+                              ),
                       ),
                       Row(
                         mainAxisSize: MainAxisSize.min,

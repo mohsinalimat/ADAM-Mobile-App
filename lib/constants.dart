@@ -15,17 +15,17 @@ const String kLogoBlack = 'assets/logo/logoBlack.svg';
 const String kLogoA = 'assets/logo/logoA.svg';
 
 // text styles
-TextStyle kHintTextStyle =
-    TextStyle(fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);
+// TextStyle kHintTextStyle =
+//     TextStyle(fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);
 
 const TextStyle kBtnTextStyle =
     TextStyle(color: Colors.white, letterSpacing: 1.2, fontSize: 14.0);
 
-const TextStyle kHeadingStyle = TextStyle(
-    color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 28.0);
+// const TextStyle kHeadingStyle = TextStyle(
+//     color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 28.0);
 
-const TextStyle kSubHeadingStyle = TextStyle(
-    color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 18.0);
+// const TextStyle kSubHeadingStyle = TextStyle(
+//     color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 18.0);
 
 const Widget kLoader = SizedBox(
   height: 25,
@@ -62,4 +62,5 @@ var paymentCanceled = Row(
 const String apiKey =
     'pk_test_51IP4cYA0otFr5s95f3vXRDX2brIA2URgIykWst0rwxbYZifDk9lY4bMwtHJTE8mdPay2GeLhW2wlmy3WnlyMjk5n00w5VNeT0N';
 
-const String secretKey = "sk_test_51IP4cYA0otFr5s95LfrEMzPlF7jRc7NB4Ivj8zUqs2uJIs6yKPGsyMSSMXcZOB4iRzlQZKvQfaWEvPACpi64XX3800ZKcjxiQf";
+const String secretKey =
+    "sk_test_51IP4cYA0otFr5s95LfrEMzPlF7jRc7NB4Ivj8zUqs2uJIs6yKPGsyMSSMXcZOB4iRzlQZKvQfaWEvPACpi64XX3800ZKcjxiQf";

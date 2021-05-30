@@ -1,5 +1,8 @@
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:provider/provider.dart';
 
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
@@ -58,6 +61,7 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SizedBox.expand(
       child: Stack(
         alignment: Alignment.bottomRight,

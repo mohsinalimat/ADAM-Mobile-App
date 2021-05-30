@@ -1,6 +1,8 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController textEditingController;
@@ -28,8 +30,8 @@ class CustomTextField extends StatefulWidget {
     this.node,
     @required this.hintText,
     @required this.icon,
-    this.iconColor = kPrimaryBlueColor,
-    this.passIconColor = kPrimaryBlueColor,
+    this.iconColor,
+    this.passIconColor,
     this.isPassword = false,
     this.onChangeFtn,
     this.onEditComplete,
@@ -54,6 +56,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
 
     return SizedBox(
       width: width * 0.89,
@@ -68,22 +71,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
           errorText: widget.errorText,
           prefixIcon: Icon(
             widget.icon,
-            color: widget.iconColor,
+            color: widget.iconColor != null
+                ? widget.iconColor
+                : Theme.of(context).primaryColor,
+            // color: widget.iconColor,
           ),
           suffixIcon: widget.isPassword
               ? IconButton(
                   onPressed: _showPass,
                   icon: Icon(
                     showPass ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
-                    color: widget.passIconColor,
+                    color: widget.passIconColor != null
+                        ? widget.passIconColor
+                        : Theme.of(context).primaryColor,
                     size: 20.0,
                   ),
                 )
               : null,
           contentPadding: const EdgeInsets.all(5.0),
           hintText: widget.hintText,
-          hintStyle: kHintTextStyle,
-          fillColor: Colors.grey[200],
+          hintStyle: Theme.of(context).textTheme.caption,
+          fillColor:
+              _themeProvider.darkTheme ? Colors.black12 : Colors.grey[200],
           filled: true,
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent)),

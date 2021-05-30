@@ -1,11 +1,6 @@
-import 'package:adam/database/databaseService.dart';
-import 'package:adam/views/profile/phoneVerificationView.dart';
-import 'package:adam/widgets/customTextField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -40,6 +35,7 @@ class Auth {
         "gender": gender,
         "country": country,
         "city": city,
+        "phoneVerify": false,
       });
 
       if (!user.emailVerified) {
@@ -152,7 +148,8 @@ class Auth {
           EmailAuthProvider.credential(email: email, password: pass);
       print("AUTHENTICATION USER!");
       await _firebaseAuth.currentUser.reauthenticateWithCredential(credential);
-      await DatabaseService(uid: uid).deleteUserData();
+      await FirebaseStorage.instance.ref(uid).child("dp").delete();
+      await FirebaseFirestore.instance.collection('user').doc(uid).delete();
       await _firebaseAuth.currentUser.delete();
     } on FirebaseAuthException catch (e) {
       if (e.code == "requires-recent-login") {
