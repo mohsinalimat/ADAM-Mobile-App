@@ -8,11 +8,9 @@ const Color kMediumBlueColor = Color(0xff0179d4);
 const Color kSecondaryBlueColor = Color(0xff0d569e);
 const Color kPrimaryBlueColor = Color(0xff114b8c);
 
-// paths
-const String kLogoColor = 'assets/logo/logo/logoColor.svg';
-const String kLogoWhite = 'assets/logo/logoWhite.svg';
-const String kLogoBlack = 'assets/logo/logoBlack.svg';
-const String kLogoA = 'assets/logo/logoA.svg';
+// fontSize
+
+
 
 // text styles
 // TextStyle kHintTextStyle =

@@ -1,4 +1,3 @@
-import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +33,7 @@ class ProfileInfoWidget extends StatelessWidget {
             : Text(
                 info,
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: Theme.of(context).textTheme.subtitle2.fontSize,
                   color: Provider.of<ThemeProvider>(context).darkTheme
                       ? Colors.white
                       : Colors.black,

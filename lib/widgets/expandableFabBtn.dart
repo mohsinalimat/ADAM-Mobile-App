@@ -1,3 +1,4 @@
+import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -61,7 +62,6 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SizedBox.expand(
       child: Stack(
         alignment: Alignment.bottomRight,
@@ -90,7 +90,9 @@ class _ExpandableFabState extends State<ExpandableFab>
               padding: const EdgeInsets.all(8.0),
               child: Icon(
                 Icons.close,
-                color: Theme.of(context).primaryColor,
+                color: Provider.of<ThemeProvider>(context).darkTheme
+                    ? Colors.white
+                    : kPrimaryBlueColor,
               ),
             ),
           ),

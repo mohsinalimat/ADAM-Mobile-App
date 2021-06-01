@@ -1,5 +1,7 @@
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/views/services/serviceSubscriptionView.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ServiceCard extends StatelessWidget {
   const ServiceCard(
@@ -23,8 +25,13 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SizedBox(
-      height: 200,
+      height: _themeProvider.size == "Large"
+          ? 240
+          : _themeProvider.size == "Medium"
+              ? 200
+              : 190,
       child: Container(
         padding: const EdgeInsets.all(15.0),
         decoration: BoxDecoration(
@@ -47,8 +54,9 @@ class ServiceCard extends StatelessWidget {
                     color: Colors.white,
                     size: 45.0,
                   ),
-                  SizedBox(width: 8.0),
+                  SizedBox(width: 5.0),
                   Expanded(
+                    flex: 4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -57,8 +65,9 @@ class ServiceCard extends StatelessWidget {
                           serviceName,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold,
+                            fontSize:
+                                Theme.of(context).textTheme.headline2.fontSize,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
@@ -91,11 +100,10 @@ class ServiceCard extends StatelessWidget {
                               size: 15.0,
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 8.0),
                   GestureDetector(
                     onTap: addFavorite,
                     child: Icon(
@@ -122,7 +130,8 @@ class ServiceCard extends StatelessWidget {
                         text: "\$$servicePrice/",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20.0,
+                          fontSize:
+                              Theme.of(context).textTheme.subtitle2.fontSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
