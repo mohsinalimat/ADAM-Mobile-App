@@ -1,11 +1,35 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share/share.dart';
 
 class SettingsView extends StatelessWidget {
+  void _signOut(BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    FirebaseAuth.instance.signOut();
+    var snackBar = SnackBar(
+      backgroundColor: kMediumGreenColor,
+      behavior: SnackBarBehavior.floating,
+      content: Row(
+        children: [
+          Icon(Icons.info, color: Colors.white),
+          SizedBox(width: 8.0),
+          Text(
+            "Sign Out Successful!",
+            style: TextStyle(color: Colors.white),
+          )
+        ],
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    preferences.remove("userId");
+    Navigator.popUntil(context, (route) => route.settings.name == "/");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,28 +78,42 @@ class SettingsView extends StatelessWidget {
               leading: Icon(Icons.exit_to_app),
               title: Text("Logout"),
               subtitle: Text("See you soon!"),
-              onTap: () async {
-                SharedPreferences preferences =
-                    await SharedPreferences.getInstance();
-                FirebaseAuth.instance.signOut();
-                var snackBar = SnackBar(
-                  backgroundColor: kMediumGreenColor,
-                  behavior: SnackBarBehavior.floating,
-                  content: Row(
-                    children: [
-                      Icon(Icons.info, color: Colors.white),
-                      SizedBox(width: 8.0),
-                      Text(
-                        "Sign Out Successful!",
-                        style: TextStyle(color: Colors.white),
-                      )
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: new Text(
+                      "Log Out!",
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.headline2.fontSize,
+                        color: Provider.of<ThemeProvider>(context).darkTheme
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                    content: new Text(
+                      "Are You Sure?",
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(
+                          "Yes 😟",
+                          style: TextStyle(
+                            color: Colors.red[700],
+                          ),
+                        ),
+                        onPressed: () => _signOut(context),
+                      ),
+                      TextButton(
+                        child: Text("No 😃"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ],
                   ),
                 );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                preferences.remove("userId");
-                Navigator.popUntil(
-                    context, (route) => route.settings.name == "/");
               },
             ),
             SizedBox(height: 30.0),

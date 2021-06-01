@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:adam/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class StripePaymentCheckout extends StatefulWidget {
@@ -66,7 +66,7 @@ class _StripePaymentCheckoutState extends State<StripePaymentCheckout> {
 
   Future<void> _redirectToStripe(String sessionId) async {
     final redirectToCheckoutJs = '''
-    var stripe = Stripe(\'$apiKey\');
+    var stripe = Stripe(\'${dotenv.env['apiKey']}\');
     
     stripe.redirectToCheckout({
       sessionId: '$sessionId'

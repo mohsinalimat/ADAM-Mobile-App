@@ -3,6 +3,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/splashScreen.dart';
 import 'package:adam/views/home/homeView.dart';
 import 'package:adam/views/profile/profileView.dart';
 import 'package:adam/views/settings/settingsView.dart';
@@ -67,40 +68,6 @@ class _MainViewState extends State<MainView> {
   //   }
   // }
 
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: new Text(
-              "Exit Application",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            content: new Text("Are You Sure?"),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  "Yes",
-                  style: TextStyle(
-                    color: Colors.red[700],
-                  ),
-                ),
-                onPressed: () {
-                  // exit(0);
-                  SystemNavigator.pop();
-                },
-              ),
-              TextButton(
-                child: Text("No"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        )) ??
-        false;
-  }
-
   @override
   void initState() {
     _storingUserIdinLocalStoraget();
@@ -124,13 +91,19 @@ class _MainViewState extends State<MainView> {
         : WillPopScope(
             onWillPop: _onWillPop,
             child: Scaffold(
-              appBar: _bottomBarProviders.currentIndex == 2
+              appBar: _bottomBarProviders.currentIndex == 1
                   ? AppBar(
                       leading: Container(),
                       leadingWidth: 10.0,
-                      title: Text("Settings"),
+                      title: Text("Stats & Analysis"),
                     )
-                  : null,
+                  : _bottomBarProviders.currentIndex == 2
+                      ? AppBar(
+                          leading: Container(),
+                          leadingWidth: 10.0,
+                          title: Text("Settings"),
+                        )
+                      : null,
               body: SafeArea(child: _views[_bottomBarProviders.currentIndex]),
               floatingActionButton: _bottomBarProviders.currentIndex == 0
                   ? WidgetAnimator(
@@ -166,7 +139,7 @@ class _MainViewState extends State<MainView> {
                     topLeft: Radius.circular(18.0),
                     topRight: Radius.circular(18.0),
                   ),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
                       offset: Offset(0, -1),
@@ -210,7 +183,7 @@ class _MainViewState extends State<MainView> {
                                   ),
                           ),
                           _bottomBarProviders.currentIndex == i
-                              ? NavBarBottomItemDot()
+                              ? const NavBarBottomItemDot()
                               : Container()
                         ],
                       ),
@@ -249,9 +222,51 @@ class _MainViewState extends State<MainView> {
             ),
           );
   }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: new Text(
+              "Exit Application",
+              style: TextStyle(
+                fontSize: Theme.of(context).textTheme.headline1.fontSize,
+                color: Provider.of<ThemeProvider>(context).darkTheme
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+            content: new Text(
+              "Are You Sure?",
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  "Yes 😟",
+                  style: TextStyle(
+                    color: Colors.red[700],
+                  ),
+                ),
+                onPressed: () {
+                  // exit(0);
+                  SystemNavigator.pop();
+                },
+              ),
+              TextButton(
+                child: Text("No 😀"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
 }
 
 class NavBarBottomItemDot extends StatelessWidget {
+  const NavBarBottomItemDot();
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);

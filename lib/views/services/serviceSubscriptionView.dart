@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:adam/constants.dart';
+import 'package:adam/views/stripe/stripePayment.dart';
+import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,6 +34,9 @@ class ServiceSubscriptionView extends StatefulWidget {
 class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  int standardPrice = 89;
+  int premiumPrice = 129;
 
   @override
   void initState() {
@@ -226,7 +231,31 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                   colorTheme: widget.colorTheme,
                   iconData: widget.iconData,
                   standardFeatures: _standardFeatures,
-                  subcribe: showNotification,
+                  subcribe: () async {
+                    String sessionId = await StripeServer(
+                            serviceName: widget.serviceName,
+                            price: standardPrice)
+                        .createCheckout();
+                    final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => StripePaymentCheckout(
+                                  sessionId: sessionId,
+                                )));
+
+                    if (result == 'success') {
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      //   behavior: SnackBarBehavior.floating,
+                      //   content: paymentSuccessful,
+                      // ));
+                      showNotification();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: paymentCanceled,
+                      ));
+                    }
+                  },
                   // subcribe: _subscribe,
                 ),
                 SizedBox(
@@ -236,7 +265,31 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                   colorTheme: widget.colorTheme,
                   iconData: widget.iconData,
                   standardFeatures: _premiumFeatures,
-                  subcribe: showNotification,
+                  subcribe: () async {
+                    String sessionId = await StripeServer(
+                      serviceName: widget.serviceName,
+                      price: premiumPrice,
+                    ).createCheckout();
+                    final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => StripePaymentCheckout(
+                                  sessionId: sessionId,
+                                )));
+
+                    if (result == 'success') {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: paymentSuccessful,
+                      ));
+                      showNotification();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: paymentCanceled,
+                      ));
+                    }
+                  },
                   // subcribe: _subscribe,
                 ),
                 SizedBox(

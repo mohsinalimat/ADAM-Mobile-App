@@ -1,6 +1,7 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/validators/textFieldValidators.dart';
 import 'package:adam/views/signup/setupProfilePic.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
@@ -146,19 +147,7 @@ class _SignUpViewState extends State<SignUpView> {
                             node: node,
                             hintText: "Email Address",
                             icon: Icons.email,
-                            validatorFtn: (value) {
-                              bool emailValid = RegExp(
-                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                                  .hasMatch(value);
-
-                              if (value.isEmpty) {
-                                return "Email cannot be empty!";
-                              } else if (!emailValid) {
-                                return "Invalid Email address!";
-                              }
-
-                              return null;
-                            },
+                            validatorFtn: TextFieldValidators.emailValidator,
                             onChangeFtn: (value) => print(value),
                           ),
                           SizedBox(
@@ -172,18 +161,8 @@ class _SignUpViewState extends State<SignUpView> {
                             hintText: "Phone Number",
                             icon: Icons.phone,
                             onChangeFtn: (value) => print(value),
-                            validatorFtn: (value) {
-                              bool validPhone = RegExp(
-                                      r'^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$')
-                                  .hasMatch(value);
-                              if (value.isEmpty) {
-                                return "Phone number cannot be empty!";
-                              } else if (!validPhone) {
-                                return "Invalid Phone Number!";
-                              }
-
-                              return null;
-                            },
+                            validatorFtn:
+                                TextFieldValidators.phoneNumberValidator,
                           ),
                           SizedBox(
                             height: height * 0.02,
@@ -196,19 +175,7 @@ class _SignUpViewState extends State<SignUpView> {
                             isPassword: true,
                             hintText: "Password",
                             icon: Icons.lock_open,
-                            validatorFtn: (value) {
-                              bool passValid = RegExp(
-                                      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
-                                  .hasMatch(value);
-                              if (value.isEmpty) {
-                                return "Password cannot be empty!";
-                              } else if (!passValid) {
-                                return "Uppercase, lowercase, number and special character is required!";
-                              } else if (value.length < 6) {
-                                return "Password must be greater than 6 characters!";
-                              }
-                              return null;
-                            },
+                            validatorFtn: TextFieldValidators.passwordValidator,
                             onChangeFtn: (value) => print(value),
                             onFieldSubmit: (value) => node.nextFocus(),
                           ),

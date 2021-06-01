@@ -1,7 +1,6 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class FAQView extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:adam/constants.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class StripeServer {
   final String serviceName;
@@ -11,14 +11,15 @@ class StripeServer {
   StripeServer({this.serviceName, this.price});
 
   Future<String> createCheckout() async {
-    // final auth = "Basic " + base64Encode(utf8.encode(dotenv.env['secretKey']));
-    final auth = 'Basic ' + base64Encode(utf8.encode('$secretKey:'));
+    final auth = "Basic " + base64Encode(utf8.encode(dotenv.env['secretKey']));
     final body = {
-      'payment_method_types': ['card'],
+      'payment_method_types[]': ['card'],
       'line_items': [
         {
-          'amount': price,
+          'amount': (price * 100).toInt(),
           'quantity': 1,
+          'currency': 'usd',
+          'name': serviceName,
         }
       ],
       'mode': 'payment',
@@ -35,15 +36,6 @@ class StripeServer {
           contentType: "application/x-www-form-urlencoded",
         ),
       );
-      // final result = await http.post(
-      //     Uri.parse(
-      //       "https://api.stripe.com/v1/checkout/sessions",
-      //     ),
-      //     body: body,
-      //     headers: {
-      //       "content-type": "application/x-www-form-urlencoded",
-      //     });
-      // print(result.body);
       return result.data['id'];
     } catch (e) {
       print(e.response);

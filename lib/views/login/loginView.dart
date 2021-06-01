@@ -1,6 +1,7 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/validators/textFieldValidators.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
@@ -82,17 +83,7 @@ class _LoginViewState extends State<LoginView> {
                         textEditingController: emailTextController,
                         textInputAction: TextInputAction.next,
                         textInputType: TextInputType.emailAddress,
-                        validatorFtn: (value) {
-                          bool emailValid = RegExp(
-                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                              .hasMatch(value);
-
-                          if (!emailValid) {
-                            return "Invalid Email address!";
-                          }
-
-                          return null;
-                        },
+                        validatorFtn: TextFieldValidators.emailValidator,
                       ),
                       SizedBox(
                         height: height * 0.03,
@@ -100,7 +91,6 @@ class _LoginViewState extends State<LoginView> {
                       CustomTextField(
                         hintText: "Enter Password",
                         icon: Icons.lock,
-                        passIconColor: kPrimaryBlueColor,
                         isPassword: true,
                         node: node,
                         onChangeFtn: (value) => print(value),
@@ -166,7 +156,7 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                   ],
                                 ),
-                                backgroundColor: Colors.red[900],
+                                backgroundColor: Colors.red[700],
                                 behavior: SnackBarBehavior.floating,
                               );
                               ScaffoldMessenger.of(context)

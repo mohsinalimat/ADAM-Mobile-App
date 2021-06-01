@@ -33,12 +33,12 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
     double width = MediaQuery.of(context).size.width;
     final _themeProvider = Provider.of<ThemeProvider>(context);
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        body: AbsorbPointer(
-          absorbing: _isLoading,
-          child: SingleChildScrollView(
+    return AbsorbPointer(
+      absorbing: _isLoading,
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          body: SingleChildScrollView(
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
