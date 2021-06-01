@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:adam/constants.dart';
 import 'package:adam/controller/darkModeController/themeProvider.dart';
-import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/widgets/customBtn.dart';
@@ -11,7 +10,6 @@ import 'package:adam/widgets/profileInfoWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +22,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   final _firebaseAuth = FirebaseAuth.instance;
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final imgPicker = ImagePicker();
   File image;
   String photoUrl = "";
@@ -82,17 +81,26 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
     final _textTheme = Theme.of(context).textTheme;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    return SafeArea(
-      child: StreamBuilder(
-        stream: FirebaseFirestore.instance
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text("Profile"),
+      // ),
+      body: StreamBuilder(
+        stream: firebaseFirestore
             .collection('user')
             .doc(_firebaseAuth.currentUser.uid)
             .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          print(snapshot.hasData);
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.active &&
+              snapshot.hasData) {
             return SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -100,12 +108,9 @@ class _ProfileViewState extends State<ProfileView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: LogoDisplay(),
-                    ),
+                    // LogoDisplay(),
                     SizedBox(
-                      height: 15.0,
+                      height: 25.0,
                     ),
                     Align(
                       alignment: Alignment.center,
@@ -113,17 +118,17 @@ class _ProfileViewState extends State<ProfileView> {
                           child: Stack(
                         children: [
                           CircleAvatar(
-                            radius: 70.0,
+                            radius: 90.0,
                             backgroundColor: _themeProvider.darkTheme
                                 ? kMediumGreenColor
                                 : kLightGreenColor,
                             child: CircleAvatar(
-                              radius: 68,
+                              radius: 88,
                               backgroundColor: _themeProvider.darkTheme
                                   ? Colors.grey[800]
                                   : Colors.white,
                               child: CircleAvatar(
-                                radius: 65.0,
+                                radius: 85.0,
                                 backgroundImage:
                                     _firebaseAuth.currentUser.photoURL == null
                                         ? AssetImage('assets/dp.png')
@@ -164,38 +169,30 @@ class _ProfileViewState extends State<ProfileView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(_firebaseAuth.currentUser.displayName,
-                              style: _textTheme.headline1),
+                              style: _textTheme.headline6),
                           CustomEditBtn(
                             heroTag: "editBtn",
                             onBtnPress: () => Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      Duration(milliseconds: 750),
-                                  reverseTransitionDuration:
-                                      Duration(milliseconds: 750),
-                                  transitionsBuilder:
-                                      (context, ani1, ani2, child) {
-                                    return FadeTransition(
-                                      child: child,
-                                      opacity: ani1,
-                                    );
-                                  },
-                                  pageBuilder: (context, a1, a2) =>
-                                      EditProfileView(
-                                    user: _firebaseAuth.currentUser,
-                                    snapshot: snapshot.data,
-                                    refreshCallBack: callBack,
-                                  ),
-                                )
-                                // MaterialPageRoute(
-                                //   builder: (_) => EditProfileView(
-                                //     user: _firebaseAuth.currentUser,
-                                //     snapshot: snapshot.data,
-                                //     refreshCallBack: callBack,
-                                //   ),
-                                // ),
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 750),
+                                reverseTransitionDuration:
+                                    Duration(milliseconds: 750),
+                                transitionsBuilder:
+                                    (context, ani1, ani2, child) {
+                                  return FadeTransition(
+                                    child: child,
+                                    opacity: ani1,
+                                  );
+                                },
+                                pageBuilder: (context, a1, a2) =>
+                                    EditProfileView(
+                                  user: _firebaseAuth.currentUser,
+                                  snapshot: snapshot.data,
+                                  refreshCallBack: callBack,
                                 ),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -226,7 +223,20 @@ class _ProfileViewState extends State<ProfileView> {
                                           SizedBox(
                                             width: 8.0,
                                           ),
-                                          Text("Email Verification"),
+                                          Text(
+                                            "Email Verification",
+                                            style: TextStyle(
+                                              fontSize: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2
+                                                  .fontSize,
+                                              color: Provider.of<ThemeProvider>(
+                                                          context)
+                                                      .darkTheme
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                       content: Text(
@@ -251,7 +261,20 @@ class _ProfileViewState extends State<ProfileView> {
                                           SizedBox(
                                             width: 8.0,
                                           ),
-                                          Text("Email Verification"),
+                                          Text(
+                                            "Email Verification",
+                                            style: TextStyle(
+                                              fontSize: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2
+                                                  .fontSize,
+                                              color: Provider.of<ThemeProvider>(
+                                                          context)
+                                                      .darkTheme
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                       content: Text(
@@ -271,7 +294,22 @@ class _ProfileViewState extends State<ProfileView> {
                                                     SizedBox(
                                                       width: 8.0,
                                                     ),
-                                                    Text("Email Sent!"),
+                                                    Text(
+                                                      "Email Sent!",
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headline2
+                                                                .fontSize,
+                                                        color:
+                                                            Provider.of<ThemeProvider>(
+                                                                        context)
+                                                                    .darkTheme
+                                                                ? Colors.white
+                                                                : Colors.black,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                                 content: Text(
@@ -318,7 +356,20 @@ class _ProfileViewState extends State<ProfileView> {
                                           SizedBox(
                                             width: 8.0,
                                           ),
-                                          Text("Phone Verification"),
+                                          Text(
+                                            "Phone Verification",
+                                            style: TextStyle(
+                                              fontSize: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2
+                                                  .fontSize,
+                                              color: Provider.of<ThemeProvider>(
+                                                          context)
+                                                      .darkTheme
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                       content: Text(
@@ -343,14 +394,27 @@ class _ProfileViewState extends State<ProfileView> {
                                           SizedBox(
                                             width: 8.0,
                                           ),
-                                          Text("Phone Verification"),
+                                          Text(
+                                            "Phone Verification",
+                                            style: TextStyle(
+                                              fontSize: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2
+                                                  .fontSize,
+                                              color: Provider.of<ThemeProvider>(
+                                                          context)
+                                                      .darkTheme
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                       content: Text(
                                           "Opss!\nYour phone is not verified!"),
                                       actions: [
                                         TextButton(
-                                          onPressed: () async {
+                                          onPressed: () {
                                             Navigator.pop(context);
                                             Navigator.push(
                                               context,
@@ -404,94 +468,21 @@ class _ProfileViewState extends State<ProfileView> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ProfileInfoWidget(
-                            icon: Icons.lock,
-                            infoTitle: "Password",
-                            info: "* * * * * * * *",
-                          ),
-                        ),
-                        CustomEditBtn(
-                          heroTag: "editPassbtn",
-                          onBtnPress: () =>
-                              Navigator.pushNamed(context, '/changePassword'),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: CustomButton(
-                        btnWidth: 170,
-                        btnHeight: 35,
-                        btnOnPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Row(
-                                children: [
-                                  Icon(
-                                    Icons.info,
-                                    color: Colors.red[700],
-                                  ),
-                                  SizedBox(width: 8.0),
-                                  Text("Delete Account!"),
-                                ],
-                              ),
-                              content: Text(
-                                "You are about to delete your account. Please note that this process is irreversible and all your data will be lost!\n\nDo you want to continue?",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pushNamed(
-                                        context, "/deleteAccount");
-                                  },
-                                  child: Text(
-                                    "Yes, I'm sure",
-                                    style: TextStyle(color: Colors.red[700]),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text("No, Cancel it"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        btnColor: Colors.red[700],
-                        btnText: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 20.0,
-                            ),
-                            Text(
-                              "Delete Account",
-                              style: kBtnTextStyle,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
                   ],
                 ),
               ),
             );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            return Center(
+              child: Text("Something went wrong!"),
+            );
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            return Center(
+              child: Text("Trying to fetch data!"),
+            );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Text("Check internet please!"),
             );
           }
         },

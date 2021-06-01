@@ -97,7 +97,7 @@ class _ServicesViewState extends State<ServicesView> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

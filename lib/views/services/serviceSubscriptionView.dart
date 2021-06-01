@@ -1,17 +1,13 @@
 import 'dart:convert';
 
 import 'package:adam/constants.dart';
-import 'package:adam/views/mainView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:adam/views/stripe/stripePayment.dart';
-import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:stripe_payment/stripe_payment.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceSubscriptionView extends StatefulWidget {
@@ -59,8 +55,13 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
   showNotification() async {
     var android = AndroidNotificationDetails('id', 'channel ', 'description',
-        priority: Priority.high, importance: Importance.max);
-    var iOS = IOSNotificationDetails();
+        priority: Priority.high,
+        importance: Importance.max,
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('xperia'));
+    var iOS = IOSNotificationDetails(
+      sound: "xperia.mp3",
+    );
     var platform = new NotificationDetails(
       android: android,
       iOS: iOS,
@@ -70,7 +71,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
       widget.serviceName,
       'Service has been subscribed successfully!',
       platform,
-      payload: 'Welcome to the Local Notification demo',
+      payload: 'xperia',
     );
   }
 
@@ -168,6 +169,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
           "body": "body",
           "title": "title",
           "click_action": "FLUTTER_NOTIFICATION_CLICK",
+          "sound": "xperia.mp3"
         }
       };
       await http.post(
@@ -341,9 +343,6 @@ class FeedbackCard extends StatelessWidget {
                 )
               ],
             ),
-          ),
-          SizedBox(
-            height: 10.0,
           ),
           Expanded(
             child: Text(
@@ -608,7 +607,7 @@ class ServiceSubscriptionTop extends StatelessWidget {
                 position: DiagonalPosition.BOTTOM_RIGHT,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  height: 20.0,
+                  // height: 20.0,
                   width: 100,
                   color: isPremeium ? kLightGreenColor : kLightBlueColor,
                   child: Column(

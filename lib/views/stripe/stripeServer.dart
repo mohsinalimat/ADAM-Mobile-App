@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:adam/constants.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 
 class StripeServer {
   final String serviceName;
