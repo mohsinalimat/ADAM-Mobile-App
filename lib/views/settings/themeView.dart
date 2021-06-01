@@ -1,5 +1,6 @@
 import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ThemeView extends StatefulWidget {
@@ -8,47 +9,67 @@ class ThemeView extends StatefulWidget {
 }
 
 class _ThemeViewState extends State<ThemeView> {
-  final String _fontSize = "Medium";
+  List _fontSizeList = ["Small", "Medium", "Large"];
 
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Theme"),
-        ),
-        body: ListView(
-          children: [
-            ListTile(
-              leading: Icon(Icons.brightness_6_rounded),
-              title: Text("Dark Mode"),
-              trailing: Switch(
-                value: _themeProvider.darkTheme,
-                onChanged: (value) => _themeProvider.darkTheme = value,
-              ),
+    return _themeProvider == null
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text("Theme"),
             ),
-            ListTile(
-              leading: Icon(Icons.text_fields_rounded),
-              title: Text("Font size"),
-              trailing: DropdownButtonHideUnderline(
-                child: DropdownButton(
-                  value: _themeProvider.size,
-                  onChanged: (value) {
-                    setState(() {
-                      _themeProvider.size = value;
-                    });
-                    print(_themeProvider.size);
-                  },
-                  items: ["Small", "Medium", "Large"]
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e),
-                          ))
-                      .toList(),
+            body: ListView(
+              padding: const EdgeInsets.only(top: 10.0, left: 15.0, right: 10.0),
+              children: [
+                ListTile(
+                  leading: Icon(Icons.brightness_6_rounded),
+                  title: Text("Dark Mode"),
+                  trailing: Switch(
+                    value: _themeProvider.darkTheme,
+                    onChanged: (value) => _themeProvider.darkTheme = value,
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ));
+                ListTile(
+                  leading: Icon(FontAwesomeIcons.font),
+                  title: Text("Font size"),
+                  trailing: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      icon: Container(),
+                      value: _themeProvider.size,
+                      onChanged: (value) {
+                        _themeProvider.size = value;
+
+                        print(_themeProvider.size);
+                      },
+                      items: _fontSizeList
+                          .map((value) => DropdownMenuItem(
+                                onTap: () {
+                                  var snackBar = SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(
+                                      "Font size changed: $value",
+                                    ),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                },
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ));
   }
 }
