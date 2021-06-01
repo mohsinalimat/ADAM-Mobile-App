@@ -1,6 +1,7 @@
 import 'package:adam/controller/darkModeController/themeProvider.dart';
 import 'package:adam/controller/darkModeController/themeStyles.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/splashScreen.dart';
 import 'package:adam/views/chat/chatView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/changePasswordView.dart';
@@ -13,6 +14,7 @@ import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/views/profile/profileView.dart';
 import 'package:adam/views/services/servicesView.dart';
 import 'package:adam/views/settings/accountView.dart';
+import 'package:adam/views/settings/help/appInfo.dart';
 import 'package:adam/views/settings/help/faqView.dart';
 import 'package:adam/views/settings/help/helpView.dart';
 import 'package:adam/views/settings/notificationView.dart';
@@ -22,36 +24,17 @@ import 'package:adam/views/subscriptionHistory/subscriptionHistoryView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:flutter_stripe/flutter_stripe.dart';
+
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  // Provider.debugCheckInvalidValueType = null;
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  // Stripe.publishableKey = apiKey;
   await Firebase.initializeApp();
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  String user = pref.getString("userId");
-  if (user == null) {
-    print("No user logged in!");
-    runApp(MyApp(
-      userLoggedIn: false,
-    ));
-  } else {
-    print("User already logged in!");
-    runApp(MyApp(
-      userLoggedIn: true,
-    ));
-  }
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  final bool userLoggedIn;
-
-  MyApp({Key key, this.userLoggedIn}) : super(key: key);
-
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -94,9 +77,10 @@ class _MyAppState extends State<MyApp> {
                           ? 35.0
                           : 20.0,
                 ),
-                initialRoute: widget.userLoggedIn ? "/mainView" : "/",
+                initialRoute: "/splashScreen",
                 routes: {
                   "/": (context) => LoginView(),
+                  "/splashScreen": (context) => SplashScreen(),
                   "/signUp": (context) => SignUpView(),
                   "/forgotPassword": (context) => ForgotPasswordView(),
                   "/mainView": (context) => ChangeNotifierProvider(
@@ -118,6 +102,7 @@ class _MyAppState extends State<MyApp> {
                   "/help": (context) => HelpView(),
                   "/theme": (context) => ThemeView(),
                   "/faq": (context) => FAQView(),
+                  "/appInfo": (context) => AppInfo(),
                 },
               ),
             ),

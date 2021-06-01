@@ -45,11 +45,17 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool showPass = true;
-
+  FocusNode _node = FocusNode();
   _showPass() {
     setState(() {
       showPass = !showPass;
     });
+  }
+
+  @override
+  void dispose() {
+    _node.dispose();
+    super.dispose();
   }
 
   @override
@@ -60,6 +66,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return SizedBox(
       width: width * 0.89,
       child: TextFormField(
+        // focusNode: widget.node == null ? _node : widget.node,
         obscureText: widget.isPassword ? showPass : false,
         controller: widget.textEditingController,
         textInputAction: widget.textInputAction,
@@ -70,9 +77,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           errorText: widget.errorText,
           prefixIcon: Icon(
             widget.icon,
-            color: widget.iconColor != null
-                ? widget.iconColor
-                : Theme.of(context).primaryColor,
+            color: widget.iconColor != null ? widget.iconColor : Colors.white,
             // color: widget.iconColor,
           ),
           suffixIcon: widget.isPassword
@@ -82,7 +87,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     showPass ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
                     color: widget.passIconColor != null
                         ? widget.passIconColor
-                        : Theme.of(context).primaryColor,
+                        : Colors.white70,
                     size: 20.0,
                   ),
                 )
