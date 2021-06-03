@@ -1,4 +1,4 @@
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/views/services/serviceSubscriptionView.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -5,7 +5,10 @@ class StatsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: Text("Stats View"),
+        child: Text(
+          "Stats & Analysis",
+          style: Theme.of(context).textTheme.headline1,
+        ),
       ),
     );
   }

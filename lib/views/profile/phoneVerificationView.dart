@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,7 +1,7 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
-import 'package:adam/validators/textFieldValidators.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/validators/validators.dart';
 import 'package:adam/views/signup/setupProfilePic.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
@@ -147,7 +147,7 @@ class _SignUpViewState extends State<SignUpView> {
                             node: node,
                             hintText: "Email Address",
                             icon: Icons.email,
-                            validatorFtn: TextFieldValidators.emailValidator,
+                            validatorFtn: Validators.emailValidator,
                             onChangeFtn: (value) => print(value),
                           ),
                           SizedBox(
@@ -162,7 +162,7 @@ class _SignUpViewState extends State<SignUpView> {
                             icon: Icons.phone,
                             onChangeFtn: (value) => print(value),
                             validatorFtn:
-                                TextFieldValidators.phoneNumberValidator,
+                                Validators.phoneNumberValidator,
                           ),
                           SizedBox(
                             height: height * 0.02,
@@ -175,7 +175,7 @@ class _SignUpViewState extends State<SignUpView> {
                             isPassword: true,
                             hintText: "Password",
                             icon: Icons.lock_open,
-                            validatorFtn: TextFieldValidators.passwordValidator,
+                            validatorFtn: Validators.passwordValidator,
                             onChangeFtn: (value) => print(value),
                             onFieldSubmit: (value) => node.nextFocus(),
                           ),
@@ -460,6 +460,7 @@ class _SignUpViewState extends State<SignUpView> {
                                       .showSnackBar(snackBar);
                                   _clearController();
 
+                                  // TODO: Move to Home Screen no need to upoad image
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

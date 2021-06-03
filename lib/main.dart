@@ -1,5 +1,5 @@
-import 'package:adam/controller/darkModeController/themeProvider.dart';
-import 'package:adam/controller/darkModeController/themeStyles.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeStyles.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/splashScreen.dart';
 import 'package:adam/views/chat/chatView.dart';
@@ -12,6 +12,7 @@ import 'package:adam/views/login/loginView.dart';
 import 'package:adam/views/mainView.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/views/profile/profileView.dart';
+import 'package:adam/views/services/onGoingServiceView.dart';
 import 'package:adam/views/services/servicesView.dart';
 import 'package:adam/views/settings/accountView.dart';
 import 'package:adam/views/settings/help/appInfo.dart';

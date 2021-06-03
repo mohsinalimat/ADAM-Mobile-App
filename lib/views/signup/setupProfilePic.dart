@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,6 +36,10 @@ class _SetupProfilePicState extends State<SetupProfilePic> {
 
       if (file != null) {
         image = File(file.path);
+      } else {
+        setState((){
+          _uploading = false;
+        });
       }
 
       Reference ref =

@@ -1,4 +1,5 @@
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/constants.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
           errorText: widget.errorText,
           prefixIcon: Icon(
             widget.icon,
-            color: widget.iconColor != null ? widget.iconColor : Colors.white,
+            color: widget.iconColor != null
+                ? widget.iconColor
+                : _themeProvider.darkTheme
+                    ? Colors.white
+                    : kPrimaryBlueColor,
             // color: widget.iconColor,
           ),
           suffixIcon: widget.isPassword
@@ -87,7 +92,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     showPass ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
                     color: widget.passIconColor != null
                         ? widget.passIconColor
-                        : Colors.white70,
+                        : _themeProvider.darkTheme
+                            ? Colors.white70
+                            : kPrimaryBlueColor,
                     size: 20.0,
                   ),
                 )

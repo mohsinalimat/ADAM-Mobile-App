@@ -24,7 +24,7 @@ class SubscriptionHistoryView extends StatelessWidget {
                 Text(
                   "Subscription History",
                   style: _textTheme.headline1,
-                )
+                ),
               ],
             ),
           ),

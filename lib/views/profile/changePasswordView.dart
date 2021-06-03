@@ -1,6 +1,8 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/validators/validators.dart';
+import 'package:adam/views/settings/settingsView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePasswordView extends StatefulWidget {
   @override
@@ -87,19 +90,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         icon: Icons.lock_open,
                         isPassword: true,
                         onFieldSubmit: (value) => node.nextFocus(),
-                        validatorFtn: (value) {
-                          bool passValid = RegExp(
-                                  r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
-                              .hasMatch(value);
-                          if (value.isEmpty) {
-                            return "Password cannot be empty!";
-                          } else if (!passValid) {
-                            return "Uppercase, lowercase, Number and Special character required!";
-                          } else if (value.length < 6) {
-                            return "Password must be greater than 6 characters!";
-                          }
-                          return null;
-                        },
+                        validatorFtn: Validators.passwordValidator,
                       ),
                       SizedBox(height: 20.0),
                       CustomTextField(
@@ -144,12 +135,52 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text("Security Check!"),
+                                  title: Text(
+                                    "Security Check!",
+                                    style: TextStyle(
+                                      fontSize: Theme.of(context)
+                                          .textTheme
+                                          .headline1
+                                          .fontSize,
+                                      color: Provider.of<ThemeProvider>(context)
+                                              .darkTheme
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
                                   content: Text(value),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text("Back"),
+                                      onPressed: () async {
+                                        SharedPreferences preferences =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        var snackBar = SnackBar(
+                                          backgroundColor: kMediumGreenColor,
+                                          behavior: SnackBarBehavior.floating,
+                                          content: Row(
+                                            children: [
+                                              Icon(Icons.info,
+                                                  color: Colors.white),
+                                              SizedBox(width: 8.0),
+                                              Text(
+                                                "Sign Out Successful!",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                        FirebaseAuth.instance.signOut();
+                                        preferences.remove("userId");
+                                        Navigator.popUntil(
+                                            context,
+                                            (route) =>
+                                                route.settings.name == "/");
+                                      },
+                                      child: Text("Logout"),
                                     )
                                   ],
                                 ),

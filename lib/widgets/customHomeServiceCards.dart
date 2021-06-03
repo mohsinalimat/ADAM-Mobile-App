@@ -1,5 +1,7 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/views/services/onGoingServiceView.dart';
+import 'package:adam/views/services/serviceNotRunning.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
@@ -123,7 +125,23 @@ class YourServiceCard extends StatelessWidget {
             CustomButton(
               btnWidth: 200,
               btnHeight: 40.0,
-              btnOnPressed: () {},
+              btnOnPressed: () {
+                if (isRunning) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => OnGoingServiceView(
+                                serviceName: serviceTitle,
+                              )));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => ServiceNotRunning(
+                                serviceName: serviceTitle,
+                              )));
+                }
+              },
               btnColor: _themeProvider.darkTheme
                   ? kMediumBlueColor
                   : kPrimaryBlueColor,

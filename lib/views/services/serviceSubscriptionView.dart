@@ -352,7 +352,7 @@ class FeedbackCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
+      height: 220,
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
@@ -372,7 +372,10 @@ class FeedbackCard extends StatelessWidget {
                         SizedBox(
                           width: 8.0,
                         ),
-                        Text("John Doe")
+                        Text(
+                          "John Doe",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
                       ],
                     ),
                     SizedBox(
@@ -401,6 +404,27 @@ class FeedbackCard extends StatelessWidget {
             child: Text(
               "Really helpful, got my business started with this service. I am glad I found this on internet. Really afforadable and awesome results! 100% recommended!",
             ),
+          ),
+          Row(
+            children: [
+              Text(
+                "Was this review helpful?",
+              ),
+              Expanded(child: Container()),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: Text("Yes"),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text("No"),
+                  ),
+                ],
+              ),
+            ],
           )
         ],
       ),

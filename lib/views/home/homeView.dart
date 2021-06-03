@@ -1,5 +1,5 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -60,6 +60,8 @@ class _HomeViewState extends State<HomeView> {
     ),
   ];
 
+
+  // TODO: Show all services here
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);

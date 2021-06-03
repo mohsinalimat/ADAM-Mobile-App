@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/customLoader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,8 +13,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileView extends StatefulWidget {
   @override
@@ -107,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
             print(snapshot.hasData);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: CustomLoader(),
               );
             } else if (snapshot.connectionState == ConnectionState.active &&
                 snapshot.hasData) {
@@ -493,10 +492,6 @@ class _ProfileViewState extends State<ProfileView> {
             } else if (snapshot.connectionState == ConnectionState.done) {
               return Center(
                 child: Text("Something went wrong!"),
-              );
-            } else if (snapshot.connectionState == ConnectionState.active) {
-              return Center(
-                child: Text("Trying to fetch data!"),
               );
             } else {
               return Center(

@@ -1,7 +1,7 @@
 import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
-import 'package:adam/validators/textFieldValidators.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +83,7 @@ class _LoginViewState extends State<LoginView> {
                         textEditingController: emailTextController,
                         textInputAction: TextInputAction.next,
                         textInputType: TextInputType.emailAddress,
-                        validatorFtn: TextFieldValidators.emailValidator,
+                        validatorFtn: Validators.emailValidator,
                       ),
                       SizedBox(
                         height: height * 0.03,
@@ -162,6 +162,8 @@ class _LoginViewState extends State<LoginView> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             } else {
+
+                              // TODO: App carshing after logging out
                               Navigator.pushNamed(
                                 context,
                                 "/mainView",

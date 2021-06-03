@@ -1,5 +1,5 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,6 @@ import 'package:share/share.dart';
 class SettingsView extends StatelessWidget {
   void _signOut(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    FirebaseAuth.instance.signOut();
     var snackBar = SnackBar(
       backgroundColor: kMediumGreenColor,
       behavior: SnackBarBehavior.floating,
@@ -26,6 +25,7 @@ class SettingsView extends StatelessWidget {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    FirebaseAuth.instance.signOut();
     preferences.remove("userId");
     Navigator.popUntil(context, (route) => route.settings.name == "/");
   }
@@ -98,7 +98,7 @@ class SettingsView extends StatelessWidget {
                     actions: <Widget>[
                       TextButton(
                         child: Text(
-                          "Yes 😟",
+                          "Yes",
                           style: TextStyle(
                             color: Colors.red[700],
                           ),
@@ -106,7 +106,7 @@ class SettingsView extends StatelessWidget {
                         onPressed: () => _signOut(context),
                       ),
                       TextButton(
-                        child: Text("No 😃"),
+                        child: Text("No"),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },

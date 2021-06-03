@@ -1,9 +1,8 @@
 import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/darkModeController/themeProvider.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/splashScreen.dart';
 import 'package:adam/views/home/homeView.dart';
 import 'package:adam/views/profile/profileView.dart';
 import 'package:adam/views/settings/settingsView.dart';
@@ -15,6 +14,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
+// TODO: Until email is verified, user cannot use the app
 
 class MainView extends StatefulWidget {
   @override
@@ -242,7 +244,7 @@ class _MainViewState extends State<MainView> {
             actions: <Widget>[
               TextButton(
                 child: Text(
-                  "Yes 😟",
+                  "Yes",
                   style: TextStyle(
                     color: Colors.red[700],
                   ),
@@ -253,7 +255,7 @@ class _MainViewState extends State<MainView> {
                 },
               ),
               TextButton(
-                child: Text("No 😀"),
+                child: Text("No"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
