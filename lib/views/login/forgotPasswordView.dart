@@ -115,8 +115,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             if (value is String) {
                               print("Valueeee: " + value.toString());
                               var snackBar = SnackBar(
-                                  backgroundColor: Colors.red[900],
-                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.red[700],
                                   content: Row(
                                     children: [
                                       Icon(
@@ -136,18 +135,16 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             } else {
                               forgorEmailTextController.clear();
                               var snackBar = SnackBar(
-                                  backgroundColor: kSecondaryBlueColor,
-                                  behavior: SnackBarBehavior.floating,
                                   content: Row(
-                                    children: [
-                                      Icon(Icons.send, color: Colors.white),
-                                      Expanded(
-                                        child: Text(
-                                          " Reset link has been sent to your Email",
-                                        ),
-                                      ),
-                                    ],
-                                  ));
+                                children: [
+                                  Icon(Icons.send, color: Colors.white),
+                                  Expanded(
+                                    child: Text(
+                                      " Reset link has been sent to your Email",
+                                    ),
+                                  ),
+                                ],
+                              ));
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
 

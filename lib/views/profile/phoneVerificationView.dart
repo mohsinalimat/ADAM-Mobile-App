@@ -62,7 +62,6 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
       verificationFailed: (FirebaseAuthException e) {
         print("EXCEPTION: ${e.code}");
         var snackBar = SnackBar(
-          behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red[700],
           content: Row(
             children: [
@@ -96,7 +95,6 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
           "phoneVerify": true,
         });
         var snackBar = SnackBar(
-          behavior: SnackBarBehavior.floating,
           backgroundColor: kMediumBlueColor,
           content: Row(
             children: [
@@ -136,7 +134,6 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
       "phoneVerify": true,
     });
     var snackBar = SnackBar(
-      behavior: SnackBarBehavior.floating,
       backgroundColor: kMediumBlueColor,
       content: Row(
         children: [
@@ -212,7 +209,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: "Enter 6-Digit Code sent to ",
+                        text: "Wait for auto-detection! Code sent to ",
                         style: TextStyle(color: kPrimaryBlueColor)),
                     TextSpan(
                         text: widget.phoneNumber,

@@ -26,9 +26,10 @@ class HelpView extends StatelessWidget {
             subtitle: Text("YouTube video help"),
           ),
           ListTile(
-            leading: Icon(Icons.report_outlined),
+            leading: Icon(Icons.report_problem_rounded),
             title: Text("Report a problem"),
             subtitle: Text("Bug? Issues?"),
+            onTap: () => Navigator.pushNamed(context, '/reportProblem'),
           ),
           ListTile(
             leading: Icon(Icons.info_outlined),

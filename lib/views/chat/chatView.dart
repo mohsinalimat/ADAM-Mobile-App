@@ -126,7 +126,7 @@ class _ChatViewState extends State<ChatView> {
                     children: [
                       Expanded(
                           child: SizedBox(
-                        height: 40.0,
+                        height: 45.0,
                         child: TextFormField(
                           maxLines: null,
                           focusNode: _focus,
@@ -153,9 +153,9 @@ class _ChatViewState extends State<ChatView> {
                           ),
                         ),
                       )),
-                      SizedBox(width: 8.0),
-                      IconButton(
-                        onPressed: () {
+                      SizedBox(width: 15.0),
+                      InkWell(
+                        onTap: () {
                           if (_messageFieldController.text != "") {
                             setState(() {
                               _chatMessages.add(MessageBubble(
@@ -170,19 +170,20 @@ class _ChatViewState extends State<ChatView> {
                             // _scrollDown();
                           }
                         },
-                        icon: Icon(Icons.send_rounded),
+                        child: Icon(Icons.send_rounded, size: 25.0,),
                       ),
+                      SizedBox(width: 10.0),
                       _fieldEnabled
                           ? Container()
-                          : IconButton(
-                              onPressed: () {
+                          : InkWell(
+                              onTap: () {
                                 _addAttachment();
 
                                 Future.delayed(Duration(seconds: 1), () {
                                   setState(() {});
                                 });
                               },
-                              icon: Icon(Icons.attach_file_rounded),
+                              child: Icon(Icons.attach_file_rounded, size: 25.0,),
                             ),
                     ],
                   ),

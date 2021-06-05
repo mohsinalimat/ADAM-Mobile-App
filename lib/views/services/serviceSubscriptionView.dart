@@ -192,6 +192,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: ScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.only(
                 left: 15.0, right: 15.0, top: 15.0, bottom: 25.0),
@@ -244,14 +245,9 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                                 )));
 
                     if (result == 'success') {
-                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      //   behavior: SnackBarBehavior.floating,
-                      //   content: paymentSuccessful,
-                      // ));
                       showNotification();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        behavior: SnackBarBehavior.floating,
                         content: paymentCanceled,
                       ));
                     }
@@ -279,13 +275,11 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
                     if (result == 'success') {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        behavior: SnackBarBehavior.floating,
                         content: paymentSuccessful,
                       ));
                       showNotification();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        behavior: SnackBarBehavior.floating,
                         content: paymentCanceled,
                       ));
                     }
@@ -328,7 +322,12 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                 SizedBox(
                   height: 20.0,
                 ),
-                for (int i = 0; i < 3; i++) FeedbackCard(),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: 3,
+                  itemBuilder: (context, index) => FeedbackCard(),
+                ),
                 TextButton(
                   onPressed: () {},
                   child: Text(
@@ -447,39 +446,12 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
   final List<ServiceFeatureWidget> _standardFeatures;
   final Function subcribe;
 
-  // void _subscribe() async {
-  //   final sessionId = await StripeServer(
-  //     serviceName: "Service Name",
-  //     price: 3000,
-  //   ).createCheckout();
-
-  //   print("SESSION ID $sessionId");
-
-  //   final result = await Navigator.of(context).push(
-  //     MaterialPageRoute(
-  //       builder: (_) => StripePaymentCheckout(
-  //         sessionId: sessionId,
-  //       ),
-  //     ),
-  //   );
-  //   SnackBar snackbar;
-  //   if (result == "success") {
-  //     snackbar = SnackBar(
-  //       content: paymentSuccessful,
-  //     );
-  //   } else {
-  //     snackbar = SnackBar(
-  //       content: paymentCanceled,
-  //     );
-  //   }
-  //   ScaffoldMessenger.of(context).showSnackBar(snackbar);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
       width: 275,
+      height: 465,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         gradient: LinearGradient(
@@ -492,6 +464,7 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ServiceSubscriptionTop(
@@ -506,8 +479,13 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15.0),
-          for (int i = 0; i < _standardFeatures.length; i++)
-            _standardFeatures[i],
+          Expanded(
+            child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: _standardFeatures.length,
+              itemBuilder: (context, index) => _standardFeatures[index],
+            ),
+          ),
           SizedBox(height: 15.0),
           CustomButton(
             btnWidth: MediaQuery.of(context).size.width,

@@ -1,21 +1,29 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:provider/provider.dart';
 
 class AppInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            kMediumGreenColor,
-            kPrimaryBlueColor,
-          ],
+          colors: _themeProvider.darkTheme
+              ? [
+                  Colors.black,
+                  Colors.white.withAlpha(10),
+                ]
+              : [
+                  kMediumGreenColor,
+                  kPrimaryBlueColor,
+                ],
         ),
       ),
       child: Scaffold(
@@ -62,9 +70,21 @@ class AppInfo extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(FontAwesomeIcons.googlePlay),
+                        Icon(
+                          FontAwesomeIcons.googlePlay,
+                          color: _themeProvider.darkTheme
+                              ? Colors.white
+                              : Colors.blue,
+                        ),
                         SizedBox(width: 8.0),
-                        Text("Rate & Feedback")
+                        Text(
+                          "Rate & Feedback",
+                          style: TextStyle(
+                            color: _themeProvider.darkTheme
+                                ? Colors.white
+                                : Colors.blue,
+                          ),
+                        )
                       ],
                     ),
                   )

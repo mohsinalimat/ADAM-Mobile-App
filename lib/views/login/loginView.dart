@@ -17,18 +17,27 @@ class _LoginViewState extends State<LoginView> {
   final _auth = Auth();
 
   final emailTextController = TextEditingController();
-  final forgorEmailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
 
+  _testingValues() {
+    emailTextController.text = 'hamza.6.shakeel@gmail.com';
+    passwordTextController.text = 'Hamza@1';
+  }
+
+  @override
+  void initState() {
+    _testingValues();
+    super.initState();
+  }
+
   @override
   void dispose() {
     emailTextController.dispose();
     passwordTextController.dispose();
-    forgorEmailTextController.dispose();
     super.dispose();
   }
 
@@ -58,7 +67,6 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       SvgPicture.asset(
                         "assets/logo/logoColor.svg",
-                        // height: height * 0.1,
                         height: 50.0,
                       ),
                       SizedBox(
@@ -66,8 +74,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       Text(
                         "Automated Digital Assitant in Marketing",
-                        style: TextStyle(
-                          // color: kPrimaryBlueColor,
+                        style: const TextStyle(
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -110,13 +117,11 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       CustomButton(
                         btnWidth: width * 0.8,
-                        // btnHeight: height * 0.055,
                         btnHeight: 40,
                         node: node,
                         btnColor: _themeProvider.darkTheme
                             ? kMediumBlueColor
                             : kPrimaryBlueColor,
-                        // btnText: Text("Login", style: kBtnTextStyle),
                         btnText: _isLoading
                             ? kLoader
                             : Text(
@@ -125,6 +130,7 @@ class _LoginViewState extends State<LoginView> {
                               ),
                         btnOnPressed: () async {
                           if (_formKey.currentState.validate()) {
+                            FocusScope.of(context).unfocus();
                             setState(() {
                               _isLoading = true;
                             });
@@ -139,35 +145,9 @@ class _LoginViewState extends State<LoginView> {
                             });
 
                             if (value is String) {
-                              print("Error: " + value);
-                              var snackBar = SnackBar(
-                                content: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.info,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      width: 8.0,
-                                    ),
-                                    Text(
-                                      value,
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                backgroundColor: Colors.red[700],
-                                behavior: SnackBarBehavior.floating,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                              _errorLogin(value);
                             } else {
-
-                              // TODO: App carshing after logging out
-                              Navigator.pushNamed(
-                                context,
-                                "/mainView",
-                              );
+                              Navigator.pushNamed(context, "/mainView");
                               emailTextController.clear();
                               passwordTextController.clear();
                               node.unfocus();
@@ -206,5 +186,28 @@ class _LoginViewState extends State<LoginView> {
         )),
       ),
     );
+  }
+
+  void _errorLogin(String value) {
+    print("Error: " + value);
+    var snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(
+            Icons.info,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          Text(
+            value,
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.red[700],
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

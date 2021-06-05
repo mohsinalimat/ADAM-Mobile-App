@@ -1,7 +1,8 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/widgets/logoDisplay.dart';
+import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
+import 'package:adam/widgets/serviceCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -50,25 +51,21 @@ class _HomeViewState extends State<HomeView> {
       serviceTitle: "SMS Marketing",
     ),
     YourServiceCard(
-      serviceIcon: FontAwesomeIcons.facebook,
-      serviceTitle: "Facebook Marketing",
-    ),
-    YourServiceCard(
       isPremium: true,
       serviceIcon: FontAwesomeIcons.linkedin,
       serviceTitle: "LinkedIn Marketing",
     ),
   ];
 
-
-  // TODO: Show all services here
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _bottomBarProviders = Provider.of<BottomNavBarProvider>(context);
 
     return _themeProvider == null
         ? CircularProgressIndicator()
         : SingleChildScrollView(
+            physics: ScrollPhysics(),
             child: Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
@@ -78,27 +75,45 @@ class _HomeViewState extends State<HomeView> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        LogoDisplay(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "Hi! ${_firebaseAuth.currentUser.displayName}",
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                            const Text(
+                              "Good day!",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(width: 10.0),
                         CircleAvatar(
-                          radius: 35.0,
+                          radius: 32.0,
                           backgroundColor: _themeProvider.darkTheme
                               ? kMediumGreenColor
                               : kLightGreenColor,
                           child: CircleAvatar(
-                            radius: 34.0,
+                            radius: 31.0,
                             backgroundColor: _themeProvider.darkTheme
                                 ? Colors.grey[800]
                                 : Colors.white,
-                            child: CircleAvatar(
-                              radius: 32.0,
-                              backgroundImage:
-                                  _firebaseAuth.currentUser.photoURL == null
-                                      ? AssetImage('assets/dp.png')
-                                      : NetworkImage(
-                                          _firebaseAuth.currentUser.photoURL,
-                                        ),
+                            child: GestureDetector(
+                              onTap: () {
+                                _bottomBarProviders.currentIndex = 3;
+                              },
+                              child: CircleAvatar(
+                                radius: 29.0,
+                                backgroundImage:
+                                    _firebaseAuth.currentUser.photoURL == null
+                                        ? const AssetImage('assets/dp.png')
+                                        : NetworkImage(
+                                            _firebaseAuth.currentUser.photoURL,
+                                          ),
+                              ),
                             ),
                           ),
                         ),
@@ -115,8 +130,9 @@ class _HomeViewState extends State<HomeView> {
                   SizedBox(
                     height: 20.0,
                   ),
-                  CarouselSlider(
-                    items: _yourServices,
+                  CarouselSlider.builder(
+                    itemCount: _yourServices.length,
+                    itemBuilder: (context, index, i) => _yourServices[index],
                     options: CarouselOptions(
                       enlargeCenterPage: true,
                       viewportFraction: 1,
@@ -151,17 +167,24 @@ class _HomeViewState extends State<HomeView> {
                                     : kLightBlueColor.withAlpha(100),
                           ),
                         );
-                      }).toList())
-                  // SizedBox(
-                  //   height: 50.0,
-                  // ),
-                  // Text(
-                  //   "More Services",
-                  //   style: kHeadingStyle,
-                  // ),
-                  // SizedBox(
-                  //   height: 20.0,
-                  // ),
+                      }).toList()),
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                  Text(
+                    "More Services",
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  // for (int i = 0; i < _services.length; i++) _services[i]
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: _services.length,
+                    itemBuilder: (context, i) => _services[i],
+                  ),
                   // CarouselSlider(
                   //   items: _allServices,
                   //   options: CarouselOptions(
@@ -182,4 +205,76 @@ class _HomeViewState extends State<HomeView> {
             ),
           );
   }
+
+  final _services = [
+    ServiceCard(
+      serviceIcon: FontAwesomeIcons.facebookSquare,
+      serviceName: "Facebook Marketing",
+      serviceDescription:
+          "Facebook marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "119",
+      gradientColors: [
+        Color(0xff3a5794),
+        kMediumBlueColor,
+      ],
+    ),
+    ServiceCard(
+      serviceIcon: FontAwesomeIcons.twitter,
+      serviceName: "Twitter Marketing",
+      serviceDescription:
+          "Twitter marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "149",
+      gradientColors: [
+        kMediumBlueColor,
+        kLightBlueColor,
+      ],
+    ),
+    ServiceCard(
+      serviceIcon: FontAwesomeIcons.instagram,
+      serviceName: "Instagram Marketing",
+      serviceDescription:
+          "Instagram marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "139",
+      gradientColors: [
+        Color(0xfff6d371),
+        Color(0xfff27a1d),
+        Color(0xffcf2872),
+        Color(0xff912eb9),
+        Color(0xff4d58ce),
+      ],
+    ),
+    ServiceCard(
+      serviceIcon: FontAwesomeIcons.linkedinIn,
+      serviceName: "LinkedIn Marketing",
+      serviceDescription:
+          "LinkedIn marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "99",
+      gradientColors: [
+        Color(0xff0073af),
+        kLightBlueColor,
+      ],
+    ),
+    ServiceCard(
+      serviceIcon: Icons.mail,
+      serviceName: "Email Marketing",
+      serviceDescription:
+          "Email marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "179",
+      gradientColors: [
+        kSecondaryBlueColor,
+        kMediumGreenColor,
+      ],
+    ),
+    ServiceCard(
+      serviceIcon: Icons.sms,
+      serviceName: "SMS Marketing",
+      serviceDescription:
+          "SMS marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "169",
+      gradientColors: [
+        kMediumGreenColor,
+        kMediumBlueColor,
+      ],
+    ),
+  ];
 }
