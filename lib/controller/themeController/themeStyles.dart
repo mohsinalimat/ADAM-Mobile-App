@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 class ThemeStyles {
   static ThemeData themeData(
       bool isDarkTheme, BuildContext buildContext, double fontSize) {
-    print("FONTSIZE $fontSize");
     return isDarkTheme
         ? ThemeData(
             primarySwatch: Colors.grey,
@@ -13,7 +12,14 @@ class ThemeStyles {
             brightness: Brightness.dark,
             backgroundColor: Colors.grey[900],
             accentColor: Colors.grey[900],
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: IconThemeData(
+              color: Colors.white,
+              size: fontSize == 35.0
+                  ? 35.0
+                  : fontSize == 28.0
+                      ? 22.0
+                      : 18.0,
+            ),
             dividerColor: Colors.white,
             fontFamily: 'Roboto',
             textTheme: TextTheme(
