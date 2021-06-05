@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -79,6 +81,12 @@ class Auth {
         return "Unidentified Error, Try again!";
       }
     }
+  }
+
+  Future signOut(BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.remove('userId');
+    Navigator.popUntil(context, (route) => route.settings?.name == "/");
   }
 
   Future updateData(
