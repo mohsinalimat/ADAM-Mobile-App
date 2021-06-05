@@ -3,6 +3,7 @@ import 'package:adam/controller/themeController/themeStyles.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/splashScreen.dart';
 import 'package:adam/views/chat/chatView.dart';
+import 'package:adam/views/emailNotVerfiedView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/changePasswordView.dart';
 import 'package:adam/views/profile/deleteAccountView.dart';
@@ -12,12 +13,11 @@ import 'package:adam/views/login/loginView.dart';
 import 'package:adam/views/mainView.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/views/profile/profileView.dart';
-import 'package:adam/views/services/onGoingServiceView.dart';
-import 'package:adam/views/services/servicesView.dart';
 import 'package:adam/views/settings/accountView.dart';
 import 'package:adam/views/settings/help/appInfo.dart';
 import 'package:adam/views/settings/help/faqView.dart';
 import 'package:adam/views/settings/help/helpView.dart';
+import 'package:adam/views/settings/help/reportProblem.dart';
 import 'package:adam/views/settings/notificationView.dart';
 import 'package:adam/views/settings/themeView.dart';
 import 'package:adam/views/signup/signUpView.dart';
@@ -42,7 +42,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeProvider _themeProvider = ThemeProvider();
-  BottomNavBarProvider _bottomNavBarProvider = BottomNavBarProvider();
 
   void getCurrentAppTheme() async {
     _themeProvider.darkTheme = await _themeProvider.darkThemePref.getTheme();
@@ -61,52 +60,52 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return _themeProvider == null
-        ? CircularProgressIndicator()
-        : ChangeNotifierProvider(
-            create: (context) => _themeProvider,
-            builder: (context, child) => Consumer<ThemeProvider>(
-              builder: (context, themeProvider, child) => MaterialApp(
-                title: 'ADAM',
-                debugShowCheckedModeBanner: false,
-                theme: ThemeStyles.themeData(
-                  _themeProvider.darkTheme,
-                  context,
-                  _themeProvider.size == "Medium"
-                      ? 28.0
-                      : _themeProvider.size == "Large"
-                          ? 35.0
-                          : 20.0,
-                ),
-                initialRoute: "/splashScreen",
-                routes: {
-                  "/": (context) => LoginView(),
-                  "/splashScreen": (context) => SplashScreen(),
-                  "/signUp": (context) => SignUpView(),
-                  "/forgotPassword": (context) => ForgotPasswordView(),
-                  "/mainView": (context) => ChangeNotifierProvider(
-                        builder: (context, child) => MainView(),
-                        create: (context) => _bottomNavBarProvider,
-                      ),
-                  "/profile": (context) => ProfileView(),
-                  "/editProfile": (context) => EditProfileView(),
-                  "/deleteAccount": (context) => DeleteAccountView(),
-                  "/changePassword": (context) => ChangePasswordView(),
-                  "/changeEmail": (context) => ChangeEmailView(),
-                  "/services": (context) => ServicesView(),
-                  "/phoneVerify": (context) => PhoneVerificationView(),
-                  "/chat": (context) => ChatView(),
-                  "/subscriptionHistory": (context) =>
-                      SubscriptionHistoryView(),
-                  "/account": (context) => AccountView(),
-                  "/notifications": (context) => NotificationView(),
-                  "/help": (context) => HelpView(),
-                  "/theme": (context) => ThemeView(),
-                  "/faq": (context) => FAQView(),
-                  "/appInfo": (context) => AppInfo(),
-                },
-              ),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => BottomNavBarProvider()),
+          ChangeNotifierProvider(create: (context) => _themeProvider),
+        ],
+        child: Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) => MaterialApp(
+            title: 'ADAM',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeStyles.themeData(
+              _themeProvider.darkTheme,
+              context,
+              _themeProvider.size == "Medium"
+                  ? 28.0
+                  : _themeProvider.size == "Large"
+                      ? 35.0
+                      : 20.0,
             ),
-          );
+            initialRoute: "/splashScreen",
+            routes: {
+              // TODO: Phone Auth check
+              // TODO: Services Screen hatao!
+              "/": (context) => LoginView(),
+              "/mainView": (context) => MainView(),
+              "/splashScreen": (context) => SplashScreen(),
+              "/signUp": (context) => SignUpView(),
+              "/emailNotVerified": (context) => EmailNotVerfied(),
+              "/forgotPassword": (context) => ForgotPasswordView(),
+              "/profile": (context) => ProfileView(),
+              "/editProfile": (context) => EditProfileView(),
+              "/deleteAccount": (context) => DeleteAccountView(),
+              "/changePassword": (context) => ChangePasswordView(),
+              "/changeEmail": (context) => ChangeEmailView(),
+              "/phoneVerify": (context) => PhoneVerificationView(),
+              "/chat": (context) => ChatView(),
+              "/subscriptionHistory": (context) => SubscriptionHistoryView(),
+              "/account": (context) => AccountView(),
+              "/notifications": (context) => NotificationView(),
+              "/help": (context) => HelpView(),
+              "/theme": (context) => ThemeView(),
+              "/faq": (context) => FAQView(),
+              "/appInfo": (context) => AppInfo(),
+              "/reportProblem": (context) => ReportProblemView(),
+            },
+          ),
+        ));
+    // return ChangeNotifierProvider(?
   }
 }
