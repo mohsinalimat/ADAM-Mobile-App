@@ -83,7 +83,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 : _themeProvider.darkTheme
                     ? Colors.white
                     : kPrimaryBlueColor,
-            // color: widget.iconColor,
           ),
           suffixIcon: widget.isPassword
               ? IconButton(

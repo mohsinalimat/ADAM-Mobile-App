@@ -65,7 +65,7 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
         SizedBox(height: 10.0),
         SizedBox(
           width: width,
-          height: 40.0,
+          // height: 40.0,
           child: TextFormField(
             obscureText: widget.isPassword ? showPass : false,
             controller: widget.textEditingController,
@@ -74,44 +74,49 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
             onChanged: widget.onChangeFtn,
             onEditingComplete: widget.onEditComplete,
             decoration: InputDecoration(
-                filled: true,
-                fillColor: _themeProvider.darkTheme
-                    ? Colors.black12
-                    : Colors.grey[100],
-                errorText: widget.errorText,
-                prefixIcon: Hero(
-                  tag: widget.icon.toString(),
-                  child: Icon(
-                    widget.icon,
-                    color: _themeProvider.darkTheme
-                        ? Colors.grey
-                        : kPrimaryBlueColor,
-                  ),
+              filled: true,
+              fillColor:
+                  _themeProvider.darkTheme ? Colors.black12 : Colors.grey[100],
+              errorText: widget.errorText,
+              prefixIcon: Hero(
+                tag: widget.icon.toString(),
+                child: Icon(
+                  widget.icon,
+                  color: _themeProvider.darkTheme
+                      ? Colors.grey
+                      : kPrimaryBlueColor,
                 ),
-                suffixIcon: widget.isPassword
-                    ? IconButton(
-                        onPressed: _showPass,
-                        icon: Icon(
-                          showPass
-                              ? FontAwesomeIcons.eyeSlash
-                              : FontAwesomeIcons.eye,
-                          color: kPrimaryBlueColor,
-                          size: 20.0,
-                        ),
-                      )
-                    : null,
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
-                  ),
+              ),
+              suffixIcon: widget.isPassword
+                  ? IconButton(
+                      onPressed: _showPass,
+                      icon: Icon(
+                        showPass
+                            ? FontAwesomeIcons.eyeSlash
+                            : FontAwesomeIcons.eye,
+                        color: kPrimaryBlueColor,
+                        size: 20.0,
+                      ),
+                    )
+                  : null,
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.transparent,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                )),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.transparent,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.red,
+                ),
+              ),
+            ),
             validator: widget.validatorFtn,
             onFieldSubmitted: widget.onFieldSubmit,
           ),
