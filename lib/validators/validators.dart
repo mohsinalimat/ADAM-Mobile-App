@@ -19,7 +19,7 @@ class Validators {
     if (password.isEmpty) {
       return "Password cannot be empty!";
     } else if (!passValid) {
-      return "Uppercase, lowercase, number and special character is required!";
+      return "Requirements missing!";
     } else if (password.length < 6) {
       return "Password must be greater than 6 characters!";
     }
