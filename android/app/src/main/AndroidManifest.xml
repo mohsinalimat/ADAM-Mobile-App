@@ -2,6 +2,7 @@
     package="com.cui.adam">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="ADAM"
         android:icon="@mipmap/ic_launcher">
