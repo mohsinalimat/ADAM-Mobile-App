@@ -16,11 +16,11 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String userId = pref.getString("userId");
     if (userId == null) {
-      Future.delayed(Duration(seconds: 4), () {
+      Future.delayed(Duration(seconds: 3), () {
         Navigator.pushNamed(context, '/');
       });
     } else {
-      Future.delayed(Duration(seconds: 4), () {
+      Future.delayed(Duration(seconds: 3), () {
         Navigator.pushNamed(context, '/mainView');
       });
     }
