@@ -132,7 +132,7 @@ class LogoutAlertBox extends StatelessWidget {
           child: Text(
             "Yes",
             style: TextStyle(
-              color: Colors.red[700],
+              color: Colors.red,
             ),
           ),
           onPressed: () => signOut(context),
