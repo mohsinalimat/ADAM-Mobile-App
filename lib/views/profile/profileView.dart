@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/views/profile/editProfileView.dart';
-import 'package:adam/views/profile/phoneVerificationView.dart';
+import 'package:adam/views/profile/verificationBadges.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customLoader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
@@ -75,7 +75,6 @@ class _ProfileViewState extends State<ProfileView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // LogoDisplay(),
                       SizedBox(
                         height: 25.0,
                       ),
@@ -98,7 +97,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   radius: 85.0,
                                   backgroundImage: _firebaseAuth
                                               .currentUser.photoURL ==
-                                          null
+                                          " "
                                       ? AssetImage('assets/dp.png')
                                       : NetworkImage(
                                           _firebaseAuth.currentUser.photoURL),
@@ -179,44 +178,7 @@ class _ProfileViewState extends State<ProfileView> {
                               infoTitle: "Email",
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Row(
-                                    children: [
-                                      Icon(Icons.verified,
-                                          color: kLightBlueColor),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      Text(
-                                        "Email Verification",
-                                        style: TextStyle(
-                                          fontSize: Theme.of(context)
-                                              .textTheme
-                                              .headline2
-                                              .fontSize,
-                                          color: Provider.of<ThemeProvider>(
-                                                      context)
-                                                  .darkTheme
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  content: Text(
-                                      "Congratulations!\nYour email is verified."),
-                                ),
-                              );
-                            },
-                            child: Icon(
-                              Icons.verified,
-                              color: kLightBlueColor,
-                            ),
-                          )
+                          VerificationBadge(isEmailType: true),
                         ],
                       ),
                       SizedBox(
@@ -233,102 +195,9 @@ class _ProfileViewState extends State<ProfileView> {
                             ),
                           ),
                           snapshot.data['phoneVerify']
-                              ? InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Row(
-                                          children: [
-                                            Icon(Icons.verified,
-                                                color: kLightBlueColor),
-                                            SizedBox(
-                                              width: 8.0,
-                                            ),
-                                            Text(
-                                              "Phone Verification",
-                                              style: TextStyle(
-                                                fontSize: Theme.of(context)
-                                                    .textTheme
-                                                    .headline2
-                                                    .fontSize,
-                                                color:
-                                                    Provider.of<ThemeProvider>(
-                                                                context)
-                                                            .darkTheme
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        content: Text(
-                                            "Congratulations!\nYour phone number is verified."),
-                                      ),
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.verified,
-                                    color: kLightBlueColor,
-                                  ),
-                                )
-                              : InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Row(
-                                          children: [
-                                            Icon(Icons.verified,
-                                                color: Colors.grey),
-                                            SizedBox(
-                                              width: 8.0,
-                                            ),
-                                            Text(
-                                              "Phone Verification",
-                                              style: TextStyle(
-                                                fontSize: Theme.of(context)
-                                                    .textTheme
-                                                    .headline2
-                                                    .fontSize,
-                                                color:
-                                                    Provider.of<ThemeProvider>(
-                                                                context)
-                                                            .darkTheme
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        content: Text(
-                                            "Opss!\nYour phone is not verified!\n\nIf you want to proceed, please make sure that SIM Card respective to your phone number must be in your device otherwise verification will be failed as its based on auto-detection."),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      PhoneVerificationView(
-                                                    phoneNumber: snapshot
-                                                        .data['phoneNumber'],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            child: Text("Verify Now!"),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.info,
-                                    color: Colors.yellow[600],
-                                  ),
-                                )
+                              ? VerificationBadge(isEmailType: false)
+                              : PhoneNotVerified(
+                                  phoneNumber: snapshot.data['phoneNumber'])
                         ],
                       ),
                       SizedBox(
@@ -363,13 +232,9 @@ class _ProfileViewState extends State<ProfileView> {
                   ),
                 ),
               );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return Center(
-                child: Text("Something went wrong!"),
-              );
             } else {
               return Center(
-                child: Text("Check internet please!"),
+                child: Text("Network error!"),
               );
             }
           },
@@ -378,28 +243,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  _removePic() {
-    var snackBar = SnackBar(content: Text("Feature under construction!"));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    Navigator.pop(context);
-    // try {
-    //   firebaseStorage
-    //       .ref(_firebaseAuth.currentUser.uid)
-    //       .child("dp")
-    //       .delete()
-    //       .whenComplete(() async {
-    //     await _firebaseAuth.currentUser.updateProfile();
-    //   });
-    //   Navigator.pop(context);
-    //   await _firebaseAuth.currentUser.reload().whenComplete(() {
-    //     setState(() {});
-    //   });
-    // } on FirebaseException catch (e) {
-    //   print(e.code);
-    // }
-  }
-
-  _updateProfilePic() {
+  void _updateProfilePic() {
     showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
@@ -409,7 +253,7 @@ class _ProfileViewState extends State<ProfileView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              " Profile Photo",
+              " Profile photo",
               style: Theme.of(context).textTheme.headline1,
             ),
             SizedBox(height: 10.0),
@@ -445,7 +289,22 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  _takePic() async {
+  void _removePic() async {
+    try {
+      Navigator.pop(context);
+
+      await FirebaseAuth.instance.currentUser.updateProfile(photoURL: " ");
+      await FirebaseAuth.instance.currentUser.reload();
+
+      setState(() {});
+
+      firebaseStorage.ref(_firebaseAuth.currentUser.uid).child("dp").delete();
+    } on FirebaseException catch (e) {
+      print(e.code);
+    }
+  }
+
+  void _takePic() async {
     try {
       setState(() {
         _uploading = true;
@@ -482,7 +341,7 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
-  _uploadPic() async {
+  void _uploadPic() async {
     try {
       setState(() {
         _uploading = true;
@@ -519,7 +378,7 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
-  _getUploadedPic() async {
+  void _getUploadedPic() async {
     // getting dp URL link
     photoUrl = await firebaseStorage
         .ref("${_firebaseAuth.currentUser.uid}/dp")
@@ -536,4 +395,5 @@ class _ProfileViewState extends State<ProfileView> {
       setState(() {});
     });
   }
+
 }

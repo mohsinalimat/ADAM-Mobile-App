@@ -62,7 +62,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
       verificationFailed: (FirebaseAuthException e) {
         print("EXCEPTION: ${e.code}");
         var snackBar = SnackBar(
-          backgroundColor: Colors.red[700],
+          backgroundColor: Colors.red,
           content: Row(
             children: [
               Icon(Icons.check, color: Colors.white),

@@ -117,8 +117,11 @@ class _EditProfileViewState extends State<EditProfileView> {
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 20.0),
+                  padding: const EdgeInsets.only(
+                    left: 15.0,
+                    right: 15.0,
+                    top: 20.0,
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -453,7 +456,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                                             ),
                                           ],
                                         ),
-                                        backgroundColor: Colors.red[700],
+                                        backgroundColor: Colors.red,
                                       );
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
@@ -477,7 +480,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                                       );
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
-                                      Future.delayed(Duration(seconds: 3), () {
+                                      Future.delayed(Duration(seconds: 1), () {
                                         Navigator.pop(context);
                                       });
                                       widget.refreshCallBack(true);

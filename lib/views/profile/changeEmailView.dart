@@ -145,7 +145,7 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
 
                               if (value is String) {
                                 var snackBar = SnackBar(
-                                  backgroundColor: Colors.red[700],
+                                  backgroundColor: Colors.red,
                                   content: Row(
                                     children: [
                                       Icon(Icons.info, color: Colors.white),
