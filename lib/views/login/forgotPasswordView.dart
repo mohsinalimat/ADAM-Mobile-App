@@ -115,7 +115,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             if (value is String) {
                               print("Valueeee: " + value.toString());
                               var snackBar = SnackBar(
-                                  backgroundColor: Colors.red[700],
+                                  backgroundColor: Colors.red,
                                   content: Row(
                                     children: [
                                       Icon(

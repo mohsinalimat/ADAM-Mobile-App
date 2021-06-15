@@ -17,7 +17,7 @@ class OnGoingServiceView extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
           child: SingleChildScrollView(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,8 +90,11 @@ class OnGoingServiceView extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 40.0,
-                        backgroundImage: NetworkImage(
-                            FirebaseAuth.instance.currentUser.photoURL),
+                        backgroundImage:
+                            FirebaseAuth.instance.currentUser.photoURL == " "
+                                ? AssetImage('assets/dp.png')
+                                : NetworkImage(
+                                    FirebaseAuth.instance.currentUser.photoURL),
                       ),
                       SizedBox(width: 10.0),
                       Column(
@@ -251,7 +254,7 @@ class OnGoingServiceView extends StatelessWidget {
                 btnWidth: MediaQuery.of(context).size.width,
                 btnHeight: 40.0,
                 btnOnPressed: () {},
-                btnColor: Colors.red[700],
+                btnColor: Colors.red,
                 btnText: Text(
                   "Stop",
                   style: kBtnTextStyle,

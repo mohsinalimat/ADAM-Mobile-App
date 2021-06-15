@@ -98,7 +98,7 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
             context, '/mainView', (route) => false);
       } else {
         var snackBar = SnackBar(
-          backgroundColor: Colors.red[700],
+          backgroundColor: Colors.red,
           content: Row(
             children: [
               Icon(

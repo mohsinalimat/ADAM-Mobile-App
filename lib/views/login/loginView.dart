@@ -206,7 +206,7 @@ class _LoginViewState extends State<LoginView> {
           ),
         ],
       ),
-      backgroundColor: Colors.red[700],
+      backgroundColor: Colors.red,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

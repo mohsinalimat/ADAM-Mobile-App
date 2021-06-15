@@ -43,16 +43,6 @@ class _ChatViewState extends State<ChatView> {
     }
   }
 
-  // _scrollDown() {
-  //   _scrollController.animateTo(
-  //     MediaQuery.of(context).size.height,
-  //     curve: Curves.easeOut,
-  //     duration: Duration(
-  //       milliseconds: 750,
-  //     ),
-  //   );
-  // }
-
   @override
   void initState() {
     _focus = FocusNode();
@@ -80,7 +70,7 @@ class _ChatViewState extends State<ChatView> {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0, bottom: 5.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -170,7 +160,10 @@ class _ChatViewState extends State<ChatView> {
                             // _scrollDown();
                           }
                         },
-                        child: Icon(Icons.send_rounded, size: 25.0,),
+                        child: Icon(
+                          Icons.send_rounded,
+                          size: 25.0,
+                        ),
                       ),
                       SizedBox(width: 10.0),
                       _fieldEnabled
@@ -183,7 +176,10 @@ class _ChatViewState extends State<ChatView> {
                                   setState(() {});
                                 });
                               },
-                              child: Icon(Icons.attach_file_rounded, size: 25.0,),
+                              child: Icon(
+                                Icons.attach_file_rounded,
+                                size: 25.0,
+                              ),
                             ),
                     ],
                   ),

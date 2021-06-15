@@ -12,7 +12,7 @@ class ServiceNotRunning extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 25.0),
+        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
           // mainAxisAlignment: MainAxisAlignment.center,

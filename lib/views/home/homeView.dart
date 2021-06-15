@@ -108,7 +108,7 @@ class _HomeViewState extends State<HomeView> {
                               child: CircleAvatar(
                                 radius: 29.0,
                                 backgroundImage:
-                                    _firebaseAuth.currentUser.photoURL == null
+                                    _firebaseAuth.currentUser.photoURL == " "
                                         ? const AssetImage('assets/dp.png')
                                         : NetworkImage(
                                             _firebaseAuth.currentUser.photoURL,
@@ -120,14 +120,14 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   Text(
                     "Your Services",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   CarouselSlider.builder(
@@ -144,7 +144,7 @@ class _HomeViewState extends State<HomeView> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10.0,
                   ),
                   Row(
@@ -155,11 +155,10 @@ class _HomeViewState extends State<HomeView> {
                           duration: Duration(milliseconds: 200),
                           width: _currentIndex == index ? 25.0 : 7.0,
                           height: 7.0,
-                          margin: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 2.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(360),
-                            // shape: BoxShape.circle,
                             color: _currentIndex == index
                                 ? kMediumBlueColor
                                 : _themeProvider.darkTheme
@@ -168,38 +167,22 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         );
                       }).toList()),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   Text(
                     "More Services",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
-                  // for (int i = 0; i < _services.length; i++) _services[i]
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: _services.length,
                     itemBuilder: (context, i) => _services[i],
                   ),
-                  // CarouselSlider(
-                  //   items: _allServices,
-                  //   options: CarouselOptions(
-                  //       enlargeCenterPage: true,
-                  //       viewportFraction: 1,
-                  //       height: 330.0,
-                  //       autoPlay: true,
-                  //       enableInfiniteScroll: false,
-                  //       autoPlayInterval: Duration(
-                  //         seconds: 3,
-                  //       )),
-                  // ),
-                  // SizedBox(
-                  //   height: 20.0,
-                  // ),
                 ],
               ),
             ),

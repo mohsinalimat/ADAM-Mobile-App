@@ -240,7 +240,7 @@ class _MainViewState extends State<MainView>
                           onPressed: () => _bottomBarProviders.currentIndex = 3,
                           icon: CircleAvatar(
                             backgroundImage:
-                                _firebaseAuth.currentUser.photoURL == null
+                                _firebaseAuth.currentUser.photoURL == " "
                                     ? const AssetImage('assets/dp.png')
                                     : NetworkImage(
                                         _firebaseAuth.currentUser.photoURL),
@@ -328,7 +328,7 @@ class _MainViewState extends State<MainView>
                 child: Text(
                   "Yes",
                   style: TextStyle(
-                    color: Colors.red[700],
+                    color: Colors.red,
                   ),
                 ),
                 onPressed: () {

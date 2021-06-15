@@ -558,7 +558,7 @@ class _SignUpViewState extends State<SignUpView> {
                                                   color: Colors.white)),
                                         ],
                                       ),
-                                      backgroundColor: Colors.red[700],
+                                      backgroundColor: Colors.red,
                                     );
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackBar);
