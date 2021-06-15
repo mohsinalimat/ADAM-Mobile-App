@@ -27,9 +27,7 @@ class Auth {
       if (user == null) {
         return null;
       }
-      await user.updateProfile(
-        displayName: fullName,
-      );
+      await user.updateProfile(displayName: fullName, photoURL: " ");
 
       firebaseFirestore.collection('user').doc(user.uid).set({
         "phoneNumber": phoneNumber,
@@ -156,9 +154,14 @@ class Auth {
           EmailAuthProvider.credential(email: email, password: pass);
       print("AUTHENTICATION USER!");
       await _firebaseAuth.currentUser.reauthenticateWithCredential(credential);
+
       await FirebaseStorage.instance.ref(uid).child("dp").delete();
       await FirebaseFirestore.instance.collection('user').doc(uid).delete();
       await _firebaseAuth.currentUser.delete();
+
+      // Removing userId from local storage
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.remove('userId');
     } on FirebaseAuthException catch (e) {
       if (e.code == "requires-recent-login") {
         return "For changing the password your account needs to be logged in recently. Please re-login!";
