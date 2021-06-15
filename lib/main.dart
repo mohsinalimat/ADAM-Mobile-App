@@ -6,14 +6,15 @@ import 'package:adam/views/chat/chatView.dart';
 import 'package:adam/views/emailNotVerfiedView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/changePasswordView.dart';
-import 'package:adam/views/profile/deleteAccountView.dart';
+import 'package:adam/views/settings/account/deleteAccountView.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/login/forgotPasswordView.dart';
 import 'package:adam/views/login/loginView.dart';
 import 'package:adam/views/mainView.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/views/profile/profileView.dart';
-import 'package:adam/views/settings/accountView.dart';
+import 'package:adam/views/settings/account/accountView.dart';
+import 'package:adam/views/settings/account/disableAccountRequestView.dart';
 import 'package:adam/views/settings/help/appInfo.dart';
 import 'package:adam/views/settings/help/faqView.dart';
 import 'package:adam/views/settings/help/helpView.dart';
@@ -81,7 +82,6 @@ class _MyAppState extends State<MyApp> {
             initialRoute: "/splashScreen",
             routes: {
               // TODO: Phone Auth check
-              // TODO: Services Screen hatao!
               "/": (context) => LoginView(),
               "/mainView": (context) => MainView(),
               "/splashScreen": (context) => SplashScreen(),
@@ -103,9 +103,9 @@ class _MyAppState extends State<MyApp> {
               "/faq": (context) => FAQView(),
               "/appInfo": (context) => AppInfo(),
               "/reportProblem": (context) => ReportProblemView(),
+              "/disableAccount": (context) => DisableAccountRequestView()
             },
           ),
         ));
-    // return ChangeNotifierProvider(?
   }
 }
