@@ -43,11 +43,11 @@ class _SplashScreenState extends State<SplashScreen> {
           colors: _themeProvider.darkTheme
               ? [
                   Colors.black,
-                  Colors.white.withAlpha(10),
+                  Colors.white.withAlpha(10)
                 ]
               : [
                   kMediumGreenColor,
-                  kPrimaryBlueColor,
+                  kPrimaryBlueColor
                 ],
         ),
       ),
