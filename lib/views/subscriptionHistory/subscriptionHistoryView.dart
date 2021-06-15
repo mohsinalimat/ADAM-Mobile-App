@@ -1,3 +1,4 @@
+import 'package:adam/widgets/subscriptionHistoryCard.dart';
 import 'package:flutter/material.dart';
 
 class SubscriptionHistoryView extends StatelessWidget {
@@ -6,24 +7,31 @@ class SubscriptionHistoryView extends StatelessWidget {
     final _textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
+          child: SingleChildScrollView(
+            physics: ScrollPhysics(),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: BackButton(
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    BackButton(
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      "Subscription History",
+                      style: _textTheme.headline1,
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Text(
-                  "Subscription History",
-                  style: _textTheme.headline1,
+                const SizedBox(height: 20.0),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: 10,
+                  itemBuilder: (context, index) => SubscriptionHistoryCard(),
                 ),
               ],
             ),
