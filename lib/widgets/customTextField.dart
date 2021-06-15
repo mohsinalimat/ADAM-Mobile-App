@@ -110,10 +110,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
             borderSide: BorderSide(color: Colors.transparent),
           ),
           errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red[700]),
+            borderSide: BorderSide(color: Colors.red),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red[700]),
+            borderSide: BorderSide(color: Colors.red),
           ),
         ),
         validator: widget.validatorFtn,
