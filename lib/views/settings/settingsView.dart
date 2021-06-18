@@ -28,7 +28,7 @@ class SettingsView extends StatelessWidget {
     '/account',
     '/notifications',
     '/help',
-    '/theme'
+    '/theme',
   ];
 
   @override

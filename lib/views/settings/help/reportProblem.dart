@@ -43,7 +43,7 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                   const SizedBox(height: 20.0),
                   SvgPicture.asset(
                     'assets/problem.svg',
-                    height: 130.0,
+                    height: 130,
                   ),
                   const SizedBox(height: 35.0),
                   CustomTextField(

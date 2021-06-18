@@ -42,7 +42,7 @@ class AppInfo extends StatelessWidget {
                     ),
                   ),
                   Expanded(child: Container()),
-                  SvgPicture.asset('assets/logo/logoWhite.svg', height: 75.0),
+                  SvgPicture.asset('assets/logo/logoWhite.svg', height: 75),
                   SizedBox(height: 10.0),
                   Text(
                     "Automated Digital Assistant in Marketing",

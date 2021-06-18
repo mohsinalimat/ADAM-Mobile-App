@@ -57,7 +57,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       ),
                       SvgPicture.asset(
                         'assets/forgot.svg',
-                        height: 100.0,
+                        height: 100,
                         // height: height * 0.2,
                       ),
                       SizedBox(

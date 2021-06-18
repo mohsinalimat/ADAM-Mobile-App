@@ -65,8 +65,8 @@ dependencies:
   pin_code_fields: ^7.2.0
   clippy_flutter: ^1.1.1
   carousel_slider: ^3.0.0
-  fab_circular_menu: ^1.0.0
 
+  # saving subscription history
   path_provider: ^2.0.2
   screenshot: ^1.2.1
 

@@ -11,7 +11,7 @@ class CustomLoader extends StatelessWidget {
       duration: Duration(milliseconds: 700),
       child: SvgPicture.asset(
         'assets/logo/logoA.svg',
-        height: 70.0,
+        height: 70,
         color: Provider.of<ThemeProvider>(context).darkTheme
             ? Colors.white.withAlpha(150)
             : null,

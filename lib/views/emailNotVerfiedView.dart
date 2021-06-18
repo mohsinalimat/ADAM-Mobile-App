@@ -24,7 +24,7 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
             Expanded(child: Container()),
             SvgPicture.asset(
               'assets/changeEmail.svg',
-              height: 100.0,
+              height: 100,
             ),
             Text(
               "Looks like your email is not verified yet.\nPlease verify your email!",

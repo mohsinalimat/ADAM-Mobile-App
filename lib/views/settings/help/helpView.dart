@@ -40,6 +40,7 @@ class HelpView extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.attach_file_outlined),
             title: Text("Privacy Policy"),
+            onTap: () => Navigator.pushNamed(context, '/privacyPolicy'),
           ),
         ],
       ),

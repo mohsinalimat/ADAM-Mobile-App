@@ -208,8 +208,8 @@ class _MainViewState extends State<MainView>
                                     'assets/stats.svg',
                                     height:
                                         _bottomBarProviders.currentIndex == i
-                                            ? 24.0
-                                            : 22.0,
+                                            ? 24
+                                            : 22,
                                     color: _bottomBarProviders.currentIndex == i
                                         ? _themeProvider.darkTheme
                                             ? Colors.white

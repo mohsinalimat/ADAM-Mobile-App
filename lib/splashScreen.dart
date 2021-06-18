@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 left: -40,
                 child: SvgPicture.asset(
                   'assets/logo/logoA.svg',
-                  height: 200.0,
+                  height: 200,
                   color: Colors.white.withAlpha(50),
                 ),
               )

@@ -67,7 +67,7 @@ class MyDrawer extends StatelessWidget {
                       SizedBox(height: 20.0),
                       SvgPicture.asset(
                         'assets/logo/logoWhite.svg',
-                        height: 50.0,
+                        height: 50,
                       ),
                       SizedBox(height: 10.0),
                       Text(
@@ -141,7 +141,7 @@ class MyDrawer extends StatelessWidget {
                 left: -40,
                 child: SvgPicture.asset(
                   'assets/logo/logoA.svg',
-                  height: 200.0,
+                  height: 200,
                   color: Colors.white.withAlpha(50),
                 ),
               )

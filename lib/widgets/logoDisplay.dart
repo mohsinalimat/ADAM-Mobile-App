@@ -18,7 +18,7 @@ class LogoDisplay extends StatelessWidget {
       children: [
         SvgPicture.asset(
           "assets/logo/logoColor.svg",
-          height: 40.0,
+          height: 40,
         ),
         SizedBox(
           height: 5.0,

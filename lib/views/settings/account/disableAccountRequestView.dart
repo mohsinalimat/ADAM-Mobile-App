@@ -35,7 +35,7 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
               const SizedBox(height: 20.0),
               SvgPicture.asset(
                 'assets/disable.svg',
-                height: 100.0,
+                height: 100,
               ),
               const SizedBox(height: 20.0),
               Text(

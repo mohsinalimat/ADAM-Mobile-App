@@ -67,7 +67,7 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
                         ),
                         SvgPicture.asset(
                           'assets/changeEmail.svg',
-                          height: 100.0,
+                          height: 100,
                           // height: height * 0.2,
                         ),
                         SizedBox(

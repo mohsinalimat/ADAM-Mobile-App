@@ -20,6 +20,7 @@ import 'package:adam/views/settings/help/faqView.dart';
 import 'package:adam/views/settings/help/helpView.dart';
 import 'package:adam/views/settings/help/reportProblem.dart';
 import 'package:adam/views/settings/notificationView.dart';
+import 'package:adam/views/settings/help/privacyPolicy.dart';
 import 'package:adam/views/settings/themeView.dart';
 import 'package:adam/views/signup/signUpView.dart';
 import 'package:adam/views/subscriptionHistory/subscriptionHistoryView.dart';
@@ -81,7 +82,6 @@ class _MyAppState extends State<MyApp> {
             ),
             initialRoute: "/splashScreen",
             routes: {
-              // TODO: Phone Auth check
               "/": (context) => LoginView(),
               "/mainView": (context) => MainView(),
               "/splashScreen": (context) => SplashScreen(),
@@ -103,7 +103,8 @@ class _MyAppState extends State<MyApp> {
               "/faq": (context) => FAQView(),
               "/appInfo": (context) => AppInfo(),
               "/reportProblem": (context) => ReportProblemView(),
-              "/disableAccount": (context) => DisableAccountRequestView()
+              "/disableAccount": (context) => DisableAccountRequestView(),
+              "/privacyPolicy": (context) => PrivacyPolicy(),
             },
           ),
         ));

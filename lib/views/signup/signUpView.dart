@@ -131,7 +131,7 @@ class _SignUpViewState extends State<SignUpView> {
                       SvgPicture.asset(
                         "assets/logo/logoColor.svg",
                         // height: height * 0.07,
-                        height: 40.0,
+                        height: 40,
                       ),
                       SizedBox(
                         height: height * 0.02,

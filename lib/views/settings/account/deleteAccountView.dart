@@ -58,7 +58,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                       ),
                       SvgPicture.asset(
                         'assets/delete.svg',
-                        height: 100.0,
+                        height: 100,
                       ),
                       SizedBox(
                         height: height * 0.03,

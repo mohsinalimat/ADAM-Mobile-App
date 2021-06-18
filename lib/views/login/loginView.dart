@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       SvgPicture.asset(
                         "assets/logo/logoColor.svg",
-                        height: 50.0,
+                        height: 50,
                       ),
                       SizedBox(
                         height: height * 0.02,
