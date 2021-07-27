@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class MyDrawer extends StatelessWidget {
   final _auth = Auth();
-  
+
   final _drawerOptions = [
     "Account",
     "Subscription History",
@@ -78,24 +78,20 @@ class MyDrawer extends StatelessWidget {
                       ),
                       SizedBox(height: 20.0),
                       Divider(color: Colors.white),
-                      SizedBox(
-                        height: 225,
-                        child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: _drawerOptions.length,
-                          itemBuilder: (context, index) => ListTile(
-                            minLeadingWidth: 10.0,
-                            leading: Icon(_drawerOptionsIcons[index],
-                                color: Colors.white),
-                            title: Text(
-                              _drawerOptions[index],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onTap: () => Navigator.pushNamed(
-                                context, _drawerOptionsFtn[index]),
+                      for (int index = 0;
+                          index < _drawerOptions.length;
+                          index++)
+                        ListTile(
+                          minLeadingWidth: 10.0,
+                          leading: Icon(_drawerOptionsIcons[index],
+                              color: Colors.white),
+                          title: Text(
+                            _drawerOptions[index],
+                            style: TextStyle(color: Colors.white),
                           ),
+                          onTap: () => Navigator.pushNamed(
+                              context, _drawerOptionsFtn[index]),
                         ),
-                      ),
                       ListTile(
                         minLeadingWidth: 10.0,
                         leading: Icon(

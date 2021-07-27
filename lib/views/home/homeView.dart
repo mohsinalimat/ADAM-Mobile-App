@@ -1,6 +1,7 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/views/home/favoriteView.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:adam/widgets/serviceCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -18,26 +19,33 @@ class _HomeViewState extends State<HomeView> {
   final _firebaseAuth = FirebaseAuth.instance;
   int _currentIndex = 0;
 
-  // final _allServices = [
-  //   MoreServiceCard(
-  //     serviceIcon: Icons.mail,
-  //     serviceTitle: "Email Marketing",
-  //     premiumAvailable: true,
-  //     price: "79/month",
-  //   ),
-  //   MoreServiceCard(
-  //     serviceIcon: FontAwesomeIcons.sms,
-  //     serviceTitle: "SMS Marketing",
-  //     premiumAvailable: false,
-  //     price: "120/month",
-  //   ),
-  //   MoreServiceCard(
-  //     serviceIcon: FontAwesomeIcons.twitter,
-  //     serviceTitle: "Twitter Marketing",
-  //     premiumAvailable: true,
-  //     price: "89/month",
-  //   ),
-  // ];
+  List<ServiceCard> _fvtServices = [
+    ServiceCard(
+      serviceIcon: FontAwesomeIcons.facebookSquare,
+      serviceName: "Facebook Marketing",
+      serviceDescription:
+          "Facebook marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "119",
+      gradientColors: [
+        Color(0xff3a5794),
+        kMediumBlueColor,
+      ],
+    ),
+    ServiceCard(
+      serviceIcon: FontAwesomeIcons.instagram,
+      serviceName: "Instagram Marketing",
+      serviceDescription:
+          "Instagram marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
+      servicePrice: "139",
+      gradientColors: [
+        Color(0xfff6d371),
+        Color(0xfff27a1d),
+        Color(0xffcf2872),
+        Color(0xff912eb9),
+        Color(0xff4d58ce),
+      ],
+    ),
+  ];
 
   final _yourServices = [
     YourServiceCard(
@@ -170,9 +178,22 @@ class _HomeViewState extends State<HomeView> {
                   const SizedBox(
                     height: 30.0,
                   ),
-                  Text(
-                    "More Services",
-                    style: Theme.of(context).textTheme.headline1,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "More Services",
+                        style: Theme.of(context).textTheme.headline1,
+                      ),
+                      IconButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => FavoriteView(
+                                        favoriteServices: _fvtServices,
+                                      ))),
+                          icon: Icon(Icons.favorite_outline_rounded)),
+                    ],
                   ),
                   const SizedBox(
                     height: 20.0,

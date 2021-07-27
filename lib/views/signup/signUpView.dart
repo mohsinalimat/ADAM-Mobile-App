@@ -4,6 +4,7 @@ import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
+import 'package:adam/widgets/passCheckRequirementWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -234,41 +235,118 @@ class _SignUpViewState extends State<SignUpView> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  PassCheckRequirements(
-                                    passCheck:
-                                        _passCheck.contains(RegExp(r'[A-Z]')),
-                                    requirement: "1 Uppercase [A-Z]",
+                                  Icon(Icons.check_circle_rounded,
+                                      color: Validators.passwordValidator(
+                                                  passwordController.text
+                                                      .trim()) ==
+                                              null
+                                          ? Colors.green
+                                          : passwordController.text.trim() == ""
+                                              ? Colors.grey
+                                              : Colors.red),
+                                  Text(
+                                    " Requirements",
+                                    style: TextStyle(
+                                        color: Validators.passwordValidator(
+                                                    passwordController.text
+                                                        .trim()) ==
+                                                null
+                                            ? Colors.green
+                                            : passwordController.text.trim() ==
+                                                    ""
+                                                ? Colors.grey
+                                                : Colors.red),
                                   ),
-                                  SizedBox(height: 5.0),
-                                  PassCheckRequirements(
-                                    passCheck:
-                                        _passCheck.contains(RegExp(r'[a-z]')),
-                                    requirement: "1 lower [a-z]",
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  PassCheckRequirements(
-                                    passCheck:
-                                        _passCheck.contains(RegExp(r'[0-9]')),
-                                    requirement: "1 number [0-9]",
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  PassCheckRequirements(
-                                    passCheck: _passCheck.contains(
-                                        RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
-                                    requirement:
-                                        "1 special character [@, \$, # etc.]",
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  PassCheckRequirements(
-                                    passCheck: _passCheck.length >= 6,
-                                    requirement: "6 characters minimum",
+                                  Spacer(),
+                                  PopupMenuButton(
+                                    child: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Validators.passwordValidator(
+                                                  passwordController.text
+                                                      .trim()) ==
+                                              null
+                                          ? Colors.green
+                                          : passwordController.text.trim() == ""
+                                              ? Colors.grey
+                                              : Colors.red,
+                                    ),
+                                    elevation: 2.0,
+                                    itemBuilder: (context) => [
+                                      PassCheckRequirements(
+                                        passCheck: _passCheck
+                                            .contains(RegExp(r'[A-Z]')),
+                                        requirement: "1 Uppercase [A-Z]",
+                                      ),
+                                      PassCheckRequirements(
+                                        passCheck: _passCheck
+                                            .contains(RegExp(r'[a-z]')),
+                                        requirement: "1 lower [a-z]",
+                                      ),
+                                      PassCheckRequirements(
+                                        passCheck: _passCheck
+                                            .contains(RegExp(r'[0-9]')),
+                                        requirement: "1 number [0-9]",
+                                      ),
+                                      PassCheckRequirements(
+                                        passCheck: _passCheck.contains(
+                                            RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
+                                        requirement:
+                                            "1 special character [@, \$, # etc.]",
+                                      ),
+                                      PassCheckRequirements(
+                                        passCheck: _passCheck.length >= 6,
+                                        requirement: "6 characters minimum",
+                                      ),
+                                    ]
+                                        .map((e) => PopupMenuItem(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 2.0, horizontal: 8.0),
+                                            height: 10.0,
+                                            child: e))
+                                        .toList(),
                                   ),
                                 ],
                               ),
                             ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(left: 5.0),
+                            //   child: Column(
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       PassCheckRequirements(
+                            //         passCheck:
+                            //             _passCheck.contains(RegExp(r'[A-Z]')),
+                            //         requirement: "1 Uppercase [A-Z]",
+                            //       ),
+                            //       SizedBox(height: 5.0),
+                            //       PassCheckRequirements(
+                            //         passCheck:
+                            //             _passCheck.contains(RegExp(r'[a-z]')),
+                            //         requirement: "1 lower [a-z]",
+                            //       ),
+                            //       SizedBox(height: 5.0),
+                            //       PassCheckRequirements(
+                            //         passCheck:
+                            //             _passCheck.contains(RegExp(r'[0-9]')),
+                            //         requirement: "1 number [0-9]",
+                            //       ),
+                            //       SizedBox(height: 5.0),
+                            //       PassCheckRequirements(
+                            //         passCheck: _passCheck.contains(
+                            //             RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
+                            //         requirement:
+                            //             "1 special character [@, \$, # etc.]",
+                            //       ),
+                            //       SizedBox(height: 5.0),
+                            //       PassCheckRequirements(
+                            //         passCheck: _passCheck.length >= 6,
+                            //         requirement: "6 characters minimum",
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             SizedBox(
                               height: height * 0.02,
                             ),
@@ -625,45 +703,6 @@ class _SignUpViewState extends State<SignUpView> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class PassCheckRequirements extends StatelessWidget {
-  final bool passCheck;
-  final String requirement;
-
-  const PassCheckRequirements(
-      {Key key, @required this.passCheck, @required this.requirement})
-      : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
-    return Row(
-      children: [
-        passCheck
-            ? Icon(
-                Icons.check_circle_rounded,
-                color: Colors.green,
-              )
-            : Icon(
-                Icons.check_circle_outline_rounded,
-                color:
-                    _themeProvider.darkTheme ? Colors.white : Colors.grey[500],
-              ),
-        SizedBox(
-          width: 8.0,
-        ),
-        Text(
-          requirement,
-          style: TextStyle(
-              color: passCheck
-                  ? Colors.green
-                  : _themeProvider.darkTheme
-                      ? Colors.white
-                      : Colors.grey[500]),
-        )
-      ],
     );
   }
 }

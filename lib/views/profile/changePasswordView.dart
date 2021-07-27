@@ -5,6 +5,7 @@ import 'package:adam/validators/validators.dart';
 import 'package:adam/views/signup/signUpView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
+import 'package:adam/widgets/passCheckRequirementWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   String _passCheck = "";
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _oldPassController = TextEditingController();
   final _auth = Auth();
   final _formKey = GlobalKey<FormState>();
   bool _updatingPass = false;
@@ -63,7 +65,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           ),
                         ),
                         SizedBox(
-                          height: height * 0.05,
+                          height: height * 0.035,
                         ),
                         SvgPicture.asset(
                           'assets/forgot.svg',
@@ -82,6 +84,18 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           "Make sure to login after changing password.",
                         ),
                         SizedBox(height: height * 0.05),
+                        // TODO: Shift this to mongoDB
+                        // CustomTextField(
+                        //   textEditingController: _oldPassController,
+                        //   textInputAction: TextInputAction.next,
+                        //   textInputType: TextInputType.text,
+                        //   hintText: "Old Password",
+                        //   node: node,
+                        //   icon: Icons.lock_open,
+                        //   isPassword: true,
+                        //   onFieldSubmit: (value) => node.nextFocus(),
+                        // ),
+                        // SizedBox(height: 10),
                         CustomTextField(
                           textEditingController: _newPasswordController,
                           textInputAction: TextInputAction.next,
@@ -98,45 +112,84 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                             });
                           },
                         ),
-                        SizedBox(height: 10.0),
                         Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          padding: const EdgeInsets.all(7.5),
+                          child: Row(
                             children: [
-                              PassCheckRequirements(
-                                passCheck:
-                                    _passCheck.contains(RegExp(r'[A-Z]')),
-                                requirement: "1 Uppercase [A-Z]",
+                              Icon(Icons.check_circle_rounded,
+                                  color: Validators.passwordValidator(
+                                              _newPasswordController.text
+                                                  .trim()) ==
+                                          null
+                                      ? Colors.green
+                                      : _newPasswordController.text.trim() == ""
+                                          ? Colors.grey
+                                          : Colors.red),
+                              Text(
+                                " Requirements",
+                                style: TextStyle(
+                                    color: Validators.passwordValidator(
+                                                _newPasswordController.text
+                                                    .trim()) ==
+                                            null
+                                        ? Colors.green
+                                        : _newPasswordController.text.trim() ==
+                                                ""
+                                            ? Colors.grey
+                                            : Colors.red),
                               ),
-                              SizedBox(height: 5.0),
-                              PassCheckRequirements(
-                                passCheck:
-                                    _passCheck.contains(RegExp(r'[a-z]')),
-                                requirement: "1 lower [a-z]",
-                              ),
-                              SizedBox(height: 5.0),
-                              PassCheckRequirements(
-                                passCheck:
-                                    _passCheck.contains(RegExp(r'[0-9]')),
-                                requirement: "1 number [0-9]",
-                              ),
-                              SizedBox(height: 5.0),
-                              PassCheckRequirements(
-                                passCheck: _passCheck.contains(
-                                    RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
-                                requirement:
-                                    "1 special character [@, \$, # etc.]",
-                              ),
-                              SizedBox(height: 5.0),
-                              PassCheckRequirements(
-                                passCheck: _passCheck.length >= 6,
-                                requirement: "6 characters minimum",
+                              Spacer(),
+                              PopupMenuButton(
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Validators.passwordValidator(
+                                              _newPasswordController.text
+                                                  .trim()) ==
+                                          null
+                                      ? Colors.green
+                                      : _newPasswordController.text.trim() == ""
+                                          ? Colors.grey
+                                          : Colors.red,
+                                ),
+                                elevation: 2.0,
+                                itemBuilder: (context) => [
+                                  PassCheckRequirements(
+                                    passCheck:
+                                        _passCheck.contains(RegExp(r'[A-Z]')),
+                                    requirement: "1 Uppercase [A-Z]",
+                                  ),
+                                  PassCheckRequirements(
+                                    passCheck:
+                                        _passCheck.contains(RegExp(r'[a-z]')),
+                                    requirement: "1 lower [a-z]",
+                                  ),
+                                  PassCheckRequirements(
+                                    passCheck:
+                                        _passCheck.contains(RegExp(r'[0-9]')),
+                                    requirement: "1 number [0-9]",
+                                  ),
+                                  PassCheckRequirements(
+                                    passCheck: _passCheck.contains(
+                                        RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
+                                    requirement:
+                                        "1 special character [@, \$, # etc.]",
+                                  ),
+                                  PassCheckRequirements(
+                                    passCheck: _passCheck.length >= 6,
+                                    requirement: "6 characters minimum",
+                                  ),
+                                ]
+                                    .map((e) => PopupMenuItem(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 2.0, horizontal: 8.0),
+                                        height: 10.0,
+                                        child: e))
+                                    .toList(),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 8.0),
                         CustomTextField(
                           node: node,
                           isPassword: true,

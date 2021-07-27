@@ -245,18 +245,33 @@ class _ProfileViewState extends State<ProfileView> {
 
   void _updateProfilePic() {
     showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              " Profile photo",
-              style: Theme.of(context).textTheme.headline1,
+            Container(
+              decoration:
+                  BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(360.0)),
+              height: 7.0,
+              width: 50.0,
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 20.0),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                " Profile photo",
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            ),
+            const SizedBox(height: 15.0),
             Row(
                 children: List.generate(
               3,
@@ -395,5 +410,4 @@ class _ProfileViewState extends State<ProfileView> {
       setState(() {});
     });
   }
-
 }

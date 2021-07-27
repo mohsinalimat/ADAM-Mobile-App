@@ -198,6 +198,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                         ),
                         SizedBox(height: 10.0),
                         DateTimeField(
+                          validator: Validators.dobValidator,
                           controller: dobController,
                           decoration: InputDecoration(
                             fillColor: _themeProvider.darkTheme

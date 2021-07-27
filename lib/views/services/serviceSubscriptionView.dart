@@ -4,12 +4,12 @@ import 'package:adam/constants.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
 import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/feedbackCard.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceSubscriptionView extends StatefulWidget {
@@ -309,12 +309,10 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                     for (int i = 0; i < 4; i++)
                       Icon(
                         Icons.star_rounded,
-                        // color: kPrimaryBlueColor,
                         size: 30.0,
                       ),
                     Icon(
                       Icons.star_half_rounded,
-                      // color: kPrimaryBlueColor,
                       size: 30.0,
                     )
                   ],
@@ -338,94 +336,6 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class FeedbackCard extends StatelessWidget {
-  const FeedbackCard({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 220,
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage('assets/dp.png'),
-                        ),
-                        SizedBox(
-                          width: 8.0,
-                        ),
-                        Text(
-                          "John Doe",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(
-                          Icons.star_rounded,
-                          size: 15.0,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                Expanded(child: Container()),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.more_vert_outlined),
-                )
-              ],
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "Really helpful, got my business started with this service. I am glad I found this on internet. Really afforadable and awesome results! 100% recommended!",
-            ),
-          ),
-          Row(
-            children: [
-              Text(
-                "Was this review helpful?",
-              ),
-              Expanded(child: Container()),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: Text("Yes"),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text("No"),
-                  ),
-                ],
-              ),
-            ],
-          )
-        ],
       ),
     );
   }

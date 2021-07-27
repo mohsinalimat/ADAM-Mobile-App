@@ -13,12 +13,6 @@ class _SubscriptionHistoryViewState extends State<SubscriptionHistoryView> {
     SubscriptionHistoryCard(),
     SubscriptionHistoryCard(),
     SubscriptionHistoryCard(),
-    // SubscriptionHistoryCard(),
-    // SubscriptionHistoryCard(),
-    // SubscriptionHistoryCard(),
-    // SubscriptionHistoryCard(),
-    // SubscriptionHistoryCard(),
-    // SubscriptionHistoryCard(),
   ];
 
   @override
@@ -73,7 +67,7 @@ class _SubscriptionHistoryViewState extends State<SubscriptionHistoryView> {
                                       color: Colors.white),
                                   const SizedBox(width: 8.0),
                                   const Text(
-                                    "Deleted!",
+                                    "History Deleted!",
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],

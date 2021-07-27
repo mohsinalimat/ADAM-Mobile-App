@@ -29,7 +29,7 @@ class _StripePaymentCheckoutState extends State<StripePaymentCheckout> {
 
   <body>
       <div style="position: absolute; text-align: center; width:100%; height:100%; top:50%;">
-          <p>Loding Stripe...!</p>
+          <p>Loading Stripe...!</p>
       </div>
   </body>
 
