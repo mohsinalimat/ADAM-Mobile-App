@@ -111,6 +111,11 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
                   color: Colors.transparent,
                 ),
               ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.red,
+                ),
+              ),
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.red,

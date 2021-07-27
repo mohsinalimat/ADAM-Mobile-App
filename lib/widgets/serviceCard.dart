@@ -3,7 +3,7 @@ import 'package:adam/views/services/serviceSubscriptionView.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ServiceCard extends StatelessWidget {
+class ServiceCard extends StatefulWidget {
   const ServiceCard(
       {Key key,
       @required this.serviceIcon,
@@ -24,6 +24,12 @@ class ServiceCard extends StatelessWidget {
   final bool isFavorite;
 
   @override
+  _ServiceCardState createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<ServiceCard> {
+  bool _isFav = false;
+  @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Padding(
@@ -41,7 +47,7 @@ class ServiceCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: gradientColors,
+              colors: widget.gradientColors,
             ),
           ),
           child: Column(
@@ -52,7 +58,7 @@ class ServiceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      serviceIcon,
+                      widget.serviceIcon,
                       color: Colors.white,
                       size: 45.0,
                     ),
@@ -64,7 +70,7 @@ class ServiceCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            serviceName,
+                            widget.serviceName,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: Theme.of(context)
@@ -93,25 +99,39 @@ class ServiceCard extends StatelessWidget {
                                 ),
                               ),
                               for (int i = 0; i < 4; i++)
-                                Icon(
-                                  Icons.star,
-                                  color: Colors.yellow,
-                                  size: 15.0,
-                                ),
-                              Icon(
-                                Icons.star_half,
-                                color: Colors.yellow,
-                                size: 15.0,
-                              ),
+                                Icon(Icons.star,
+                                    color: Colors.yellow, size: 15.0),
+                              Icon(Icons.star_half,
+                                  color: Colors.yellow, size: 15.0),
                             ],
                           ),
                         ],
                       ),
                     ),
                     GestureDetector(
-                      onTap: addFavorite,
+                      onTap: () {
+                        setState(() {
+                          _isFav = !_isFav;
+                        });
+                        var snackBar = SnackBar(
+                          content: Row(children: [
+                            Icon(
+                                _isFav
+                                    ? Icons.favorite_rounded
+                                    : Icons.favorite_border_rounded,
+                                color: Colors.white),
+                            const SizedBox(width: 8.0),
+                            _isFav
+                                ? const Text("Added to favorites!")
+                                : const Text("Removed from favorites!"),
+                          ]),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      },
                       child: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        _isFav
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
                         color: Colors.white,
                       ),
                     ),
@@ -119,7 +139,7 @@ class ServiceCard extends StatelessWidget {
                 ),
               ),
               Text(
-                serviceDescription,
+                widget.serviceDescription,
                 style: TextStyle(
                   color: Colors.white,
                 ),
@@ -131,7 +151,7 @@ class ServiceCard extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: "\$$servicePrice/",
+                          text: "\$${widget.servicePrice}/",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize:
@@ -147,9 +167,9 @@ class ServiceCard extends StatelessWidget {
                     ),
                   ),
                   FloatingActionButton(
-                    heroTag: serviceIcon.toString(),
+                    heroTag: widget.serviceIcon.toString(),
                     elevation: 1.0,
-                    backgroundColor: gradientColors[0],
+                    backgroundColor: widget.gradientColors[0],
                     onPressed: () => Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -163,9 +183,9 @@ class ServiceCard extends StatelessWidget {
                         },
                         pageBuilder: (context, anime1, anime2) =>
                             ServiceSubscriptionView(
-                          serviceName: serviceName,
-                          iconData: serviceIcon,
-                          colorTheme: gradientColors[0],
+                          serviceName: widget.serviceName,
+                          iconData: widget.serviceIcon,
+                          colorTheme: widget.gradientColors[0],
                           serviceDesc:
                               "With Facebook marketing campaign you can now grow your business, market your brand or any organization with number of inbox messages, posts in multiple groups and much more!\n\nSo, subscribe to your favorite serivce and get started now!",
                         ),

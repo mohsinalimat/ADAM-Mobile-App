@@ -1,11 +1,14 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:adam/constants.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
+
 import 'customBtn.dart';
 
 class SubscriptionHistoryCard extends StatefulWidget {
@@ -166,27 +169,42 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
     );
   }
 
-  void _shareRecipt() {
+  void _shareRecipt() async {
+    String _pathFull =
+        "${(await getExternalStorageDirectory()).path}/adam-recipt.png";
     Navigator.pop(context);
-    Share.share(
-      "SID # 394882039488\n\nService Name: Facebook Marketing Campaign\n\nDate: 10-05-2021\n\nTime: 02:54:10 PM\n\nType: Standard",
-      subject: "Subscription History",
-    );
+    Share.shareFiles([_pathFull]);
   }
 
   void _saveRecipt() async {
-    await screenshotController
-        .captureAndSave("${(await getExternalStorageDirectory()).path}",
-            pixelRatio: 2.5,
-            fileName: "${DateTime.now().toString()}.png",
-            delay: Duration(milliseconds: 150))
-        .then((value) async {});
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            "Saved at ${(await getExternalStorageDirectory()).path}/${DateTime.now().toString()}.png"),
-      ),
-    );
+    PermissionStatus serviceStatus = await Permission.storage.request();
+
+    if (serviceStatus == PermissionStatus.granted) {
+      String _pathFull =
+          "${(await getExternalStorageDirectory()).path}/adam-recipt.png";
+      await screenshotController.captureAndSave(
+          "${(await getExternalStorageDirectory()).path}",
+          pixelRatio: 2.5,
+          fileName: "adam-recipt.png",
+          delay: Duration(milliseconds: 150));
+
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Saved at $_pathFull"),
+        ),
+      );
+    } else if (serviceStatus == PermissionStatus.denied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Permission Denied"),
+          action: SnackBarAction(
+            textColor: kLightBlueColor,
+            onPressed: () {},
+            label: "Dismiss",
+          ),
+        ),
+      );
+    }
   }
 }
