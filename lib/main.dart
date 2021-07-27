@@ -4,6 +4,7 @@ import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/splashScreen.dart';
 import 'package:adam/views/chat/chatView.dart';
 import 'package:adam/views/emailNotVerfiedView.dart';
+import 'package:adam/views/home/favoriteView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/changePasswordView.dart';
 import 'package:adam/views/settings/account/deleteAccountView.dart';
@@ -21,6 +22,7 @@ import 'package:adam/views/settings/help/helpView.dart';
 import 'package:adam/views/settings/help/reportProblem.dart';
 import 'package:adam/views/settings/notificationView.dart';
 import 'package:adam/views/settings/help/privacyPolicy.dart';
+import 'package:adam/views/settings/settingsView.dart';
 import 'package:adam/views/settings/themeView.dart';
 import 'package:adam/views/signup/signUpView.dart';
 import 'package:adam/views/subscriptionHistory/subscriptionHistoryView.dart';
@@ -99,12 +101,14 @@ class _MyAppState extends State<MyApp> {
               "/account": (context) => AccountView(),
               "/notifications": (context) => NotificationView(),
               "/help": (context) => HelpView(),
+              "/settings": (context) => SettingsView(),
               "/theme": (context) => ThemeView(),
               "/faq": (context) => FAQView(),
               "/appInfo": (context) => AppInfo(),
               "/reportProblem": (context) => ReportProblemView(),
               "/disableAccount": (context) => DisableAccountRequestView(),
               "/privacyPolicy": (context) => PrivacyPolicy(),
+              "/favorite": (context) => FavoriteView(),
             },
           ),
         ));

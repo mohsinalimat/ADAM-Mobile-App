@@ -38,4 +38,14 @@ class Validators {
 
     return null;
   }
+
+  static String dobValidator(DateTime value) {
+    if (value == null) {
+      return "DOB cannot be empty!";
+    }
+    if (value.isAfter(DateTime.now())) {
+      return "DOB cannot be in the future!";
+    }
+    return null;
+  }
 }
