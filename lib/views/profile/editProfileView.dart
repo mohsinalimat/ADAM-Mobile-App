@@ -65,9 +65,10 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   bool _informationUpdated() {
+    print(dobController.text.trim());
     if (_oldName != fullNameController.text.trim() ||
         _oldPhone != phoneNumberController.text.trim() ||
-        _oldDob != dobController.text ||
+        _oldDob != dobController.text.trim() ||
         _oldGender != _gender ||
         _oldCity != _city ||
         _oldEmail != emailController.text.trim()) {
@@ -242,13 +243,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                             );
                           },
                         ),
-                        SizedBox(
-                          height: 15.0,
-                        ),
-                        Text(
-                          "Gender",
-                          style: TextStyle(color: Colors.grey[500]),
-                        ),
+                        SizedBox(height: 15.0),
+                        Text("Gender",
+                            style: TextStyle(color: Colors.grey[500])),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -306,9 +303,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           "Address",
                           style: TextStyle(color: Colors.grey[500]),
                         ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
+                        SizedBox(height: 10.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -393,6 +388,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             btnHeight: 40.0,
                             btnOnPressed: () async {
                               if (_informationUpdated()) {
+                                print(dobController.text.trim());
                                 if (_formKey.currentState.validate()) {
                                   // data updated
                                   Map<String, Object> newData = {
@@ -442,49 +438,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                                     print("VALUE: $value");
 
                                     if (value is String) {
-                                      var snackBar = SnackBar(
-                                        content: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.info,
-                                              color: Colors.white,
-                                            ),
-                                            SizedBox(width: 8.0),
-                                            Text(
-                                              value,
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
+                                      _errorSaveProfile(value);
                                     } else {
-                                      var snackBar = SnackBar(
-                                        content: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                            ),
-                                            SizedBox(width: 8.0),
-                                            Text(
-                                              "Profile Updated!",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                        backgroundColor: kSecondaryBlueColor,
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
-                                      Future.delayed(Duration(seconds: 1), () {
-                                        Navigator.pop(context);
-                                      });
-                                      widget.refreshCallBack(true);
+                                      _saveSuccess();
                                     }
                                   }
                                 }
@@ -517,5 +473,49 @@ class _EditProfileViewState extends State<EditProfileView> {
         ),
       ),
     );
+  }
+
+  void _saveSuccess() {
+    var snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+          SizedBox(width: 8.0),
+          Text(
+            "Profile Updated!",
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+      backgroundColor: kSecondaryBlueColor,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.pop(context);
+    });
+    widget.refreshCallBack(true);
+  }
+
+  void _errorSaveProfile(String value) {
+    var snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(
+            Icons.info,
+            color: Colors.white,
+          ),
+          SizedBox(width: 8.0),
+          Text(
+            value,
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

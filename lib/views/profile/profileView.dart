@@ -258,8 +258,9 @@ class _ProfileViewState extends State<ProfileView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              decoration:
-                  BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(360.0)),
+              decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(360.0)),
               height: 7.0,
               width: 50.0,
             ),
