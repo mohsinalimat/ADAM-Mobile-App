@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     String userId = pref.getString("userId");
     if (userId == null) {
       Future.delayed(Duration(seconds: 3), () {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushReplacementNamed(context, '/');
       });
     } else {
       Future.delayed(Duration(seconds: 3), () {
