@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:adam/constants.dart';
+import 'package:adam/model/service.dart';
+import 'package:adam/views/services/userAllReviews.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
 import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:adam/widgets/customBtn.dart';
@@ -10,20 +12,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceSubscriptionView extends StatefulWidget {
-  final String serviceName;
-  final IconData iconData;
-  final Color colorTheme;
-  final String serviceDesc;
+  final Service service;
 
   ServiceSubscriptionView({
     Key key,
-    this.serviceName,
-    this.serviceDesc,
-    this.iconData,
-    this.colorTheme,
+    this.service,
   }) : super(key: key);
 
   @override
@@ -32,6 +29,8 @@ class ServiceSubscriptionView extends StatefulWidget {
 }
 
 class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
+  bool _isSubscribingStand = false;
+  bool _isSubscribingPrem = false;
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -73,7 +72,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     );
     await _flutterLocalNotificationsPlugin.show(
       0,
-      widget.serviceName,
+      widget.service.serviceName,
       'Service has been subscribed successfully!',
       platform,
       payload: 'xperia',
@@ -167,7 +166,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
         "mutable_content": true,
         "priority": "high",
         "notification": {
-          "title": widget.serviceName,
+          "title": widget.service.serviceName,
           "body": "New service has been subscribed",
         },
         "data": {
@@ -189,150 +188,181 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   @override
   Widget build(BuildContext context) {
     final _textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: ScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 15.0, right: 15.0, top: 15.0, bottom: 25.0),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: FloatingActionButton(
-                    elevation: 0.0,
-                    backgroundColor: widget.colorTheme,
-                    mini: true,
-                    heroTag: widget.iconData.toString(),
-                    onPressed: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.arrow_back,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(widget.serviceName, style: _textTheme.headline1),
-                    Text("Campaign"),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Text(widget.serviceDesc),
-                  ],
-                ),
-                SizedBox(
-                  height: 30.0,
-                ),
-                StandardServiceSubscriptionCard(
-                  colorTheme: widget.colorTheme,
-                  iconData: widget.iconData,
-                  standardFeatures: _standardFeatures,
-                  subcribe: () async {
-                    String sessionId = await StripeServer(
-                            serviceName: widget.serviceName,
-                            price: standardPrice)
-                        .createCheckout();
-                    final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => StripePaymentCheckout(
-                                  sessionId: sessionId,
-                                )));
-
-                    if (result == 'success') {
-                      showNotification();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: paymentCanceled,
-                      ));
-                    }
-                  },
-                  // subcribe: _subscribe,
-                ),
-                SizedBox(
-                  height: 40.0,
-                ),
-                PremiumServiceSubscriptionCard(
-                  colorTheme: widget.colorTheme,
-                  iconData: widget.iconData,
-                  standardFeatures: _premiumFeatures,
-                  subcribe: () async {
-                    String sessionId = await StripeServer(
-                      serviceName: widget.serviceName,
-                      price: premiumPrice,
-                    ).createCheckout();
-                    final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => StripePaymentCheckout(
-                                  sessionId: sessionId,
-                                )));
-
-                    if (result == 'success') {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: paymentSuccessful,
-                      ));
-                      showNotification();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: paymentCanceled,
-                      ));
-                    }
-                  },
-                  // subcribe: _subscribe,
-                ),
-                SizedBox(
-                  height: 40.0,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Ratings and reviews",
-                    style: _textTheme.headline2,
-                  ),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "4.7",
-                      style: _textTheme.headline1,
-                    ),
-                    Expanded(child: Container()),
-                    for (int i = 0; i < 4; i++)
-                      Icon(
-                        Icons.star_rounded,
-                        size: 30.0,
+    return AbsorbPointer(
+      absorbing: _isSubscribingStand ? _isSubscribingStand : _isSubscribingPrem,
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 15.0, bottom: 25.0),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: FloatingActionButton(
+                      elevation: 0.0,
+                      backgroundColor:
+                          Color(int.parse(widget.service.serviceColor[0])),
+                      mini: true,
+                      heroTag: widget.service.serviceIcon,
+                      onPressed: () => Navigator.pop(context),
+                      child: Icon(
+                        Icons.arrow_back,
                       ),
-                    Icon(
-                      Icons.star_half_rounded,
-                      size: 30.0,
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 3,
-                  itemBuilder: (context, index) => FeedbackCard(),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "See all reviews",
+                    ),
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(widget.service.serviceName,
+                          style: _textTheme.headline1),
+                      Text("Campaign"),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      Text(
+                        "With Facebook marketing campaign you can now grow your business, market your brand or any organization with number of inbox messages, posts in multiple groups and much more!\n\nSo, subscribe to your favorite serivce and get started now!",
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                  StandardServiceSubscriptionCard(
+                    subscribing: _isSubscribingStand,
+                    serviceType: widget.service.serviceType[0],
+                    colorTheme:
+                        Color(int.parse(widget.service.serviceColor[0])),
+                    iconData: widget.service.serviceIcon,
+                    standardFeatures: _standardFeatures,
+                    subcribe: () async {
+                      setState(() {
+                        _isSubscribingStand = true;
+                      });
+                      String sessionId = await StripeServer(
+                              serviceName: widget.service.serviceName,
+                              price: widget.service.serviceType[0].typePrice)
+                          .createCheckout();
+
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => StripePaymentCheckout(
+                                    sessionId: sessionId,
+                                  ))).whenComplete(() {
+                        setState(() {
+                          _isSubscribingStand = false;
+                        });
+                      });
+
+                      if (result == 'success') {
+                        showNotification();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: paymentCanceled,
+                        ));
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 40.0),
+                  PremiumServiceSubscriptionCard(
+                    subscribing: _isSubscribingPrem,
+                    serviceType: widget.service.serviceType[1],
+                    colorTheme:
+                        Color(int.parse(widget.service.serviceColor[0])),
+                    iconData: widget.service.serviceIcon,
+                    standardFeatures: _premiumFeatures,
+                    subcribe: () async {
+                      setState(() {
+                        _isSubscribingPrem = true;
+                      });
+                      String sessionId = await StripeServer(
+                        serviceName: widget.service.serviceName,
+                        price: widget.service.serviceType[1].typePrice,
+                      ).createCheckout();
+
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => StripePaymentCheckout(
+                                    sessionId: sessionId,
+                                  ))).whenComplete(() {
+                        setState(() {
+                          _isSubscribingPrem = false;
+                        });
+                      });
+
+                      if (result == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: paymentSuccessful,
+                        ));
+                        showNotification();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: paymentCanceled,
+                        ));
+                      }
+                    },
+                    // subcribe: _subscribe,
+                  ),
+                  SizedBox(height: 40.0),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Ratings and reviews",
+                      style: _textTheme.headline2,
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Text(
+                        widget.service.serviceRatings.toString(),
+                        style: _textTheme.headline1,
+                      ),
+                      Expanded(child: Container()),
+                      for (int i = 0; i < 4; i++)
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 30.0,
+                        ),
+                      const Icon(
+                        Icons.star_half_rounded,
+                        size: 30.0,
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20.0),
+                  ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        Divider(color: Colors.grey),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: widget.service.serviceComments.length < 3
+                        ? widget.service.serviceComments.length
+                        : 3,
+                    itemBuilder: (context, index) => FeedbackCard(
+                        serviceCommentData:
+                            widget.service.serviceComments[index]),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => UserReviews(
+                                  userReviews: widget.service.serviceComments,
+                                ))),
+                    child: const Text(
+                      "See all reviews",
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -346,15 +376,19 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
     Key key,
     @required this.colorTheme,
     @required this.iconData,
+    @required this.serviceType,
     @required List<ServiceFeatureWidget> standardFeatures,
     this.subcribe,
+    this.subscribing,
   })  : _standardFeatures = standardFeatures,
         super(key: key);
 
+  final ServiceType serviceType;
   final Color colorTheme;
-  final IconData iconData;
+  final String iconData;
   final List<ServiceFeatureWidget> _standardFeatures;
   final Function subcribe;
+  final bool subscribing;
 
   @override
   Widget build(BuildContext context) {
@@ -379,11 +413,11 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
         children: [
           ServiceSubscriptionTop(
             iconData: iconData,
-            price: "89",
+            price: serviceType.typePrice.toString(),
           ),
           SizedBox(height: 15.0),
           Text(
-            "An affordable entry point for anyone looking to grow their business via Facebook.",
+            serviceType.typeDesc,
             style: TextStyle(
               color: Colors.white,
             ),
@@ -402,10 +436,12 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
             btnHeight: 40.0,
             btnOnPressed: subcribe,
             btnColor: kLightBlueColor,
-            btnText: Text(
-              "Subscribe",
-              style: kBtnTextStyle,
-            ),
+            btnText: subscribing
+                ? kLoaderWhite
+                : Text(
+                    "Subscribe",
+                    style: kBtnTextStyle,
+                  ),
           ),
         ],
       ),
@@ -417,17 +453,20 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
   const PremiumServiceSubscriptionCard({
     Key key,
     @required this.colorTheme,
+    @required this.serviceType,
     @required this.iconData,
     this.subcribe,
+    this.subscribing,
     @required List<ServiceFeatureWidget> standardFeatures,
   })  : _standardFeatures = standardFeatures,
         super(key: key);
 
+  final ServiceType serviceType;
   final Color colorTheme;
-  final IconData iconData;
+  final String iconData;
   final List<ServiceFeatureWidget> _standardFeatures;
   final Function subcribe;
-
+  final bool subscribing;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -449,12 +488,12 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
         children: [
           ServiceSubscriptionTop(
             iconData: iconData,
-            price: "129",
+            price: serviceType.typePrice.toString(),
             isPremeium: true,
           ),
           SizedBox(height: 15.0),
           Text(
-            "An affordable entry point for anyone looking to grow their business via Facebook.",
+            serviceType.typeDesc,
             style: TextStyle(
               color: Colors.white,
             ),
@@ -468,10 +507,12 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
             btnHeight: 40.0,
             btnOnPressed: subcribe,
             btnColor: kLightBlueColor,
-            btnText: Text(
-              "Subscribe",
-              style: kBtnTextStyle,
-            ),
+            btnText: subscribing
+                ? kLoaderWhite
+                : Text(
+                    "Subscribe",
+                    style: kBtnTextStyle,
+                  ),
           ),
         ],
       ),
@@ -524,7 +565,7 @@ class ServiceSubscriptionTop extends StatelessWidget {
     @required this.price,
   }) : super(key: key);
 
-  final IconData iconData;
+  final String iconData;
   final bool isPremeium;
   final String price;
 
@@ -533,9 +574,9 @@ class ServiceSubscriptionTop extends StatelessWidget {
     return Row(
       // mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
+        SvgPicture.network(
           iconData,
-          size: 50.0,
+          height: 50.0,
           color: Colors.white,
         ),
         SizedBox(width: 10.0),

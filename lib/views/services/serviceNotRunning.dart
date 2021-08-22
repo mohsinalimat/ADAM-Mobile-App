@@ -1,7 +1,9 @@
 import 'package:adam/constants.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/logoDisplay.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ServiceNotRunning extends StatelessWidget {
   final String serviceName;
@@ -38,7 +40,52 @@ class ServiceNotRunning extends StatelessWidget {
               btnWidth: 200.0,
               btnHeight: 40.0,
               btnColor: kLightBlueColor,
-              btnOnPressed: () {},
+              btnOnPressed: () async {
+                FilePickerResult result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['jpg'],
+                    allowMultiple: false);
+                // File file = File(result.files.single.path);
+                if (result != null) {
+                  print(result.files.single.path);
+                  String url =
+                      "https://adam-twitter.herokuapp.com/twitter/post/media";
+
+                  var response = await http.post(Uri.parse(url), body: {
+                    "text": "Flutter posting",
+                    "media": result.files.single.path,
+                  });
+
+                  // FormData formData = FormData.fromMap({
+                  //   "text": "FLUTTER + TWITTER API IS LOVE!",
+                  //   "media": await MultipartFile.fromFile(
+                  //     result.files.single.path,
+                  //     filename: result.files.single.name,
+                  //   ),
+                  // });
+
+                  // var response = await dio.post(
+                  //   url,
+                  //   data: formData,
+                  //   options: Options(
+                  //     contentType: "application/form-data",
+                  //     followRedirects: false,
+                  //     validateStatus: (status) {
+                  //       return status < 500;
+                  //     },
+                  //   ),
+                  // );
+                  // var response = await http.post(Uri.parse(url),
+                  //     body: jsonEncode(<String, dynamic>{
+                  //       "text": "POSTING FROM FLUTTER!!",
+                  //     }));
+                  print(response.body);
+                  // if (response.statusCode == 400) {
+                  //   print(response.data['id']);
+                  //   print("WAR GYE");
+                  // }
+                }
+              },
               btnText: Text(
                 "Start!",
                 style: kBtnTextStyle,
