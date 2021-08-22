@@ -94,8 +94,7 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/mainView', (route) => false);
+        Navigator.pushReplacementNamed(context, '/mainView');
       } else {
         var snackBar = SnackBar(
           backgroundColor: Colors.red,

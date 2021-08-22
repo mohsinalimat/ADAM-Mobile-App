@@ -1,4 +1,4 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
 class SettingsView extends StatelessWidget {
-  final _auth = Auth();
+  final _userAuth = UserAuth();
 
   final _settingsOptionsIcons = [
     Icons.vpn_key_rounded,
@@ -88,7 +88,7 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  void _signOut(BuildContext context) {
+  void _signOut(BuildContext context) async {
     var snackBar = SnackBar(
       backgroundColor: Colors.green,
       content: Row(
@@ -102,9 +102,13 @@ class SettingsView extends StatelessWidget {
         ],
       ),
     );
-    _auth.signOut(context);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    Navigator.popUntil(context, (route) => route.settings?.name == "/");
+    int value = await _userAuth.logout();
+    if (value == 200) {
+      Navigator.popUntil(context, (route) => route.settings?.name == "/");
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      print(value);
+    }
   }
 }
 

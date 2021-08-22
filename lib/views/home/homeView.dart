@@ -1,13 +1,15 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+
 import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/views/home/favoriteView.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:adam/widgets/serviceCard.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -18,34 +20,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final _firebaseAuth = FirebaseAuth.instance;
   int _currentIndex = 0;
-
-  List<ServiceCard> _fvtServices = [
-    ServiceCard(
-      serviceIcon: FontAwesomeIcons.facebookSquare,
-      serviceName: "Facebook Marketing",
-      serviceDescription:
-          "Facebook marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "119",
-      gradientColors: [
-        Color(0xff3a5794),
-        kMediumBlueColor,
-      ],
-    ),
-    ServiceCard(
-      serviceIcon: FontAwesomeIcons.instagram,
-      serviceName: "Instagram Marketing",
-      serviceDescription:
-          "Instagram marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "139",
-      gradientColors: [
-        Color(0xfff6d371),
-        Color(0xfff27a1d),
-        Color(0xffcf2872),
-        Color(0xff912eb9),
-        Color(0xff4d58ce),
-      ],
-    ),
-  ];
 
   final _yourServices = [
     YourServiceCard(
@@ -186,99 +160,51 @@ class _HomeViewState extends State<HomeView> {
                         style: Theme.of(context).textTheme.headline1,
                       ),
                       IconButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => FavoriteView(
-                                        favoriteServices: _fvtServices,
-                                      ))),
+                          onPressed: () {},
+                          // onPressed: () => Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (_) => FavoriteView(
+                          //               favoriteServices: _fvtServices,
+                          //             ))),
                           icon: Icon(Icons.favorite_outline_rounded)),
                     ],
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: _services.length,
-                    itemBuilder: (context, i) => _services[i],
-                  ),
+                  FutureBuilder(
+                      future: ServiceController().getServices(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data.services.length != 0) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data.services.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ServiceCard(
+                                  service: snapshot.data.services[index],
+                                );
+                              },
+                            );
+                          } else {
+                            return Center(
+                              child: Text("No Services Found :)"),
+                            );
+                          }
+                        } else {
+                          return Center(
+                            child: JumpingDotsProgressIndicator(
+                              fontSize: 40.0,
+                              color: kMediumBlueColor,
+                            ),
+                          );
+                        }
+                      }),
                 ],
               ),
             ),
           );
   }
-
-  final _services = [
-    ServiceCard(
-      serviceIcon: FontAwesomeIcons.facebookSquare,
-      serviceName: "Facebook Marketing",
-      serviceDescription:
-          "Facebook marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "119",
-      gradientColors: [
-        Color(0xff3a5794),
-        kMediumBlueColor,
-      ],
-    ),
-    ServiceCard(
-      serviceIcon: FontAwesomeIcons.twitter,
-      serviceName: "Twitter Marketing",
-      serviceDescription:
-          "Twitter marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "149",
-      gradientColors: [
-        kMediumBlueColor,
-        kLightBlueColor,
-      ],
-    ),
-    ServiceCard(
-      serviceIcon: FontAwesomeIcons.instagram,
-      serviceName: "Instagram Marketing",
-      serviceDescription:
-          "Instagram marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "139",
-      gradientColors: [
-        Color(0xfff6d371),
-        Color(0xfff27a1d),
-        Color(0xffcf2872),
-        Color(0xff912eb9),
-        Color(0xff4d58ce),
-      ],
-    ),
-    ServiceCard(
-      serviceIcon: FontAwesomeIcons.linkedinIn,
-      serviceName: "LinkedIn Marketing",
-      serviceDescription:
-          "LinkedIn marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "99",
-      gradientColors: [
-        Color(0xff0073af),
-        kLightBlueColor,
-      ],
-    ),
-    ServiceCard(
-      serviceIcon: Icons.mail,
-      serviceName: "Email Marketing",
-      serviceDescription:
-          "Email marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "179",
-      gradientColors: [
-        kSecondaryBlueColor,
-        kMediumGreenColor,
-      ],
-    ),
-    ServiceCard(
-      serviceIcon: Icons.sms,
-      serviceName: "SMS Marketing",
-      serviceDescription:
-          "SMS marketing campaign with numbers of likes, comments, inbox messages, account scheduling and much more!",
-      servicePrice: "169",
-      gradientColors: [
-        kMediumGreenColor,
-        kMediumBlueColor,
-      ],
-    ),
-  ];
 }
