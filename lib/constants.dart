@@ -8,10 +8,6 @@ const Color kMediumBlueColor = Color(0xff0179d4);
 const Color kSecondaryBlueColor = Color(0xff0d569e);
 const Color kPrimaryBlueColor = Color(0xff114b8c);
 
-// fontSize
-
-
-
 // text styles
 // TextStyle kHintTextStyle =
 //     TextStyle(fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);
@@ -31,6 +27,15 @@ const Widget kLoader = SizedBox(
   child: CircularProgressIndicator(
     strokeWidth: 2,
     valueColor: AlwaysStoppedAnimation<Color>(kLightGreenColor),
+  ),
+);
+
+const Widget kLoaderWhite = SizedBox(
+  height: 25,
+  width: 25,
+  child: CircularProgressIndicator(
+    strokeWidth: 2,
+    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
   ),
 );
 
