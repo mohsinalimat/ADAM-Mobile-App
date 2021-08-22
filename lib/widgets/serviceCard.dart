@@ -1,25 +1,16 @@
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/service.dart';
 import 'package:adam/views/services/serviceSubscriptionView.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class ServiceCard extends StatefulWidget {
   const ServiceCard(
-      {Key key,
-      @required this.serviceIcon,
-      @required this.serviceName,
-      @required this.serviceDescription,
-      @required this.servicePrice,
-      @required this.gradientColors,
-      this.addFavorite,
-      this.isFavorite = false})
+      {Key key, this.service, this.addFavorite, this.isFavorite = false})
       : super(key: key);
 
-  final IconData serviceIcon;
-  final String serviceName;
-  final String serviceDescription;
-  final String servicePrice;
-  final List<Color> gradientColors;
+  final Service service;
   final Function addFavorite;
   final bool isFavorite;
 
@@ -47,7 +38,10 @@ class _ServiceCardState extends State<ServiceCard> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: widget.gradientColors,
+              colors: [
+                for (int i = 0; i < widget.service.serviceColor.length; i++)
+                  Color(int.parse(widget.service.serviceColor[i]))
+              ],
             ),
           ),
           child: Column(
@@ -57,12 +51,17 @@ class _ServiceCardState extends State<ServiceCard> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      widget.serviceIcon,
+                    SvgPicture.network(
+                      widget.service.serviceIcon,
                       color: Colors.white,
-                      size: 45.0,
+                      height: 45.0,
                     ),
-                    SizedBox(width: 5.0),
+                    // Icon(
+                    //   widget.serviceIcon,
+                    //   color: Colors.white,
+                    //   size: 45.0,
+                    // ),
+                    SizedBox(width: 8.0),
                     Expanded(
                       flex: 4,
                       child: Column(
@@ -70,7 +69,7 @@ class _ServiceCardState extends State<ServiceCard> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            widget.serviceName,
+                            widget.service.serviceName,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: Theme.of(context)
@@ -91,7 +90,7 @@ class _ServiceCardState extends State<ServiceCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                "4.7",
+                                widget.service.serviceRatings.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 13.0,
@@ -139,7 +138,7 @@ class _ServiceCardState extends State<ServiceCard> {
                 ),
               ),
               Text(
-                widget.serviceDescription,
+                widget.service.serviceType[0].typeDesc,
                 style: TextStyle(
                   color: Colors.white,
                 ),
@@ -151,7 +150,7 @@ class _ServiceCardState extends State<ServiceCard> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: "\$${widget.servicePrice}/",
+                          text: "\$${widget.service.serviceType[0].typePrice}/",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize:
@@ -167,9 +166,10 @@ class _ServiceCardState extends State<ServiceCard> {
                     ),
                   ),
                   FloatingActionButton(
-                    heroTag: widget.serviceIcon.toString(),
+                    heroTag: widget.service.serviceIcon,
                     elevation: 1.0,
-                    backgroundColor: widget.gradientColors[0],
+                    backgroundColor:
+                        Color(int.parse(widget.service.serviceColor[0])),
                     onPressed: () => Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -183,11 +183,7 @@ class _ServiceCardState extends State<ServiceCard> {
                         },
                         pageBuilder: (context, anime1, anime2) =>
                             ServiceSubscriptionView(
-                          serviceName: widget.serviceName,
-                          iconData: widget.serviceIcon,
-                          colorTheme: widget.gradientColors[0],
-                          serviceDesc:
-                              "With Facebook marketing campaign you can now grow your business, market your brand or any organization with number of inbox messages, posts in multiple groups and much more!\n\nSo, subscribe to your favorite serivce and get started now!",
+                          service: widget.service,
                         ),
                       ),
                     ),

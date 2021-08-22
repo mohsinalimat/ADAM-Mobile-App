@@ -1,8 +1,12 @@
+import 'package:adam/model/service.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackCard extends StatefulWidget {
+  final ServiceComment serviceCommentData;
+
   const FeedbackCard({
     Key key,
+    @required this.serviceCommentData,
   }) : super(key: key);
 
   @override
@@ -17,90 +21,92 @@ class _FeedbackCardState extends State<FeedbackCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      // height: 220,
       padding: const EdgeInsets.all(8.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage('assets/dp.png'),
-                        ),
-                        SizedBox(
-                          width: 8.0,
-                        ),
-                        Text(
-                          "John Doe",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(
-                          Icons.star_rounded,
-                          size: 15.0,
-                        ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage('assets/dp.png'),
                       ),
-                    )
-                  ],
-                ),
-                Expanded(child: Container()),
-                PopupMenuButton(
-                  onSelected: (value) {
-                    setState(() {
-                      _opt = value;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Row(
-                          children: [
-                            Icon(
-                              Icons.report,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 8),
-                            Text("Under Reviewed: $_opt"),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  child: Icon(Icons.more_vert_rounded),
-                  itemBuilder: (context) =>
-                      ["Flag as spam", "Flag as inappropriate"]
-                          .map(
-                            (opt) => PopupMenuItem(
-                              value: opt,
-                              child: Text(opt),
+                      const SizedBox(width: 8.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${widget.serviceCommentData.userFirstName} ${widget.serviceCommentData.userLastName}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 14.0),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Row(
+                            children: List.generate(
+                              5,
+                              (index) => Icon(
+                                Icons.star_rounded,
+                                size: 15.0,
+                              ),
                             ),
                           )
-                          .toList(),
-                ),
-              ],
-            ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Expanded(child: Container()),
+              PopupMenuButton(
+                onSelected: (value) {
+                  setState(() {
+                    _opt = value;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(
+                            Icons.report,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          Text("Under Reviewed: $_opt"),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                child: Icon(Icons.more_vert_rounded),
+                itemBuilder: (context) =>
+                    ["Flag as spam", "Flag as inappropriate"]
+                        .map(
+                          (opt) => PopupMenuItem(
+                            value: opt,
+                            child: Text(opt),
+                          ),
+                        )
+                        .toList(),
+              ),
+            ],
           ),
-          Expanded(
-            child: Text(
-              "Really helpful, got my business started with this service. I am glad I found this on internet. Really afforadable and awesome results! 100% recommended!",
-            ),
+          const SizedBox(height: 20.0),
+          Text(
+            widget.serviceCommentData.comment,
+            textAlign: TextAlign.left,
           ),
+          const SizedBox(height: 20.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("$_vote",
+              Text("${widget.serviceCommentData.vote}",
                   style:
                       TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
               const SizedBox(width: 5.0),
