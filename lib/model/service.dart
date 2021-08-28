@@ -5,7 +5,6 @@ class ServicesList {
 
   factory ServicesList.fromJSON(Map<String, dynamic> json) {
     Iterable allServices = json['services'];
-
     List<Service> services =
         allServices.map((service) => Service.fromJSON(service)).toList();
     return ServicesList(
@@ -15,6 +14,7 @@ class ServicesList {
 }
 
 class Service {
+  final String serviceId;
   final String serviceName;
   final String serviceIcon;
   final List<dynamic> serviceColor;
@@ -22,24 +22,28 @@ class Service {
   final double serviceRatings;
   final List<ServiceComment> serviceComments;
 
-  Service(
-      {this.serviceName,
-      this.serviceIcon,
-      this.serviceType,
-      this.serviceColor,
-      this.serviceRatings,
-      this.serviceComments});
+  Service({
+    this.serviceName,
+    this.serviceId,
+    this.serviceIcon,
+    this.serviceType,
+    this.serviceColor,
+    this.serviceRatings,
+    this.serviceComments,
+  });
 
   factory Service.fromJSON(Map<String, dynamic> json) {
     Iterable allFeedbacks = json['service_feedback']['feedback'];
-    List<ServiceComment> feedbacks = allFeedbacks
-        .map((feedback) => ServiceComment.fromJSON(feedback))
-        .toList();
+
+    List<ServiceComment> feedbacks = allFeedbacks.map((feedback) {
+      return ServiceComment.fromJSON(feedback);
+    }).toList();
 
     Iterable types = json['service_type'];
     List<ServiceType> servicesTypes =
         types.map((type) => ServiceType.fromJSON(type)).toList();
     return Service(
+      serviceId: json['_id'],
       serviceName: json['service_name'],
       serviceIcon: json['service_icon'],
       serviceColor: json['service_color'],
@@ -69,7 +73,7 @@ class ServiceComment {
   final String userId;
   final String userFirstName;
   final String userLastName;
-  final double userRatings;
+  final String userRatings;
   final String comment;
   final int vote;
 
@@ -89,7 +93,7 @@ class ServiceComment {
       vote: json['votes'],
       userFirstName: json['cust_firstName'],
       userLastName: json['cust_lastName'],
-      userRatings: json['user_rating'],
+      userRatings: json['user_rating'].toString(),
     );
   }
 }

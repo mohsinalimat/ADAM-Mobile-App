@@ -1,4 +1,4 @@
-import 'package:adam/auth/userAuth.dart';
+import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/validators/validators.dart';
@@ -21,8 +21,7 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
   String _passCheck = '';
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
+  final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final passwordController = TextEditingController();
@@ -31,7 +30,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   final format = DateFormat("dd-MM-yyyy");
 
-  final _userAuth = UserAuth();
+  final _auth = Auth();
 
   String _gender = "Male";
   String _country = "Pakistan";
@@ -44,8 +43,7 @@ class _SignUpViewState extends State<SignUpView> {
   bool _isLoading = false;
 
   _clearController() {
-    firstNameController.clear();
-    lastNameController.clear();
+    fullNameController.clear();
     emailController.clear();
     phoneNumberController.clear();
     passwordController.clear();
@@ -96,8 +94,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
+    fullNameController.dispose();
     emailController.dispose();
     phoneNumberController.dispose();
     passwordController.dispose();
@@ -154,42 +151,25 @@ class _SignUpViewState extends State<SignUpView> {
                             ),
                           ),
                           SizedBox(height: height * 0.01),
-                          Align(
+                          const Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
+                            child: const Text(
                               "It's quick and easy",
                               style: TextStyle(fontSize: 14.0),
                             ),
                           ),
                           SizedBox(height: height * 0.02),
                           CustomTextField(
-                            textEditingController: firstNameController,
+                            textEditingController: fullNameController,
                             textInputAction: TextInputAction.next,
                             textInputType: TextInputType.name,
                             node: node,
-                            hintText: "First Name",
+                            hintText: "Full Name",
                             icon: Icons.person,
                             onChangeFtn: (value) => print(value),
                             validatorFtn: (value) {
                               if (value.isEmpty) {
-                                return "First Name cannot be empty!";
-                              }
-
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: height * 0.02),
-                          CustomTextField(
-                            textEditingController: lastNameController,
-                            textInputAction: TextInputAction.next,
-                            textInputType: TextInputType.name,
-                            node: node,
-                            hintText: "Last Name",
-                            icon: Icons.person,
-                            onChangeFtn: (value) => print(value),
-                            validatorFtn: (value) {
-                              if (value.isEmpty) {
-                                return "Last Name cannot be empty!";
+                                return "Name cannot be empty!";
                               }
 
                               return null;
@@ -549,19 +529,13 @@ class _SignUpViewState extends State<SignUpView> {
                             },
                             btnColor: kLightGreenColor,
                             btnText: _isLoading
-                                ? SizedBox(
-                                    height: 25,
-                                    width: 25,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Text(
+                                ? kLoaderWhite
+                                : const Text(
                                     "Sign Up",
                                     style: kBtnTextStyle,
                                   ),
                           ),
-                          Text(
+                          const Text(
                             "\n\nBy clicking Sign Up, you agree to Terms, data policy and cookies policy",
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -584,82 +558,50 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  // node signUp
   void _signUp() async {
-    setState(() {
-      _isLoading = true;
-    });
-    var value = await _userAuth
-        .signUp(
-      firstNameController.text.trim(),
-      lastNameController.text.trim(),
-      emailController.text.trim(),
-      passwordController.text.trim(),
-      phoneNumberController.text.trim(),
-      dobController.text.trim(),
-      _gender,
-      _city,
-      _country,
-    )
-        .whenComplete(() {
-      setState(() {
-        _isLoading = false;
-      });
-    });
-
-    if (value == 200) {
-      _signUpSuccessful("Account created successfully!");
-      Navigator.pop(context);
-    } else if (value == 204) {
-      _errorSignup("Email already exists!");
-    } else {
-      _errorSignup("Undefinded error!");
+    {
+      if (_formKey.currentState.validate()) {
+        setState(() {
+          _isLoading = true;
+        });
+        var result = await _auth
+            .signUp(
+          fullNameController.text.trim(),
+          emailController.text.trim(),
+          passwordController.text.trim(),
+          phoneNumberController.text.trim(),
+          dobController.text,
+          _gender,
+          _country,
+          _city,
+        )
+            .whenComplete(() {
+          setState(() {
+            _isLoading = false;
+          });
+        });
+        if (result is String) {
+          print(result);
+          _errorSignup(result);
+        } else {
+          _signUpSuccessful();
+        }
+      }
     }
   }
 
-  // void _signUp() async {
-  //   {
-  //     if (_formKey.currentState.validate()) {
-  //       setState(() {
-  //         _isLoading = true;
-  //       });
-  //       var result = await _auth
-  //           .signUp(
-  //         firstNameController.text.trim(),
-  //         emailController.text.trim(),
-  //         passwordController.text.trim(),
-  //         phoneNumberController.text.trim(),
-  //         dobController.text,
-  //         _gender,
-  //         _country,
-  //         _city,
-  //       )
-  //           .whenComplete(() {
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       });
-  //       if (result is String) {
-  //         print(result);
-  //         _errorSignup(result);
-  //       } else {
-  //         _signUpSuccessful();
-  //       }
-  //     }
-  //   }
-  // }
-
-  void _signUpSuccessful(String msg) {
+  void _signUpSuccessful() {
     var snackBar = SnackBar(
       content: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.done_rounded,
             color: Colors.white,
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
-            child: Text(msg, style: TextStyle(color: Colors.white)),
+            child: const Text("Account created successfully! Check your email.",
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -668,18 +610,18 @@ class _SignUpViewState extends State<SignUpView> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     _clearController();
 
-    // Navigator.pushReplacementNamed(context, "/emailNotVerified");
+    Navigator.popAndPushNamed(context, "/emailNotVerified");
   }
 
   void _errorSignup(String value) {
     var snackBar = SnackBar(
       content: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.report,
             color: Colors.white,
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Text(value, style: TextStyle(color: Colors.white)),
         ],
       ),

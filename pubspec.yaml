@@ -35,6 +35,7 @@ dependencies:
   datetime_picker_formfield: ^2.0.0
   shared_preferences: ^2.0.5
   progress_indicators: ^1.0.0
+  flutter_rating_bar: ^4.0.0
 
   # attachments
   image_picker: ^0.7.5+3

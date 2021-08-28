@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:adam/constants.dart';
+import 'package:adam/controller/serviceController.dart';
+import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/views/services/userAllReviews.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
@@ -12,8 +14,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:progress_indicators/progress_indicators.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceSubscriptionView extends StatefulWidget {
   final Service service;
@@ -29,6 +35,13 @@ class ServiceSubscriptionView extends StatefulWidget {
 }
 
 class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
+  final _reviewController = TextEditingController();
+
+  // for reviews
+  String firstName = "";
+  String lastName = "";
+  double _ratings = 0;
+
   bool _isSubscribingStand = false;
   bool _isSubscribingPrem = false;
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -186,7 +199,14 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   }
 
   @override
+  void dispose() {
+    _reviewController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     final _textTheme = Theme.of(context).textTheme;
     return AbsorbPointer(
       absorbing: _isSubscribingStand ? _isSubscribingStand : _isSubscribingPrem,
@@ -310,19 +330,194 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                     },
                     // subcribe: _subscribe,
                   ),
-                  SizedBox(height: 40.0),
+                  const SizedBox(height: 20.0),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 20.0),
+                  CustomButton(
+                    btnWidth: 180.0,
+                    btnHeight: 40.0,
+                    btnOnPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            "Write a Review",
+                            style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .headline2
+                                  .fontSize,
+                              color:
+                                  Provider.of<ThemeProvider>(context).darkTheme
+                                      ? Colors.white
+                                      : kLightGreenColor,
+                            ),
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RatingBar.builder(
+                                itemSize: 30.0,
+                                initialRating: 0,
+                                minRating: 1,
+                                maxRating: 5,
+                                direction: Axis.horizontal,
+                                allowHalfRating: false,
+                                itemCount: 5,
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                onRatingUpdate: (rating) {
+                                  setState(() {
+                                    _ratings = rating;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 12.0),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.89,
+                                child: TextFormField(
+                                  maxLines: 5,
+                                  controller: _reviewController,
+                                  keyboardType: TextInputType.multiline,
+                                  textInputAction: TextInputAction.done,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
+                                  decoration: InputDecoration(
+                                    hintText:
+                                        "Tell others what do you think about this service...",
+                                    hintStyle:
+                                        Theme.of(context).textTheme.caption,
+                                    fillColor: _themeProvider.darkTheme
+                                        ? Colors.black12
+                                        : Colors.grey[100],
+                                    filled: true,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent)),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.transparent),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            CustomButton(
+                              btnWidth: 90,
+                              btnHeight: 40,
+                              btnOnPressed: () => Navigator.pop(context),
+                              btnColor: Colors.white,
+                              btnText: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            CustomButton(
+                              btnWidth: 90,
+                              btnHeight: 40,
+                              btnOnPressed: () async {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+
+                                String userId = prefs.getString('userId');
+                                String firstName = prefs.getString('firstName');
+                                String lastName = prefs.getString('lastName');
+
+                                String url =
+                                    "https://adam-web-api.herokuapp.com/user/add-feedback";
+
+                                var body = {
+                                  "userId": userId,
+                                  "cust_firstName": firstName,
+                                  "cust_lastName": lastName,
+                                  "serviceId": widget.service.serviceId,
+                                  "user_rating": _ratings.toString(),
+                                  "comment": _reviewController.text.trim(),
+                                };
+                                http.Response response = await http.post(
+                                  Uri.parse(url),
+                                  body: body,
+                                );
+
+                                print(response.statusCode);
+                                if (response.statusCode == 200) {
+                                  _reviewController.clear();
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      duration: Duration(seconds: 1),
+                                      backgroundColor: kLightGreenColor,
+                                      content: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 8.0),
+                                          const Text("Review submitted!"),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                  setState(() {});
+                                } else {
+                                  _reviewController.clear();
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        duration: Duration(seconds: 1),
+                                        backgroundColor: Colors.red,
+                                        content: Text("Undefined error!")),
+                                  );
+                                }
+                              },
+                              btnColor: kLightGreenColor,
+                              btnText: Text(
+                                "Submit",
+                                style: kBtnTextStyle,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    btnColor: kPrimaryBlueColor,
+                    btnText: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.edit, color: Colors.white),
+                        const SizedBox(width: 8.0),
+                        Text("Write a review", style: kBtnTextStyle),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 40.0),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Ratings and reviews",
-                      style: _textTheme.headline2,
+                      "Reviews",
+                      style: _textTheme.headline1,
                     ),
                   ),
                   const SizedBox(height: 10.0),
                   Row(
                     children: [
                       Text(
-                        widget.service.serviceRatings.toString(),
+                        widget.service.serviceRatings.toStringAsFixed(1),
                         style: _textTheme.headline1,
                       ),
                       Expanded(child: Container()),
@@ -338,17 +533,39 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        Divider(color: Colors.grey),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: widget.service.serviceComments.length < 3
-                        ? widget.service.serviceComments.length
-                        : 3,
-                    itemBuilder: (context, index) => FeedbackCard(
-                        serviceCommentData:
-                            widget.service.serviceComments[index]),
+                  // ListView.separated(
+                  //   separatorBuilder: (context, index) =>
+                  //       Divider(color: Colors.grey),
+                  //   shrinkWrap: true,
+                  //   physics: NeverScrollableScrollPhysics(),
+                  //   itemCount: widget.service.serviceComments.length,
+                  //   itemBuilder: (context, index) => FeedbackCard(
+                  //     serviceCommentData: widget.service.serviceComments[index],
+                  //   ),
+                  // ),
+                  FutureBuilder(
+                    future: ServiceController().getServices(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.separated(
+                          separatorBuilder: (context, index) =>
+                              Divider(color: Colors.grey),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: 1,
+                          itemBuilder: (context, index) => FeedbackCard(
+                              serviceCommentData:
+                                  widget.service.serviceComments[index]),
+                        );
+                      } else {
+                        return Center(
+                          child: JumpingDotsProgressIndicator(
+                            fontSize: 40,
+                            color: kPrimaryBlueColor,
+                          ),
+                        );
+                      }
+                    },
                   ),
                   TextButton(
                     onPressed: () => Navigator.push(

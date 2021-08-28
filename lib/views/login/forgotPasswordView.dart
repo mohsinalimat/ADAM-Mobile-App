@@ -137,10 +137,11 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                               var snackBar = SnackBar(
                                   content: Row(
                                 children: [
-                                  Icon(Icons.send, color: Colors.white),
+                                  Icon(Icons.link, color: Colors.white),
+                                  const SizedBox(width: 8.0),
                                   Expanded(
                                     child: Text(
-                                      " Reset link has been sent to your Email",
+                                      "Reset link has been sent to your Email",
                                     ),
                                   ),
                                 ],
@@ -148,9 +149,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
 
-                              Future.delayed(Duration(seconds: 2), () {
-                                Navigator.pop(context);
-                              });
+                              Navigator.pop(context);
                             }
                           }
                         },

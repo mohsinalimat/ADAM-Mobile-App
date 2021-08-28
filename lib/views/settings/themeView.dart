@@ -23,7 +23,8 @@ class _ThemeViewState extends State<ThemeView> {
               title: Text("Theme"),
             ),
             body: ListView(
-              padding: const EdgeInsets.only(top: 10.0, left: 15.0, right: 10.0),
+              padding:
+                  const EdgeInsets.only(top: 10.0, left: 15.0, right: 10.0),
               children: [
                 ListTile(
                   leading: Icon(Icons.brightness_6_rounded),
@@ -49,7 +50,7 @@ class _ThemeViewState extends State<ThemeView> {
                           .map((value) => DropdownMenuItem(
                                 onTap: () {
                                   var snackBar = SnackBar(
-                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(milliseconds: 500),
                                     content: Text(
                                       "Font size changed: $value",
                                     ),

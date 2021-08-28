@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   Future signUp(
       String fullName,
@@ -29,7 +29,7 @@ class Auth {
       }
       await user.updateProfile(displayName: fullName, photoURL: " ");
 
-      firebaseFirestore.collection('user').doc(user.uid).set({
+      _firebaseFirestore.collection('user').doc(user.uid).set({
         "phoneNumber": phoneNumber,
         "dob": dob,
         "gender": gender,
@@ -42,7 +42,8 @@ class Auth {
         await user.sendEmailVerification();
         print("EMAIL VERIFICATION SENT!");
       }
-
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString('userId', user.uid);
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
@@ -61,12 +62,15 @@ class Auth {
 
   Future login(String email, String password) async {
     try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
       User user = (await _firebaseAuth.signInWithEmailAndPassword(
               email: email, password: password))
           .user;
       if (user == null) {
         return null;
       }
+      preferences.setString('userId', user.uid);
+      print(preferences.getString('userId'));
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -84,6 +88,7 @@ class Auth {
   Future signOut(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('userId');
+    _firebaseAuth.signOut();
     Navigator.popUntil(context, (route) => route.settings?.name == "/");
   }
 

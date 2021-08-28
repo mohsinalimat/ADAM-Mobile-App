@@ -132,29 +132,21 @@ class _EditProfileViewState extends State<EditProfileView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              // elevation: 2.0,
-                              // heroTag: "backBtn",
                               onPressed: () => Navigator.pop(context),
-                              // backgroundColor: Colors.white,
                               icon: Icon(
                                 Icons.arrow_back,
-                                // color: kPrimaryBlueColor,
-                                // size: 17.0,
                               ),
                             ),
-                            Text(
+                            const Text(
                               "Edit Profile ",
                               style: TextStyle(
                                 fontSize: 32.0,
                                 fontWeight: FontWeight.bold,
-                                // color: kPrimaryBlueColor,
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 35.0,
-                        ),
+                        const SizedBox(height: 35.0),
                         EditableCustomTextField(
                           labelText: "Full Name",
                           textEditingController: fullNameController,
@@ -169,7 +161,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         EditableCustomTextField(
@@ -180,7 +172,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           icon: Icons.email,
                           validatorFtn: Validators.emailValidator,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         EditableCustomTextField(
@@ -190,7 +182,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             textInputType: TextInputType.phone,
                             icon: Icons.phone,
                             validatorFtn: Validators.phoneNumberValidator),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         Text(
@@ -199,7 +191,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                         ),
                         SizedBox(height: 10.0),
                         DateTimeField(
-                          validator: Validators.dobValidator,
                           controller: dobController,
                           decoration: InputDecoration(
                             fillColor: _themeProvider.darkTheme
@@ -243,7 +234,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             );
                           },
                         ),
-                        SizedBox(height: 15.0),
+                        const SizedBox(height: 15.0),
                         Text("Gender",
                             style: TextStyle(color: Colors.grey[500])),
                         Row(
@@ -252,7 +243,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("Male"),
+                                const Text("Male"),
                                 Radio(
                                   value: "Male",
                                   groupValue: _gender,
@@ -268,7 +259,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("Female"),
+                                const Text("Female"),
                                 Radio(
                                   value: "Female",
                                   groupValue: _gender,
@@ -284,7 +275,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("Others"),
+                                const Text("Others"),
                                 Radio(
                                   value: "Others",
                                   groupValue: _gender,
@@ -303,14 +294,13 @@ class _EditProfileViewState extends State<EditProfileView> {
                           "Address",
                           style: TextStyle(color: Colors.grey[500]),
                         ),
-                        SizedBox(height: 10.0),
+                        const SizedBox(height: 10.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             SizedBox(
                               width: screenSize.width * 0.42,
                               height: 40.0,
-                              // height: height * 0.055,
                               child: Material(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0)),
@@ -325,7 +315,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                                       items: [
                                         DropdownMenuItem(
                                           value: "Pakistan",
-                                          child: Text("Pakistan"),
+                                          child: const Text("Pakistan"),
                                         ),
                                       ],
                                       onChanged: (value) {
@@ -378,9 +368,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 30.0,
-                        ),
+                        const SizedBox(height: 30.0),
                         Align(
                           alignment: Alignment.center,
                           child: CustomButton(
@@ -450,14 +438,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                             },
                             btnColor: kLightGreenColor,
                             btnText: _isLoading
-                                ? SizedBox(
-                                    height: 25,
-                                    width: 25,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Text(
+                                ? kLoaderWhite
+                                : const Text(
                                     "Save Profile",
                                     style: kBtnTextStyle,
                                   ),
@@ -479,12 +461,12 @@ class _EditProfileViewState extends State<EditProfileView> {
     var snackBar = SnackBar(
       content: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.check,
             color: Colors.white,
           ),
-          SizedBox(width: 8.0),
-          Text(
+          const SizedBox(width: 8.0),
+          const Text(
             "Profile Updated!",
             style: TextStyle(color: Colors.white),
           ),
@@ -503,11 +485,11 @@ class _EditProfileViewState extends State<EditProfileView> {
     var snackBar = SnackBar(
       content: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.info,
             color: Colors.white,
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Text(
             value,
             style: TextStyle(color: Colors.white),

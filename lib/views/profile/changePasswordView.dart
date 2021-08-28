@@ -19,7 +19,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   String _passCheck = "";
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _oldPassController = TextEditingController();
+  // final _oldPassController = TextEditingController();
   final _auth = Auth();
   final _formKey = GlobalKey<FormState>();
   bool _updatingPass = false;
@@ -82,7 +82,6 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           "Make sure to login after changing password.",
                         ),
                         SizedBox(height: height * 0.05),
-                        // TODO: Shift this to mongoDB
                         // CustomTextField(
                         //   textEditingController: _oldPassController,
                         //   textInputAction: TextInputAction.next,
@@ -111,7 +110,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           },
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: ListTileTheme(
                             dense: true,
                             child: ExpansionTile(
@@ -196,7 +195,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         ),
                         SizedBox(height: height * 0.03),
                         CustomButton(
-                          btnWidth: width * 0.8,
+                          btnWidth: width * 0.9,
                           btnHeight: 40.0,
                           btnOnPressed: () async {
                             if (_formKey.currentState.validate()) {

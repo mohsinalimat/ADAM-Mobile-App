@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/verificationBadges.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/views/settings/settingsView.dart';
 import 'package:adam/widgets/customLoader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +22,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final _firebaseAuth = FirebaseAuth.instance;
+  final _auth = Auth();
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
@@ -73,9 +75,9 @@ class _ProfileViewState extends State<ProfileView> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 20.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 25.0,
                       ),
                       Align(
@@ -127,19 +129,19 @@ class _ProfileViewState extends State<ProfileView> {
                           ],
                         )),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15.0,
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(_firebaseAuth.currentUser.displayName,
-                                style: _textTheme.headline6),
-                            CustomEditBtn(
-                              heroTag: "editBtn",
-                              onBtnPress: () => Navigator.push(
+                      Center(
+                        child: Text(_firebaseAuth.currentUser.displayName,
+                            style: _textTheme.headline6),
+                      ),
+                      const SizedBox(height: 20.0),
+                      SizedBox(
+                        height: 42.0,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
                                 context,
                                 PageRouteBuilder(
                                   transitionDuration:
@@ -160,14 +162,22 @@ class _ProfileViewState extends State<ProfileView> {
                                     refreshCallBack: callBack,
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
+                              );
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 8.0),
+                                const Text("Edit Profile",
+                                    style: kBtnTextStyle),
+                              ],
+                            )),
                       ),
-                      SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 20.0),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -181,7 +191,7 @@ class _ProfileViewState extends State<ProfileView> {
                           VerificationBadge(isEmailType: true),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20.0,
                       ),
                       Row(
@@ -200,7 +210,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   phoneNumber: snapshot.data['phoneNumber'])
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20.0,
                       ),
                       ProfileInfoWidget(
@@ -208,7 +218,7 @@ class _ProfileViewState extends State<ProfileView> {
                         info: snapshot.data["gender"],
                         infoTitle: "Gender",
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20.0,
                       ),
                       ProfileInfoWidget(
@@ -216,7 +226,7 @@ class _ProfileViewState extends State<ProfileView> {
                         info: snapshot.data["dob"],
                         infoTitle: "Date of Birth",
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20.0,
                       ),
                       ProfileInfoWidget(
@@ -225,9 +235,29 @@ class _ProfileViewState extends State<ProfileView> {
                             "${snapshot.data["city"]}, ${snapshot.data["country"]}",
                         infoTitle: "Address",
                       ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
+                      const SizedBox(height: 20.0),
+                      MaterialButton(
+                        elevation: 0.0,
+                        highlightElevation: 0.0,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => LogoutAlertBox(
+                              signOut: _signOut,
+                            ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.exit_to_app_rounded,
+                                color: Colors.red),
+                            const SizedBox(width: 8.0),
+                            const Text("Logout",
+                                style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -410,5 +440,23 @@ class _ProfileViewState extends State<ProfileView> {
       print("PHOTO URL SET FOR THE CURRENT USER $photoUrl");
       setState(() {});
     });
+  }
+
+  void _signOut(BuildContext context) async {
+    var snackBar = SnackBar(
+      backgroundColor: Colors.green,
+      content: Row(
+        children: [
+          const Icon(Icons.check, color: Colors.white),
+          const SizedBox(width: 8.0),
+          const Text(
+            "Sign Out Successful!",
+            style: TextStyle(color: Colors.white),
+          )
+        ],
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    await _auth.signOut(context);
   }
 }

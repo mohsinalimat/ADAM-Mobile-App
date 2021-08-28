@@ -56,11 +56,6 @@ class _ServiceCardState extends State<ServiceCard> {
                       color: Colors.white,
                       height: 45.0,
                     ),
-                    // Icon(
-                    //   widget.serviceIcon,
-                    //   color: Colors.white,
-                    //   size: 45.0,
-                    // ),
                     SizedBox(width: 8.0),
                     Expanded(
                       flex: 4,
@@ -90,13 +85,15 @@ class _ServiceCardState extends State<ServiceCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                widget.service.serviceRatings.toString(),
+                                widget.service.serviceRatings
+                                    .toStringAsFixed(1),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 13.0,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              const SizedBox(width: 5.0),
                               for (int i = 0; i < 4; i++)
                                 Icon(Icons.star,
                                     color: Colors.yellow, size: 15.0),
@@ -113,6 +110,7 @@ class _ServiceCardState extends State<ServiceCard> {
                           _isFav = !_isFav;
                         });
                         var snackBar = SnackBar(
+                          duration: Duration(milliseconds: 500),
                           content: Row(children: [
                             Icon(
                                 _isFav

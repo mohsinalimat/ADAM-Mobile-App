@@ -1,4 +1,4 @@
-import 'package:adam/auth/userAuth.dart';
+import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/validators/validators.dart';
@@ -15,7 +15,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _userAuth = UserAuth();
+  final _auth = Auth();
 
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
@@ -23,17 +23,6 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
-
-  _testingValues() {
-    emailTextController.text = 'hamza@mhmz.dev';
-    passwordTextController.text = 'Hamza@1';
-  }
-
-  @override
-  void initState() {
-    _testingValues();
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -46,8 +35,6 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     final node = FocusScope.of(context);
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -65,25 +52,19 @@ class _LoginViewState extends State<LoginView> {
                   child: Center(
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: height * 0.05,
-                        ),
+                        SizedBox(height: 60.0),
                         SvgPicture.asset(
                           "assets/logo/logoColor.svg",
                           height: 50,
                         ),
-                        SizedBox(
-                          height: height * 0.02,
-                        ),
-                        Text(
+                        const SizedBox(height: 10),
+                        const Text(
                           "Automated Digital Assitant in Marketing",
                           style: const TextStyle(
                             letterSpacing: 1.5,
                           ),
                         ),
-                        SizedBox(
-                          height: height * 0.1,
-                        ),
+                        const SizedBox(height: 80.0),
                         CustomTextField(
                           hintText: "Enter Email",
                           icon: Icons.email,
@@ -95,9 +76,7 @@ class _LoginViewState extends State<LoginView> {
                           textInputType: TextInputType.emailAddress,
                           validatorFtn: Validators.emailValidator,
                         ),
-                        SizedBox(
-                          height: height * 0.03,
-                        ),
+                        const SizedBox(height: 15.0),
                         CustomTextField(
                           hintText: "Enter Password",
                           icon: Icons.lock,
@@ -115,73 +94,21 @@ class _LoginViewState extends State<LoginView> {
                             return null;
                           },
                         ),
-                        SizedBox(
-                          height: height * 0.04,
-                        ),
+                        const SizedBox(height: 30.0),
                         CustomButton(
-                          btnWidth: width * 0.8,
+                          btnWidth: 300.0,
                           btnHeight: 40,
                           node: node,
                           btnColor: _themeProvider.darkTheme
                               ? kMediumBlueColor
                               : kPrimaryBlueColor,
                           btnText: _isLoading
-                              ? kLoader
+                              ? kLoaderWhite
                               : Text(
                                   "Login",
                                   style: kBtnTextStyle,
                                 ),
-                          btnOnPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              setState(() {
-                                _isLoading = true;
-                              });
-                              var value = await _userAuth
-                                  .login(emailTextController.text.trim(),
-                                      passwordTextController.text.trim())
-                                  .whenComplete(() {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              });
-                              print(value);
-                              if (value == 200) {
-                                Navigator.pushNamed(context, "/mainView");
-                                emailTextController.clear();
-                                passwordTextController.clear();
-                                node.unfocus();
-                              } else if (value == 204) {
-                                _errorLogin(
-                                    "No account found! Please sign up!");
-                              } else {
-                                _errorLogin("Try again later :)");
-                              }
-                              //   FocusScope.of(context).unfocus();
-                              //   setState(() {
-                              //     _isLoading = true;
-                              //   });
-
-                              //   var value = await _auth
-                              //       .login(emailTextController.text.trim(),
-                              //           passwordTextController.text.trim())
-                              //       .whenComplete(() {
-                              //     setState(() {
-                              //       _isLoading = false;
-                              //     });
-                              //   });
-
-                              //   if (value is String) {
-                              //     _errorLogin(value);
-                              //   } else {
-                              // Navigator.pushNamed(context, "/mainView");
-                              // emailTextController.clear();
-                              // passwordTextController.clear();
-                              // node.unfocus();
-                              //   }
-                            } else {
-                              print("Text Fields Emapty!");
-                            }
-                          },
+                          btnOnPressed: _login,
                         ),
                         TextButton(
                             onPressed: () =>
@@ -192,7 +119,7 @@ class _LoginViewState extends State<LoginView> {
                           style: TextStyle(color: Colors.grey[300]),
                         ),
                         CustomButton(
-                          btnWidth: width * 0.6,
+                          btnWidth: 250.0,
                           btnHeight: 40,
                           // btnHeight: height * 0.055,
                           btnOnPressed: () =>
@@ -215,6 +142,35 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
+  void _login() async {
+    if (_formKey.currentState.validate()) {
+      FocusScope.of(context).unfocus();
+      setState(() {
+        _isLoading = true;
+      });
+
+      var value = await _auth
+          .login(emailTextController.text.trim(),
+              passwordTextController.text.trim())
+          .whenComplete(() {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+
+      if (value is String) {
+        _errorLogin(value);
+      } else {
+        Navigator.pushNamed(context, "/mainView");
+        emailTextController.clear();
+        passwordTextController.clear();
+        FocusScope.of(context).unfocus();
+      }
+    } else {
+      print("Text Fields Emapty!");
+    }
+  }
+
   void _errorLogin(String value) {
     print("Error: " + value);
     var snackBar = SnackBar(
@@ -224,7 +180,7 @@ class _LoginViewState extends State<LoginView> {
             Icons.info,
             color: Colors.white,
           ),
-          SizedBox(
+          const SizedBox(
             width: 8.0,
           ),
           Text(

@@ -72,7 +72,7 @@ class _HomeViewState extends State<HomeView> {
                             )
                           ],
                         ),
-                        SizedBox(width: 10.0),
+                        const SizedBox(width: 10.0),
                         CircleAvatar(
                           radius: 32.0,
                           backgroundColor: _themeProvider.darkTheme
@@ -93,8 +93,7 @@ class _HomeViewState extends State<HomeView> {
                                     _firebaseAuth.currentUser.photoURL == " "
                                         ? const AssetImage('assets/dp.png')
                                         : NetworkImage(
-                                            _firebaseAuth.currentUser.photoURL,
-                                          ),
+                                            _firebaseAuth.currentUser.photoURL),
                               ),
                             ),
                           ),

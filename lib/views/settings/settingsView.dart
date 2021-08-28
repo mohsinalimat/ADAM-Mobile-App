@@ -1,4 +1,4 @@
-import 'package:adam/auth/userAuth.dart';
+import 'package:adam/auth/auth.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
 class SettingsView extends StatelessWidget {
-  final _userAuth = UserAuth();
+  final _auth = Auth();
 
   final _settingsOptionsIcons = [
     Icons.vpn_key_rounded,
@@ -66,7 +66,7 @@ class SettingsView extends StatelessWidget {
                       "https://play.google.com/store/apps/details?id=com.hmz.al_quran \n\nStart marketing as low as \$49/month! :)",
                       subject: "ADAM App");
                 }),
-            Divider(color: Colors.grey),
+            const Divider(color: Colors.grey),
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text("Logout"),
@@ -80,8 +80,8 @@ class SettingsView extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: 30.0),
-            LogoDisplay(),
+            const SizedBox(height: 30.0),
+            const LogoDisplay(),
           ],
         ),
       ),
@@ -93,22 +93,17 @@ class SettingsView extends StatelessWidget {
       backgroundColor: Colors.green,
       content: Row(
         children: [
-          Icon(Icons.check, color: Colors.white),
-          SizedBox(width: 8.0),
-          Text(
+          const Icon(Icons.check, color: Colors.white),
+          const SizedBox(width: 8.0),
+          const Text(
             "Sign Out Successful!",
             style: TextStyle(color: Colors.white),
           )
         ],
       ),
     );
-    int value = await _userAuth.logout();
-    if (value == 200) {
-      Navigator.popUntil(context, (route) => route.settings?.name == "/");
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      print(value);
-    }
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    await _auth.signOut(context);
   }
 }
 
@@ -120,7 +115,7 @@ class LogoutAlertBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: new Text(
-        "Log Out!",
+        "Logout",
         style: TextStyle(
           fontSize: Theme.of(context).textTheme.headline2.fontSize,
           color: Provider.of<ThemeProvider>(context).darkTheme
@@ -128,12 +123,12 @@ class LogoutAlertBox extends StatelessWidget {
               : Colors.black,
         ),
       ),
-      content: new Text(
+      content: const Text(
         "Are You Sure?",
       ),
       actions: <Widget>[
         TextButton(
-          child: Text(
+          child: const Text(
             "Yes",
             style: TextStyle(
               color: Colors.red,
@@ -142,7 +137,7 @@ class LogoutAlertBox extends StatelessWidget {
           onPressed: () => signOut(context),
         ),
         TextButton(
-          child: Text("No"),
+          child: const Text("No"),
           onPressed: () {
             Navigator.of(context).pop();
           },

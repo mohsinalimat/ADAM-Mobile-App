@@ -16,10 +16,12 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String userId = pref.getString("userId");
     if (userId == null) {
+      print("ALREADY LOGGED IN $userId");
       Future.delayed(Duration(seconds: 3), () {
         Navigator.pushReplacementNamed(context, '/');
       });
     } else {
+      print("NO USER FOUND LOGGED IN!");
       Future.delayed(Duration(seconds: 3), () {
         Navigator.pushNamed(context, '/mainView');
       });
@@ -41,14 +43,8 @@ class _SplashScreenState extends State<SplashScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: _themeProvider.darkTheme
-              ? [
-                  Colors.black,
-                  Colors.white.withAlpha(10)
-                ]
-              : [
-                  kMediumGreenColor,
-                  kPrimaryBlueColor
-                ],
+              ? [Colors.black, Colors.white.withAlpha(10)]
+              : [kMediumGreenColor, kPrimaryBlueColor],
         ),
       ),
       child: Scaffold(

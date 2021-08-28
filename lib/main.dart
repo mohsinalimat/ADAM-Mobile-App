@@ -7,11 +7,12 @@ import 'package:adam/views/emailNotVerfiedView.dart';
 import 'package:adam/views/home/favoriteView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/changePasswordView.dart';
+import 'package:adam/views/services/instagram/instagramView.dart';
 import 'package:adam/views/settings/account/deleteAccountView.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/login/forgotPasswordView.dart';
 import 'package:adam/views/login/loginView.dart';
-import 'package:adam/views/mainView.dart';
+import 'package:adam/views/dashboard.dart';
 import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:adam/views/profile/profileView.dart';
 import 'package:adam/views/settings/account/accountView.dart';
@@ -85,7 +86,7 @@ class _MyAppState extends State<MyApp> {
             initialRoute: "/splashScreen",
             routes: {
               "/": (context) => LoginView(),
-              "/mainView": (context) => MainView(),
+              "/mainView": (context) => Dashboard(),
               "/splashScreen": (context) => SplashScreen(),
               "/signUp": (context) => SignUpView(),
               "/emailNotVerified": (context) => EmailNotVerfied(),
@@ -109,6 +110,7 @@ class _MyAppState extends State<MyApp> {
               "/disableAccount": (context) => DisableAccountRequestView(),
               "/privacyPolicy": (context) => PrivacyPolicy(),
               "/favorite": (context) => FavoriteView(),
+              '/instagramView': (context) => InstagramView(),
             },
           ),
         ));

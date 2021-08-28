@@ -59,7 +59,8 @@ class _SubscriptionHistoryViewState extends State<SubscriptionHistoryView> {
                             setState(() {
                               cards.removeAt(index);
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            var snackBar = SnackBar(
+                              duration: Duration(milliseconds: 500),
                               backgroundColor: Colors.red[700],
                               content: Row(
                                 children: [
@@ -72,7 +73,9 @@ class _SubscriptionHistoryViewState extends State<SubscriptionHistoryView> {
                                   ),
                                 ],
                               ),
-                            ));
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                           }
                         },
                         background: Container(

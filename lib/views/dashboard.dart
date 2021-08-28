@@ -13,14 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class MainView extends StatefulWidget {
+class Dashboard extends StatefulWidget {
   @override
-  _MainViewState createState() => _MainViewState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _MainViewState extends State<MainView>
+class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   static const Duration toggleDuration = Duration(milliseconds: 250);
   static const double maxSlide = 280;
@@ -47,16 +46,6 @@ class _MainViewState extends State<MainView>
     Icons.settings,
   ];
 
-  void _storingUserIdinLocalStoraget() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getString("userId") == null) {
-      pref.setString("userId", _firebaseAuth.currentUser.uid);
-      print("ID STORED: ${_firebaseAuth.currentUser.uid}");
-    } else {
-      print("ID ALREADY STORED: ${pref.getString("userId")}");
-    }
-  }
-
   // void _getToken() async {
   //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   //   String userNotificationToken = sharedPreferences.getString("notifyToken");
@@ -79,9 +68,8 @@ class _MainViewState extends State<MainView>
   void initState() {
     _animationController = AnimationController(
       vsync: this,
-      duration: _MainViewState.toggleDuration,
+      duration: _DashboardState.toggleDuration,
     );
-    _storingUserIdinLocalStoraget();
     // _getToken();
     // Future.delayed(Duration(seconds: 3), () {
     //   pushNotificationsManager.init();
@@ -239,6 +227,7 @@ class _MainViewState extends State<MainView>
                         IconButton(
                           onPressed: () => _bottomBarProviders.currentIndex = 3,
                           icon: CircleAvatar(
+                            // backgroundImage: const AssetImage('assets/dp.png'),
                             backgroundImage:
                                 _firebaseAuth.currentUser.photoURL == " "
                                     ? const AssetImage('assets/dp.png')

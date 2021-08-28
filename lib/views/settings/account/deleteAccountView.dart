@@ -166,7 +166,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                               _passwordController.clear();
-                              
+
                               Navigator.popUntil(context,
                                   (route) => route.settings.name == "/");
                             }
@@ -174,7 +174,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                         },
                         btnColor: Colors.red,
                         btnText: _deleting
-                            ? kLoader
+                            ? kLoaderWhite
                             : Text(
                                 "Confirm Password",
                                 style: kBtnTextStyle,

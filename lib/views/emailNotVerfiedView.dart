@@ -51,23 +51,7 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
             TextButton(onPressed: _resendEmail, child: Text("Resend email")),
             Expanded(child: Container()),
             TextButton(
-              onPressed: () {
-                var snackBar = SnackBar(
-                  backgroundColor: Colors.green,
-                  content: Row(
-                    children: [
-                      Icon(Icons.check, color: Colors.white),
-                      SizedBox(width: 8.0),
-                      Text(
-                        "Sign Out Successful!",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ],
-                  ),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                _auth.signOut(context);
-              },
+              onPressed: _logout,
               child: Text("Logout"),
             ),
             SizedBox(height: 10.0),
@@ -94,18 +78,18 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.pushReplacementNamed(context, '/mainView');
+        Navigator.popAndPushNamed(context, '/mainView');
       } else {
         var snackBar = SnackBar(
           backgroundColor: Colors.red,
           content: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.report,
                 color: Colors.white,
               ),
-              SizedBox(width: 5.0),
-              Text("Email is not verfied yet!"),
+              const SizedBox(width: 5.0),
+              const Text("Email is not verfied yet!"),
             ],
           ),
         );
@@ -132,5 +116,23 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _logout() {
+    var snackBar = SnackBar(
+      backgroundColor: Colors.green,
+      content: Row(
+        children: [
+          Icon(Icons.check, color: Colors.white),
+          SizedBox(width: 8.0),
+          Text(
+            "Sign Out Successful!",
+            style: TextStyle(color: Colors.white),
+          )
+        ],
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    _auth.signOut(context);
   }
 }
