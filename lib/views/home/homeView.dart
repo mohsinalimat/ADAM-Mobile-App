@@ -119,9 +119,23 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                   const SizedBox(height: 30.0),
-                  Text(
-                    "Your Services",
-                    style: Theme.of(context).textTheme.headline1,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Your Services",
+                        style: Theme.of(context).textTheme.headline1,
+                      ),
+                      InkWell(
+                        onTap: _refreshServices,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Icon(
+                            Icons.refresh_rounded,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 20.0),
                   FutureBuilder(
@@ -266,5 +280,23 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
           );
+  }
+
+  void _refreshServices() {
+   _getSubscribedServicesList();
+    var snackBar = SnackBar(
+      backgroundColor: kSecondaryBlueColor,
+      content: Row(
+        children: [
+          const Icon(Icons.refresh_rounded, color: Colors.white),
+          const SizedBox(width: 5.0),
+          const Text("Services has been refreshed!")
+        ],
+      ),
+    );
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
   }
 }

@@ -86,13 +86,13 @@ class PhoneNotVerified extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          PhoneVerificationView(phoneNumber: phoneNumber),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) =>
+                  //         PhoneVerificationView(phoneNumber: phoneNumber),
+                  //   ),
+                  // );
                 },
                 child: Text("Verify Now!"),
               )

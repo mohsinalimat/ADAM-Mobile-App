@@ -1,9 +1,9 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/views/services/email/email_marketing_view.dart';
 import 'package:adam/views/services/instagram/instagram_view.dart';
 import 'package:adam/views/services/linkedin/linkedin_view.dart';
-import 'package:adam/views/services/onGoingServiceView.dart';
-import 'package:adam/views/services/serviceNotRunning.dart';
+import 'package:adam/views/services/sms/sms_marketing_view.dart';
 import 'package:adam/views/services/twitter/twitter_view.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
@@ -100,14 +100,8 @@ class YourServiceCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              "In Progress...",
-                              // style: _textTheme.bodyText1,
-                              // style: TextStyle(color: kPrimaryBlueColor),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
+                            const Text("In Progress..."),
+                            const SizedBox(height: 8.0),
                             Expanded(
                               child: LinearProgressIndicator(
                                 valueColor: _themeProvider.darkTheme
@@ -115,9 +109,6 @@ class YourServiceCard extends StatelessWidget {
                                         kMediumGreenColor)
                                     : AlwaysStoppedAnimation<Color>(
                                         kLightGreenColor),
-                                // color: _themeProvider.darkTheme
-                                //     ? kMediumGreenColor
-                                //     : kLightGreenColor,
                               ),
                             ),
                           ],
@@ -163,27 +154,21 @@ class YourServiceCard extends StatelessWidget {
                       ),
                     ),
                   );
+                } else if (serviceTitle == "Email Marketing") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EmailMarketingView(),
+                    ),
+                  );
+                } else if (serviceTitle == "SMS Marketing") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SMSMarketingView(),
+                    ),
+                  );
                 }
-                // if (isRunning) {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (_) => OnGoingServiceView(
-                //         serviceName: serviceTitle,
-                //       ),
-                //     ),
-                //   );
-                // } else {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (_) => ServiceNotRunning(
-                //         serviceName: serviceTitle,
-                //         isPremium: isPremium,
-                //       ),
-                //     ),
-                //   );
-                // }
               },
               btnColor: _themeProvider.darkTheme
                   ? kMediumBlueColor

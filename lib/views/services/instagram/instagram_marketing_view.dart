@@ -1,8 +1,10 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -125,46 +127,23 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                           _isWorking = true;
                         });
 
-                        Future.delayed(Duration(seconds: 5), () {
+                        Future.delayed(Duration(seconds: 8), () {
                           setState(() {
                             _isWorking = false;
                             _dataScraped = true;
                           });
                         });
-                        // setState(() {
-                        //   _isWorking = true;
-                        // });
-                        // String url =
-                        //     "http://40.76.15.56:5000/insta/scraper";
 
-                        // var body = {
-                        //   "username": "testerbester01",
-                        //   "password": "tester123",
-                        //   "targeted_username": "bareera099",
-                        // };
-                        // // var headers = {
-                        // //   "Accept": "application/json",
-                        // //   "Access-Control-Allow-Origin": "*"
-                        // // };
-                        // http.Response response = await http
-                        //     .post(
-                        //   Uri.parse(url),
-                        //   // body: body,
-                        //   // headers: headers,
-                        // )
+                        // var value = await InstagramMarketing()
+                        //     .scrapeUserData()
                         //     .whenComplete(() {
                         //   setState(() {
                         //     _isWorking = false;
                         //   });
                         // });
-                        // print(response.statusCode);
-                        // if (response.statusCode == 200) {
-                        //   setState(() {
-                        //     _dataScraped = !_dataScraped;
-                        //   });
-                        //   print(response.body);
-                        // } else {
-                        //   print("SOME ERROR!!");
+
+                        // if (value is String) {
+                        //   print(value);
                         // }
                       }
                     },

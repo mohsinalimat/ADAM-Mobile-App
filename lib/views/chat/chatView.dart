@@ -5,7 +5,6 @@ import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
 import 'package:adam/widgets/messageBubble.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

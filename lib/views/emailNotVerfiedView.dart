@@ -36,9 +36,9 @@ class _EmailNotVerfiedState extends State<EmailNotVerfied> {
               btnWidth: 200.0,
               btnHeight: 40.0,
               btnOnPressed: () {
-                _firebaseAuth.currentUser.reload().whenComplete(() {
-                  setState(() {});
-                });
+                // _firebaseAuth.currentUser.reload().whenComplete(() {
+                //   setState(() {});
+                // });
 
                 _emailVerify();
               },

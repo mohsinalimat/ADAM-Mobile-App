@@ -10,8 +10,6 @@ import 'package:adam/views/profile/verificationBadges.dart';
 import 'package:adam/views/settings/settingsView.dart';
 import 'package:adam/widgets/customLoader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,9 +23,9 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final _userAuth = UserAuth();
-  final _firebaseAuth = FirebaseAuth.instance;
+  // final _firebaseAuth = FirebaseAuth.instance;
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  // FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   // Profile Photo Buttons properties
   final _dpBtnColors = [Colors.red, Colors.purple, Colors.green];
@@ -164,7 +162,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   },
                                   pageBuilder: (context, a1, a2) =>
                                       EditProfileView(
-                                    user: _firebaseAuth.currentUser,
+                                    // user: _firebaseAuth.currentUser,
                                     userData: userData,
                                     refreshCallBack: callBack,
                                   ),
