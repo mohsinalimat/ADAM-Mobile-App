@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">http://40.76.15.56:5000/insta/scraper</domain>
+    </domain-config>
+</network-security-config>

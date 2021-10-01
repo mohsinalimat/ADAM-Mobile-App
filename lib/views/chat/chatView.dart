@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/userData.dart';
 import 'package:adam/widgets/messageBubble.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatView extends StatefulWidget {
   @override
@@ -24,6 +27,12 @@ class _ChatViewState extends State<ChatView> {
   bool _uploadingFile = false;
 
   void _addAttachment() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String stringfyJson = preferences.getString("userData");
+    UserData userData;
+    Map userDataObject = jsonDecode(stringfyJson);
+    userData = UserData.fromJSON(userDataObject);
+
     filePickerResult = await FilePicker.platform.pickFiles();
 
     if (filePickerResult != null) {
@@ -36,7 +45,7 @@ class _ChatViewState extends State<ChatView> {
       });
       _chatMessages.add(MessageBubble(
         isUser: true,
-        sender: FirebaseAuth.instance.currentUser.displayName,
+        sender: userData.fullName,
         text: platformFile.name,
         uploadingFile: _uploadingFile,
       ));
@@ -70,7 +79,8 @@ class _ChatViewState extends State<ChatView> {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0, bottom: 5.0),
+            padding: const EdgeInsets.only(
+                left: 15.0, right: 15.0, top: 20.0, bottom: 5.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -145,13 +155,19 @@ class _ChatViewState extends State<ChatView> {
                       )),
                       SizedBox(width: 15.0),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           if (_messageFieldController.text != "") {
+                            SharedPreferences preferences =
+                                await SharedPreferences.getInstance();
+                            String stringfyJson =
+                                preferences.getString("userData");
+                            UserData userData;
+                            Map userDataObject = jsonDecode(stringfyJson);
+                            userData = UserData.fromJSON(userDataObject);
                             setState(() {
                               _chatMessages.add(MessageBubble(
                                 isUser: true,
-                                sender: FirebaseAuth
-                                    .instance.currentUser.displayName,
+                                sender: userData.fullName,
                                 text: _messageFieldController.text.trim(),
                               ));
                             });

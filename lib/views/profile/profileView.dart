@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/userData.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/verificationBadges.dart';
 import 'package:adam/views/settings/settingsView.dart';
@@ -14,6 +16,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileView extends StatefulWidget {
   @override
@@ -21,8 +24,8 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  final _userAuth = UserAuth();
   final _firebaseAuth = FirebaseAuth.instance;
-  final _auth = Auth();
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
@@ -49,37 +52,41 @@ class _ProfileViewState extends State<ProfileView> {
     });
   }
 
+  // getting user data from local storege
+  UserData userData;
+  void _getUserDataLocally() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String stringfyJson = pref.getString("userData");
+    Map userDataObject = jsonDecode(stringfyJson);
+
+    setState(() {
+      userData = UserData.fromJSON(userDataObject);
+    });
+  }
+
+  @override
+  void initState() {
+    _getUserDataLocally();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _textTheme = Theme.of(context).textTheme;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
       absorbing: _uploading,
-      child: Scaffold(
-        body: StreamBuilder(
-          stream: firebaseFirestore
-              .collection('user')
-              .doc(_firebaseAuth.currentUser.uid)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            print(snapshot.hasData);
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CustomLoader(),
-              );
-            } else if (snapshot.connectionState == ConnectionState.active &&
-                snapshot.hasData) {
-              return SingleChildScrollView(
+      child: userData == null
+          ? CustomLoader()
+          : Scaffold(
+              body: SingleChildScrollView(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 10.0),
                       Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -97,12 +104,14 @@ class _ProfileViewState extends State<ProfileView> {
                                     : Colors.white,
                                 child: CircleAvatar(
                                   radius: 85.0,
-                                  backgroundImage: _firebaseAuth
-                                              .currentUser.photoURL ==
-                                          " "
+                                  backgroundImage: userData.photo == " "
                                       ? AssetImage('assets/dp.png')
-                                      : NetworkImage(
-                                          _firebaseAuth.currentUser.photoURL),
+                                      : NetworkImage(userData.photo),
+                                  // backgroundImage:
+                                  //     _firebaseAuth.currentUser.photoURL == " "
+                                  //         ? AssetImage('assets/dp.png')
+                                  //         : NetworkImage(
+                                  //             _firebaseAuth.currentUser.photoURL),
                                 ),
                               ),
                             ),
@@ -129,19 +138,17 @@ class _ProfileViewState extends State<ProfileView> {
                           ],
                         )),
                       ),
-                      const SizedBox(
-                        height: 15.0,
-                      ),
+                      const SizedBox(height: 10.0),
                       Center(
-                        child: Text(_firebaseAuth.currentUser.displayName,
+                        child: Text(userData.fullName,
                             style: _textTheme.headline6),
                       ),
-                      const SizedBox(height: 20.0),
+                      const SizedBox(height: 15.0),
                       SizedBox(
                         height: 42.0,
                         child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
+                            onPressed: () async {
+                              var value = await Navigator.push(
                                 context,
                                 PageRouteBuilder(
                                   transitionDuration:
@@ -158,11 +165,15 @@ class _ProfileViewState extends State<ProfileView> {
                                   pageBuilder: (context, a1, a2) =>
                                       EditProfileView(
                                     user: _firebaseAuth.currentUser,
-                                    snapshot: snapshot.data,
+                                    userData: userData,
                                     refreshCallBack: callBack,
                                   ),
                                 ),
                               );
+                              if (value == null) value = false;
+                              if (value) {
+                                _getUserDataLocally();
+                              }
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -184,7 +195,7 @@ class _ProfileViewState extends State<ProfileView> {
                           Expanded(
                             child: ProfileInfoWidget(
                               icon: Icons.email,
-                              info: _firebaseAuth.currentUser.email,
+                              info: userData.email,
                               infoTitle: "Email",
                             ),
                           ),
@@ -200,14 +211,15 @@ class _ProfileViewState extends State<ProfileView> {
                           Expanded(
                             child: ProfileInfoWidget(
                               icon: Icons.phone,
-                              info: snapshot.data["phoneNumber"],
+                              info: userData.phoneNumber,
                               infoTitle: "Phone",
                             ),
                           ),
-                          snapshot.data['phoneVerify']
+                          userData.isPhoneVerified
                               ? VerificationBadge(isEmailType: false)
                               : PhoneNotVerified(
-                                  phoneNumber: snapshot.data['phoneNumber'])
+                                  phoneNumber: userData.phoneNumber,
+                                )
                         ],
                       ),
                       const SizedBox(
@@ -215,7 +227,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       ProfileInfoWidget(
                         icon: Icons.person,
-                        info: snapshot.data["gender"],
+                        info: userData.gender,
                         infoTitle: "Gender",
                       ),
                       const SizedBox(
@@ -223,7 +235,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       ProfileInfoWidget(
                         icon: Icons.date_range,
-                        info: snapshot.data["dob"],
+                        info: userData.dob,
                         infoTitle: "Date of Birth",
                       ),
                       const SizedBox(
@@ -231,45 +243,14 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       ProfileInfoWidget(
                         icon: Icons.location_city,
-                        info:
-                            "${snapshot.data["city"]}, ${snapshot.data["country"]}",
+                        info: "${userData.city}, ${userData.country}",
                         infoTitle: "Address",
                       ),
-                      const SizedBox(height: 20.0),
-                      MaterialButton(
-                        elevation: 0.0,
-                        highlightElevation: 0.0,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => LogoutAlertBox(
-                              signOut: _signOut,
-                            ),
-                          );
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.exit_to_app_rounded,
-                                color: Colors.red),
-                            const SizedBox(width: 8.0),
-                            const Text("Logout",
-                                style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ),
-              );
-            } else {
-              return Center(
-                child: Text("Network error!"),
-              );
-            }
-          },
-        ),
-      ),
+              ),
+            ),
     );
   }
 
@@ -337,14 +318,57 @@ class _ProfileViewState extends State<ProfileView> {
 
   void _removePic() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String _userId = prefs.getString('userId');
+
+      setState(() {
+        photoUrl = " ";
+        _uploading = true;
+      });
+
       Navigator.pop(context);
 
-      await FirebaseAuth.instance.currentUser.updateProfile(photoURL: " ");
-      await FirebaseAuth.instance.currentUser.reload();
+      // await FirebaseAuth.instance.currentUser.updateProfile(photoURL: " ");
+      // await FirebaseAuth.instance.currentUser.reload();
+      await firebaseStorage.ref(_userId).child("dp").delete();
+      int result = await _userAuth.updateProfilePic(photoUrl).whenComplete(() {
+        setState(() {
+          _uploading = false;
+        });
+        _getUserDataLocally();
+      });
 
-      setState(() {});
-
-      firebaseStorage.ref(_firebaseAuth.currentUser.uid).child("dp").delete();
+      if (result == 200) {
+        var snackBar = SnackBar(
+          backgroundColor: Colors.red,
+          content: Row(
+            children: [
+              const Icon(Icons.person, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text(
+                "Picture Removed Successful!",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        var snackBar = SnackBar(
+          backgroundColor: Colors.blue,
+          content: Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text(
+                "Error! Try again later.",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     } on FirebaseException catch (e) {
       print(e.code);
     }
@@ -352,6 +376,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   void _takePic() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String _userId = prefs.getString('userId');
+
       setState(() {
         _uploading = true;
       });
@@ -369,9 +396,10 @@ class _ProfileViewState extends State<ProfileView> {
         });
       }
 
+      Navigator.pop(context);
+
       // creating ref at Firebase Storage with userID
-      Reference ref =
-          firebaseStorage.ref(_firebaseAuth.currentUser.uid).child("dp");
+      Reference ref = firebaseStorage.ref(_userId).child("dp");
 
       ref.putFile(image).whenComplete(() {
         print("Pic Uploaded Successfully!");
@@ -381,7 +409,6 @@ class _ProfileViewState extends State<ProfileView> {
         // refreshing the UI when photo updated
         _getUploadedPic();
       });
-      Navigator.pop(context);
     } on FirebaseException catch (e) {
       print(e);
     }
@@ -389,6 +416,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   void _uploadPic() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String _userId = prefs.getString('userId');
+
       setState(() {
         _uploading = true;
       });
@@ -405,10 +435,10 @@ class _ProfileViewState extends State<ProfileView> {
           _uploading = false;
         });
       }
+      Navigator.pop(context);
 
       // creating ref at Firebase Storage with userID
-      Reference ref =
-          firebaseStorage.ref(_firebaseAuth.currentUser.uid).child("dp");
+      Reference ref = firebaseStorage.ref(_userId).child("dp");
 
       ref.putFile(image).whenComplete(() {
         print("Pic Uploaded Successfully!");
@@ -418,28 +448,72 @@ class _ProfileViewState extends State<ProfileView> {
         // refreshing the UI when photo updated
         _getUploadedPic();
       });
-      Navigator.pop(context);
     } on FirebaseException catch (e) {
       print(e);
     }
   }
 
   void _getUploadedPic() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _userId = prefs.getString('userId');
+
     // getting dp URL link
     photoUrl = await firebaseStorage
-        .ref("${_firebaseAuth.currentUser.uid}/dp")
+        .ref("$_userId/dp")
         .getDownloadURL()
-        .whenComplete(() => print("URL UPLOADED AT: $photoUrl"));
+        .whenComplete(() {
+      setState(() {
+        print("URL FIREBASE AT: $photoUrl");
+      });
+    });
+
+    int result = await _userAuth.updateProfilePic(photoUrl).whenComplete(() {
+      setState(() {
+        _getUserDataLocally();
+      });
+    });
+
+    if (result == 200) {
+      var snackBar = SnackBar(
+        backgroundColor: Colors.green,
+        content: Row(
+          children: [
+            const Icon(Icons.person, color: Colors.white),
+            const SizedBox(width: 8.0),
+            const Text(
+              "Picture Uploaded Successful!",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      var snackBar = SnackBar(
+        backgroundColor: Colors.red,
+        content: Row(
+          children: [
+            const Icon(Icons.info, color: Colors.white),
+            const SizedBox(width: 8.0),
+            const Text(
+              "Error! Try again later.",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
     // updating user profile photo at Firebase
-    await _firebaseAuth.currentUser
-        .updateProfile(
-      photoURL: photoUrl,
-    )
-        .whenComplete(() {
-      print("PHOTO URL SET FOR THE CURRENT USER $photoUrl");
-      setState(() {});
-    });
+    // await _firebaseAuth.currentUser
+    //     .updateProfile(
+    //   photoURL: photoUrl,
+    // )
+    //     .whenComplete(() {
+    //   print("PHOTO URL SET FOR THE CURRENT USER $photoUrl");
+    //   setState(() {});
+    // });
   }
 
   void _signOut(BuildContext context) async {
@@ -456,7 +530,9 @@ class _ProfileViewState extends State<ProfileView> {
         ],
       ),
     );
+    Navigator.popUntil(context, (route) => route.settings?.name == "/");
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    await _auth.signOut(context);
+    await _userAuth.logout(context);
+    // await _auth.signOut(context);
   }
 }

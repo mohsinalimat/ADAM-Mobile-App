@@ -1,12 +1,17 @@
 import 'package:adam/constants.dart';
+import 'package:adam/views/services/instagram/instagram_view.dart';
+import 'package:adam/views/services/linkedin/linkedin_view.dart';
+import 'package:adam/views/services/twitter/twitter_view.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:flutter/material.dart';
 
 class ServiceNotRunning extends StatelessWidget {
   final String serviceName;
+  final bool isPremium;
 
-  const ServiceNotRunning({Key key, this.serviceName}) : super(key: key);
+  const ServiceNotRunning({Key key, this.isPremium, this.serviceName})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +43,37 @@ class ServiceNotRunning extends StatelessWidget {
               btnWidth: 200.0,
               btnHeight: 40.0,
               btnColor: kLightBlueColor,
-              btnOnPressed: () =>
-                  Navigator.pushNamed(context, '/instagramView'),
+              btnOnPressed: () {
+                if (serviceName == "Instagram Marketing") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InstagramView(
+                        isPrem: isPremium,
+                      ),
+                    ),
+                  );
+                } else if (serviceName == "Twitter Marketing") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TwitterView(
+                        isPrem: isPremium,
+                      ),
+                    ),
+                  );
+                } else if (serviceName == "LinkedIn Marketing") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LinkedinView(
+                        isPrem: isPremium,
+                      ),
+                    ),
+                  );
+                }
+              },
+
               // btnOnPressed: () async {
               //   FilePickerResult result = await FilePicker.platform.pickFiles(
               //       type: FileType.custom,

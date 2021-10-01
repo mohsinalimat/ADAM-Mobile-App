@@ -1,16 +1,24 @@
+import 'dart:convert';
+
 import 'package:adam/constants.dart';
 import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/service.dart';
+import 'package:adam/model/userData.dart';
 
 import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:adam/widgets/serviceCard.dart';
+import 'package:adam/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:clippy_flutter/diagonal.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -18,36 +26,46 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final _firebaseAuth = FirebaseAuth.instance;
+  final ServiceController serviceController = ServiceController();
   int _currentIndex = 0;
 
-  final _yourServices = [
-    YourServiceCard(
-      isRunning: true,
-      serviceIcon: FontAwesomeIcons.instagram,
-      serviceTitle: "Instagram Marketing",
-      isPremium: true,
-    ),
-    YourServiceCard(
-      serviceIcon: FontAwesomeIcons.sms,
-      serviceTitle: "SMS Marketing",
-    ),
-    YourServiceCard(
-      isPremium: true,
-      serviceIcon: FontAwesomeIcons.linkedin,
-      serviceTitle: "LinkedIn Marketing",
-    ),
-  ];
+  List subscribedServices = [];
+
+  void _getSubscribedServicesList() async {
+    SubscribedServices value = await serviceController.getSubscribedServices();
+    setState(() {
+      subscribedServices = List.from(value.subscribedServices);
+    });
+  }
+
+  // get local user object
+  UserData _userData;
+  void _getLocalUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map userDataObject = jsonDecode(prefs.getString("userData"));
+    UserData userData = UserData.fromJSON(userDataObject);
+    setState(() {
+      _userData = userData;
+    });
+  }
+
+  @override
+  void initState() {
+    _getSubscribedServicesList();
+    _getLocalUserData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _bottomBarProviders = Provider.of<BottomNavBarProvider>(context);
 
-    return _themeProvider == null
-        ? CircularProgressIndicator()
+    return _userData == null
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
         : SingleChildScrollView(
-            physics: ScrollPhysics(),
             child: Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
@@ -63,7 +81,8 @@ class _HomeViewState extends State<HomeView> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              "Hi! ${_firebaseAuth.currentUser.displayName}",
+                              // "Hi! ${_firebaseAuth.currentUser.displayName}",
+                              "Hi! ${_userData.fullName}",
                               style: Theme.of(context).textTheme.headline2,
                             ),
                             const Text(
@@ -89,11 +108,9 @@ class _HomeViewState extends State<HomeView> {
                               },
                               child: CircleAvatar(
                                 radius: 29.0,
-                                backgroundImage:
-                                    _firebaseAuth.currentUser.photoURL == " "
-                                        ? const AssetImage('assets/dp.png')
-                                        : NetworkImage(
-                                            _firebaseAuth.currentUser.photoURL),
+                                backgroundImage: _userData.photo == " "
+                                    ? AssetImage('assets/dp.png')
+                                    : NetworkImage(_userData.photo),
                               ),
                             ),
                           ),
@@ -101,56 +118,104 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 30.0,
-                  ),
+                  const SizedBox(height: 30.0),
                   Text(
                     "Your Services",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  CarouselSlider.builder(
-                    itemCount: _yourServices.length,
-                    itemBuilder: (context, index, i) => _yourServices[index],
-                    options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      viewportFraction: 1,
-                      height: 330.0,
-                      onPageChanged: (index, reas) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: _yourServices.map((service) {
-                        int index = _yourServices.indexOf(service);
-                        return AnimatedContainer(
-                          duration: Duration(milliseconds: 200),
-                          width: _currentIndex == index ? 25.0 : 7.0,
-                          height: 7.0,
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 2.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(360),
-                            color: _currentIndex == index
-                                ? kMediumBlueColor
-                                : _themeProvider.darkTheme
-                                    ? Colors.white
-                                    : kLightBlueColor.withAlpha(100),
-                          ),
+                  const SizedBox(height: 20.0),
+                  FutureBuilder(
+                    future: serviceController.getSubscribedServices(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data.subscribedServices.length == 0) {
+                          return Center(
+                            child: Text("No Service Subscribed!"),
+                          );
+                        } else {
+                          return CarouselSlider.builder(
+                            itemCount: snapshot.data.subscribedServices.length,
+                            itemBuilder: (_, index, i) {
+                              return YourServiceCard(
+                                serviceIcon: snapshot.data.subscribedServices[index]
+                                            ['serviceData']['service_name'] ==
+                                        "Instagram Marketing"
+                                    ? FontAwesomeIcons.instagram
+                                    : snapshot.data.subscribedServices[index]['serviceData']
+                                                ['service_name'] ==
+                                            "Twitter Marketing"
+                                        ? FontAwesomeIcons.twitter
+                                        : snapshot.data.subscribedServices[index]['serviceData']
+                                                    ['service_name'] ==
+                                                "Facebook Marketing"
+                                            ? FontAwesomeIcons.facebook
+                                            : snapshot.data.subscribedServices[index]
+                                                            ['serviceData']
+                                                        ['service_name'] ==
+                                                    "LinkedIn Marketing"
+                                                ? FontAwesomeIcons.linkedin
+                                                : snapshot.data.subscribedServices[index]
+                                                            ['serviceData']['service_name'] ==
+                                                        "Email Marketing"
+                                                    ? Icons.mail
+                                                    : Icons.sms,
+                                serviceTitle:
+                                    snapshot.data.subscribedServices[index]
+                                        ['serviceData']['service_name'],
+                                isPremium: snapshot.data
+                                    .subscribedServices[index]['isPremium'],
+                                isRunning: snapshot.data
+                                    .subscribedServices[index]['isRunning'],
+                              );
+                            },
+                            options: CarouselOptions(
+                              enableInfiniteScroll: false,
+                              enlargeCenterPage: true,
+                              viewportFraction: 1,
+                              height: 330.0,
+                              onPageChanged: (index, reas) {
+                                setState(() {
+                                  _currentIndex = index;
+                                });
+                              },
+                            ),
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
                         );
-                      }).toList()),
-                  const SizedBox(
-                    height: 30.0,
+                      } else {
+                        return Center(child: ShimmerLoaderYourServices());
+                      }
+                    },
                   ),
+                  const SizedBox(height: 10.0),
+                  subscribedServices.length == 0
+                      ? Center(
+                          child: Container(height: 27.0),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: subscribedServices.map((service) {
+                            int index = subscribedServices.indexOf(service);
+                            return AnimatedContainer(
+                              duration: Duration(milliseconds: 200),
+                              width: _currentIndex == index ? 25.0 : 7.0,
+                              height: 7.0,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(360),
+                                color: _currentIndex == index
+                                    ? kMediumBlueColor
+                                    : _themeProvider.darkTheme
+                                        ? Colors.white
+                                        : kLightBlueColor.withAlpha(100),
+                              ),
+                            );
+                          }).toList()),
+                  const SizedBox(height: 30.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -160,20 +225,12 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       IconButton(
                           onPressed: () {},
-                          // onPressed: () => Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (_) => FavoriteView(
-                          //               favoriteServices: _fvtServices,
-                          //             ))),
                           icon: Icon(Icons.favorite_outline_rounded)),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
+                  const SizedBox(height: 20.0),
                   FutureBuilder(
-                      future: ServiceController().getServices(),
+                      future: serviceController.getServices(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data.services.length != 0) {
@@ -192,6 +249,10 @@ class _HomeViewState extends State<HomeView> {
                               child: Text("No Services Found :)"),
                             );
                           }
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(snapshot.error.toString()),
+                          );
                         } else {
                           return Center(
                             child: JumpingDotsProgressIndicator(

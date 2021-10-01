@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:adam/constants.dart';
 import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
@@ -10,16 +8,12 @@ import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/feedbackCard.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceSubscriptionView extends StatefulWidget {
   final Service service;
@@ -36,6 +30,7 @@ class ServiceSubscriptionView extends StatefulWidget {
 
 class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   final _reviewController = TextEditingController();
+  final ServiceController serviceController = ServiceController();
 
   // for reviews
   String firstName = "";
@@ -68,28 +63,6 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
       },
     );
     super.initState();
-  }
-
-  showNotification() async {
-    var android = AndroidNotificationDetails('id', 'channel ', 'description',
-        priority: Priority.high,
-        importance: Importance.max,
-        playSound: true,
-        sound: RawResourceAndroidNotificationSound('xperia'));
-    var iOS = IOSNotificationDetails(
-      sound: "xperia.mp3",
-    );
-    var platform = new NotificationDetails(
-      android: android,
-      iOS: iOS,
-    );
-    await _flutterLocalNotificationsPlugin.show(
-      0,
-      widget.service.serviceName,
-      'Service has been subscribed successfully!',
-      platform,
-      payload: 'xperia',
-    );
   }
 
   final _standardFeatures = [
@@ -162,42 +135,6 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     ),
   ];
 
-  void sendNotification() async {
-    print("SENDING NOTIFICATIONS...!!");
-    final postNotificationURL = "https://fcm.googleapis.com/fcm/send";
-    final headers = {
-      'content-type': 'application/json',
-      'Authorization': dotenv.env["authServerKeyFirebase"]
-    };
-    QuerySnapshot qnSnapshot =
-        await FirebaseFirestore.instance.collection('notificationsToken').get();
-
-    for (int i = 0; i < qnSnapshot.docs.length; i++) {
-      print("TOKEN SENDING TOOO: " + qnSnapshot.docs[i]['token']);
-      final body = {
-        "to": qnSnapshot.docs[i]['token'],
-        "mutable_content": true,
-        "priority": "high",
-        "notification": {
-          "title": widget.service.serviceName,
-          "body": "New service has been subscribed",
-        },
-        "data": {
-          "body": "body",
-          "title": "title",
-          "click_action": "FLUTTER_NOTIFICATION_CLICK",
-          "sound": "xperia.mp3"
-        }
-      };
-      await http.post(
-        Uri.parse(postNotificationURL),
-        headers: headers,
-        body: json.encode(body),
-        encoding: Encoding.getByName('utf-8'),
-      );
-    }
-  }
-
   @override
   void dispose() {
     _reviewController.dispose();
@@ -213,7 +150,6 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            physics: ScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: 15.0, right: 15.0, top: 15.0, bottom: 25.0),
@@ -233,18 +169,14 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 25.0,
-                  ),
+                  const SizedBox(height: 25.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(widget.service.serviceName,
                           style: _textTheme.headline1),
-                      Text("Campaign"),
-                      SizedBox(
-                        height: 20.0,
-                      ),
+                      const Text("Campaign"),
+                      const SizedBox(height: 20.0),
                       Text(
                         "With Facebook marketing campaign you can now grow your business, market your brand or any organization with number of inbox messages, posts in multiple groups and much more!\n\nSo, subscribe to your favorite serivce and get started now!",
                       ),
@@ -260,34 +192,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                         Color(int.parse(widget.service.serviceColor[0])),
                     iconData: widget.service.serviceIcon,
                     standardFeatures: _standardFeatures,
-                    subcribe: () async {
-                      setState(() {
-                        _isSubscribingStand = true;
-                      });
-                      String sessionId = await StripeServer(
-                              serviceName: widget.service.serviceName,
-                              price: widget.service.serviceType[0].typePrice)
-                          .createCheckout();
-
-                      final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => StripePaymentCheckout(
-                                    sessionId: sessionId,
-                                  ))).whenComplete(() {
-                        setState(() {
-                          _isSubscribingStand = false;
-                        });
-                      });
-
-                      if (result == 'success') {
-                        showNotification();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: paymentCanceled,
-                        ));
-                      }
-                    },
+                    subcribe: _standardSubscription,
                   ),
                   const SizedBox(height: 40.0),
                   PremiumServiceSubscriptionCard(
@@ -297,204 +202,17 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                         Color(int.parse(widget.service.serviceColor[0])),
                     iconData: widget.service.serviceIcon,
                     standardFeatures: _premiumFeatures,
-                    subcribe: () async {
-                      setState(() {
-                        _isSubscribingPrem = true;
-                      });
-                      String sessionId = await StripeServer(
-                        serviceName: widget.service.serviceName,
-                        price: widget.service.serviceType[1].typePrice,
-                      ).createCheckout();
-
-                      final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => StripePaymentCheckout(
-                                    sessionId: sessionId,
-                                  ))).whenComplete(() {
-                        setState(() {
-                          _isSubscribingPrem = false;
-                        });
-                      });
-
-                      if (result == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: paymentSuccessful,
-                        ));
-                        showNotification();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: paymentCanceled,
-                        ));
-                      }
-                    },
+                    subcribe: _premiumSubscription,
                     // subcribe: _subscribe,
                   ),
                   const SizedBox(height: 20.0),
-                  Divider(
-                    color: Colors.grey,
-                  ),
+                  Divider(color: Colors.grey),
                   const SizedBox(height: 20.0),
                   CustomButton(
                     btnWidth: 180.0,
                     btnHeight: 40.0,
-                    btnOnPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(
-                            "Write a Review",
-                            style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headline2
-                                  .fontSize,
-                              color:
-                                  Provider.of<ThemeProvider>(context).darkTheme
-                                      ? Colors.white
-                                      : kLightGreenColor,
-                            ),
-                          ),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              RatingBar.builder(
-                                itemSize: 30.0,
-                                initialRating: 0,
-                                minRating: 1,
-                                maxRating: 5,
-                                direction: Axis.horizontal,
-                                allowHalfRating: false,
-                                itemCount: 5,
-                                itemBuilder: (context, _) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                onRatingUpdate: (rating) {
-                                  setState(() {
-                                    _ratings = rating;
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 12.0),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.89,
-                                child: TextFormField(
-                                  maxLines: 5,
-                                  controller: _reviewController,
-                                  keyboardType: TextInputType.multiline,
-                                  textInputAction: TextInputAction.done,
-                                  textCapitalization:
-                                      TextCapitalization.sentences,
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        "Tell others what do you think about this service...",
-                                    hintStyle:
-                                        Theme.of(context).textTheme.caption,
-                                    fillColor: _themeProvider.darkTheme
-                                        ? Colors.black12
-                                        : Colors.grey[100],
-                                    filled: true,
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.transparent)),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.transparent),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          actions: [
-                            CustomButton(
-                              btnWidth: 90,
-                              btnHeight: 40,
-                              btnOnPressed: () => Navigator.pop(context),
-                              btnColor: Colors.white,
-                              btnText: Text(
-                                "Cancel",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            CustomButton(
-                              btnWidth: 90,
-                              btnHeight: 40,
-                              btnOnPressed: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-
-                                String userId = prefs.getString('userId');
-                                String firstName = prefs.getString('firstName');
-                                String lastName = prefs.getString('lastName');
-
-                                String url =
-                                    "https://adam-web-api.herokuapp.com/user/add-feedback";
-
-                                var body = {
-                                  "userId": userId,
-                                  "cust_firstName": firstName,
-                                  "cust_lastName": lastName,
-                                  "serviceId": widget.service.serviceId,
-                                  "user_rating": _ratings.toString(),
-                                  "comment": _reviewController.text.trim(),
-                                };
-                                http.Response response = await http.post(
-                                  Uri.parse(url),
-                                  body: body,
-                                );
-
-                                print(response.statusCode);
-                                if (response.statusCode == 200) {
-                                  _reviewController.clear();
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      duration: Duration(seconds: 1),
-                                      backgroundColor: kLightGreenColor,
-                                      content: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.check,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 8.0),
-                                          const Text("Review submitted!"),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                  setState(() {});
-                                } else {
-                                  _reviewController.clear();
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        duration: Duration(seconds: 1),
-                                        backgroundColor: Colors.red,
-                                        content: Text("Undefined error!")),
-                                  );
-                                }
-                              },
-                              btnColor: kLightGreenColor,
-                              btnText: Text(
-                                "Submit",
-                                style: kBtnTextStyle,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                    btnOnPressed: () =>
+                        _giveReviewAlertBox(_themeProvider.darkTheme),
                     btnColor: kPrimaryBlueColor,
                     btnText: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -522,41 +240,31 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                       ),
                       Expanded(child: Container()),
                       for (int i = 0; i < 4; i++)
-                        const Icon(
-                          Icons.star_rounded,
-                          size: 30.0,
-                        ),
-                      const Icon(
-                        Icons.star_half_rounded,
-                        size: 30.0,
-                      )
+                        const Icon(Icons.star_rounded, size: 30.0),
+                      const Icon(Icons.star_half_rounded, size: 30.0)
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  // ListView.separated(
-                  //   separatorBuilder: (context, index) =>
-                  //       Divider(color: Colors.grey),
-                  //   shrinkWrap: true,
-                  //   physics: NeverScrollableScrollPhysics(),
-                  //   itemCount: widget.service.serviceComments.length,
-                  //   itemBuilder: (context, index) => FeedbackCard(
-                  //     serviceCommentData: widget.service.serviceComments[index],
-                  //   ),
-                  // ),
                   FutureBuilder(
                     future: ServiceController().getServices(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
-                        return ListView.separated(
-                          separatorBuilder: (context, index) =>
-                              Divider(color: Colors.grey),
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: 1,
-                          itemBuilder: (context, index) => FeedbackCard(
-                              serviceCommentData:
-                                  widget.service.serviceComments[index]),
-                        );
+                        if (widget.service.serviceComments.length != 0) {
+                          return ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                Divider(color: Colors.grey),
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: 1,
+                            itemBuilder: (context, index) => FeedbackCard(
+                                serviceCommentData:
+                                    widget.service.serviceComments[index]),
+                          );
+                        } else {
+                          return Center(
+                            child: const Text("No Reviews Yet!"),
+                          );
+                        }
                       } else {
                         return Center(
                           child: JumpingDotsProgressIndicator(
@@ -568,12 +276,16 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                     },
                   ),
                   TextButton(
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => UserReviews(
+                    onPressed: widget.service.serviceComments.length == 0
+                        ? null
+                        : () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UserReviews(
                                   userReviews: widget.service.serviceComments,
-                                ))),
+                                ),
+                              ),
+                            ),
                     child: const Text(
                       "See all reviews",
                     ),
@@ -583,6 +295,238 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  showNotification() async {
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.high,
+        importance: Importance.max,
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('xperia'));
+    var iOS = IOSNotificationDetails(
+      sound: "xperia.mp3",
+    );
+    var platform = new NotificationDetails(
+      android: android,
+      iOS: iOS,
+    );
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      widget.service.serviceName,
+      'Service has been subscribed successfully!',
+      platform,
+      payload: 'xperia',
+    );
+  }
+
+  void _standardSubscription() async {
+    setState(() {
+      _isSubscribingStand = true;
+    });
+    String sessionId = await StripeServer(
+            serviceName: widget.service.serviceName,
+            price: widget.service.serviceType[0].typePrice)
+        .createCheckout();
+
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => StripePaymentCheckout(
+                  sessionId: sessionId,
+                ))).whenComplete(() {
+      setState(() {
+        _isSubscribingStand = false;
+      });
+    });
+
+    if (result == 'success') {
+      int code = await serviceController.subscribeService(
+        widget.service.serviceId,
+        false,
+      );
+
+      if (code == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: paymentSuccessful,
+        ));
+        showNotification();
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: paymentCanceled,
+      ));
+    }
+  }
+
+  void _premiumSubscription() async {
+    setState(() {
+      _isSubscribingPrem = true;
+    });
+    String sessionId = await StripeServer(
+      serviceName: widget.service.serviceName,
+      price: widget.service.serviceType[1].typePrice,
+    ).createCheckout();
+
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => StripePaymentCheckout(
+                  sessionId: sessionId,
+                ))).whenComplete(() {
+      setState(() {
+        _isSubscribingPrem = false;
+      });
+    });
+
+    if (result == 'success') {
+      int code = await serviceController.subscribeService(
+        widget.service.serviceId,
+        true,
+      );
+
+      if (code == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: paymentSuccessful,
+        ));
+        showNotification();
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: paymentCanceled,
+      ));
+    }
+  }
+
+  void _giveReview() async {
+    int result = await ServiceController().giveFeedBack(
+      widget.service.serviceId,
+      _ratings.toString(),
+      _reviewController.text.trim(),
+    );
+    print(result);
+    if (result == 200) {
+      _reviewController.clear();
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 1),
+          backgroundColor: kLightGreenColor,
+          content: Row(
+            children: [
+              const Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8.0),
+              const Text("Review submitted!"),
+            ],
+          ),
+        ),
+      );
+      setState(() {});
+    } else {
+      _reviewController.clear();
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            duration: Duration(seconds: 1),
+            backgroundColor: Colors.red,
+            content: Text("Undefined error!")),
+      );
+    }
+  }
+
+  void _giveReviewAlertBox(bool theme) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Write a Review",
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.headline2.fontSize,
+            color: Provider.of<ThemeProvider>(context).darkTheme
+                ? Colors.white
+                : kLightGreenColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RatingBar.builder(
+              itemSize: 30.0,
+              initialRating: 0,
+              minRating: 1,
+              maxRating: 5,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                setState(() {
+                  _ratings = rating;
+                });
+              },
+            ),
+            const SizedBox(height: 12.0),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.89,
+              child: TextFormField(
+                maxLines: 5,
+                controller: _reviewController,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.done,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  hintText:
+                      "Tell others what do you think about this service...",
+                  hintStyle: Theme.of(context).textTheme.caption,
+                  fillColor: theme ? Colors.black12 : Colors.grey[100],
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent)),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          CustomButton(
+            btnWidth: 90,
+            btnHeight: 40,
+            btnOnPressed: () => Navigator.pop(context),
+            btnColor: Colors.white,
+            btnText: Text(
+              "Cancel",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ),
+          CustomButton(
+            btnWidth: 90,
+            btnHeight: 40,
+            btnOnPressed: _giveReview,
+            btnColor: kLightGreenColor,
+            btnText: Text(
+              "Submit",
+              style: kBtnTextStyle,
+            ),
+          ),
+        ],
       ),
     );
   }

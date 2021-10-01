@@ -7,7 +7,8 @@ import 'package:adam/views/emailNotVerfiedView.dart';
 import 'package:adam/views/home/favoriteView.dart';
 import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/views/profile/changePasswordView.dart';
-import 'package:adam/views/services/instagram/instagramView.dart';
+import 'package:adam/views/services/linkedin/linkedin_marketing_view.dart';
+import 'package:adam/views/services/twitter/twitter_marketing_view.dart';
 import 'package:adam/views/settings/account/deleteAccountView.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/login/forgotPasswordView.dart';
@@ -40,6 +41,24 @@ void main() async {
   runApp(MyApp());
 }
 
+class ScrollBehaviorModified extends ScrollBehavior {
+  const ScrollBehaviorModified();
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    switch (getPlatform(context)) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+      case TargetPlatform.android:
+        return const BouncingScrollPhysics();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        return const ClampingScrollPhysics();
+    }
+    return null;
+  }
+}
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -66,53 +85,59 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => BottomNavBarProvider()),
-          ChangeNotifierProvider(create: (context) => _themeProvider),
-        ],
-        child: Consumer<ThemeProvider>(
-          builder: (context, themeProvider, child) => MaterialApp(
-            title: 'ADAM',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeStyles.themeData(
-              _themeProvider.darkTheme,
-              context,
-              _themeProvider.size == "Medium"
-                  ? 28.0
-                  : _themeProvider.size == "Large"
-                      ? 35.0
-                      : 20.0,
-            ),
-            initialRoute: "/splashScreen",
-            routes: {
-              "/": (context) => LoginView(),
-              "/mainView": (context) => Dashboard(),
-              "/splashScreen": (context) => SplashScreen(),
-              "/signUp": (context) => SignUpView(),
-              "/emailNotVerified": (context) => EmailNotVerfied(),
-              "/forgotPassword": (context) => ForgotPasswordView(),
-              "/profile": (context) => ProfileView(),
-              "/editProfile": (context) => EditProfileView(),
-              "/deleteAccount": (context) => DeleteAccountView(),
-              "/changePassword": (context) => ChangePasswordView(),
-              "/changeEmail": (context) => ChangeEmailView(),
-              "/phoneVerify": (context) => PhoneVerificationView(),
-              "/chat": (context) => ChatView(),
-              "/subscriptionHistory": (context) => SubscriptionHistoryView(),
-              "/account": (context) => AccountView(),
-              "/notifications": (context) => NotificationView(),
-              "/help": (context) => HelpView(),
-              "/settings": (context) => SettingsView(),
-              "/theme": (context) => ThemeView(),
-              "/faq": (context) => FAQView(),
-              "/appInfo": (context) => AppInfo(),
-              "/reportProblem": (context) => ReportProblemView(),
-              "/disableAccount": (context) => DisableAccountRequestView(),
-              "/privacyPolicy": (context) => PrivacyPolicy(),
-              "/favorite": (context) => FavoriteView(),
-              '/instagramView': (context) => InstagramView(),
-            },
+      providers: [
+        ChangeNotifierProvider(create: (context) => BottomNavBarProvider()),
+        ChangeNotifierProvider(create: (context) => _themeProvider),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) => MaterialApp(
+          title: 'ADAM',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeStyles.themeData(
+            _themeProvider.darkTheme,
+            context,
+            _themeProvider.size == "Medium"
+                ? 28.0
+                : _themeProvider.size == "Large"
+                    ? 35.0
+                    : 20.0,
           ),
-        ));
+          builder: (context, widget) {
+            return ScrollConfiguration(
+                behavior: ScrollBehaviorModified(), child: widget);
+          },
+          initialRoute: "/splashScreen",
+          routes: {
+            "/": (context) => LoginView(),
+            "/mainView": (context) => Dashboard(),
+            "/splashScreen": (context) => SplashScreen(),
+            "/signUp": (context) => SignUpView(),
+            "/emailNotVerified": (context) => EmailNotVerfied(),
+            "/forgotPassword": (context) => ForgotPasswordView(),
+            "/profile": (context) => ProfileView(),
+            "/editProfile": (context) => EditProfileView(),
+            "/deleteAccount": (context) => DeleteAccountView(),
+            "/changePassword": (context) => ChangePasswordView(),
+            "/changeEmail": (context) => ChangeEmailView(),
+            "/phoneVerify": (context) => PhoneVerificationView(),
+            "/chat": (context) => ChatView(),
+            "/subscriptionHistory": (context) => SubscriptionHistoryView(),
+            "/account": (context) => AccountView(),
+            "/notifications": (context) => NotificationView(),
+            "/help": (context) => HelpView(),
+            "/settings": (context) => SettingsView(),
+            "/theme": (context) => ThemeView(),
+            "/faq": (context) => FAQView(),
+            "/appInfo": (context) => AppInfo(),
+            "/reportProblem": (context) => ReportProblemView(),
+            "/disableAccount": (context) => DisableAccountRequestView(),
+            "/privacyPolicy": (context) => PrivacyPolicy(),
+            "/favorite": (context) => FavoriteView(),
+            '/twitterView': (context) => TwitterMarketingView(),
+            '/linkedInView': (context) => LinkedinMarketingView(),
+          },
+        ),
+      ),
+    );
   }
 }

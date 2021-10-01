@@ -1,4 +1,4 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/validators/validators.dart';
@@ -30,7 +30,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   final format = DateFormat("dd-MM-yyyy");
 
-  final _auth = Auth();
+  final _userAuth = UserAuth();
 
   String _gender = "Male";
   String _country = "Pakistan";
@@ -558,34 +558,69 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
+  /// `Firebase signup`
+  // void _signUp() async {
+  //   {
+  //     if (_formKey.currentState.validate()) {
+  //       setState(() {
+  //         _isLoading = true;
+  //       });
+  //       var result = await _auth
+  //           .signUp(
+  //         fullNameController.text.trim(),
+  //         emailController.text.trim(),
+  //         passwordController.text.trim(),
+  //         phoneNumberController.text.trim(),
+  //         dobController.text,
+  //         _gender,
+  //         _country,
+  //         _city,
+  //       )
+  //           .whenComplete(() {
+  //         setState(() {
+  //           _isLoading = false;
+  //         });
+  //       });
+  //       if (result is String) {
+  //         print(result);
+  //         _errorSignup(result);
+  //       } else {
+  //         _signUpSuccessful();
+  //       }
+  //     }
+  //   }
+  // }
+
+  /// `Node signup`
   void _signUp() async {
-    {
-      if (_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      int result = await _userAuth
+          .signUp(
+        fullName: fullNameController.text.trim(),
+        email: emailController.text.trim(),
+        phone: phoneNumberController.text.trim(),
+        password: passwordController.text.trim(),
+        dob: dobController.text.trim(),
+        gender: _gender,
+        city: _city,
+        country: _country,
+      )
+          .whenComplete(() {
         setState(() {
-          _isLoading = true;
+          _isLoading = false;
         });
-        var result = await _auth
-            .signUp(
-          fullNameController.text.trim(),
-          emailController.text.trim(),
-          passwordController.text.trim(),
-          phoneNumberController.text.trim(),
-          dobController.text,
-          _gender,
-          _country,
-          _city,
-        )
-            .whenComplete(() {
-          setState(() {
-            _isLoading = false;
-          });
-        });
-        if (result is String) {
-          print(result);
-          _errorSignup(result);
-        } else {
-          _signUpSuccessful();
-        }
+      });
+
+      if (result == 200) {
+        _signUpSuccessful();
+      } else if (result == 204) {
+        _errorSignup("Account already exists!");
+      } else {
+        _errorSignup("Undefined error!");
       }
     }
   }
@@ -609,8 +644,8 @@ class _SignUpViewState extends State<SignUpView> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     _clearController();
-
-    Navigator.popAndPushNamed(context, "/emailNotVerified");
+    Navigator.pop(context);
+    // Navigator.popAndPushNamed(context, "/emailNotVerified");
   }
 
   void _errorSignup(String value) {

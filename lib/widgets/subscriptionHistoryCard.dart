@@ -157,7 +157,8 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
                       child: Row(
                         children: [
                           Text("Save "),
-                          Icon(Icons.download, size: 17.0)
+                          // Icon(Icons.download, size: 17.0)
+                          Icon(Icons.save, size: 17.0)
                         ],
                       )),
                 ],

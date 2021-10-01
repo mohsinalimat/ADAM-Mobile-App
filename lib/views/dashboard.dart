@@ -7,8 +7,7 @@ import 'package:adam/views/home/homeView.dart';
 import 'package:adam/views/mydrawer.dart';
 import 'package:adam/views/profile/profileView.dart';
 import 'package:adam/views/settings/settingsView.dart';
-import 'package:adam/views/stats/statsView.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:adam/views/stats/stats_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -28,7 +27,7 @@ class _DashboardState extends State<Dashboard>
   AnimationController _animationController;
   bool _canBeDragged = false;
 
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   // FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   PushNotificationsManager pushNotificationsManager =
       PushNotificationsManager();
@@ -42,8 +41,10 @@ class _DashboardState extends State<Dashboard>
 
   final _bottomIcons = [
     Icons.home,
-    Icons.auto_graph,
+    // Icons.auto_graph,
+    Icons.graphic_eq,
     Icons.settings,
+    Icons.person,
   ];
 
   // void _getToken() async {
@@ -184,7 +185,7 @@ class _DashboardState extends State<Dashboard>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (int i = 0; i < _views.length - 1; i++)
+                    for (int i = 0; i < _views.length; i++)
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -221,36 +222,36 @@ class _DashboardState extends State<Dashboard>
                               : Container()
                         ],
                       ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          onPressed: () => _bottomBarProviders.currentIndex = 3,
-                          icon: CircleAvatar(
-                            // backgroundImage: const AssetImage('assets/dp.png'),
-                            backgroundImage:
-                                _firebaseAuth.currentUser.photoURL == " "
-                                    ? const AssetImage('assets/dp.png')
-                                    : NetworkImage(
-                                        _firebaseAuth.currentUser.photoURL),
-                          ),
-                        ),
-                        _bottomBarProviders.currentIndex == 3
-                            ? WidgetAnimator(
-                                child: Container(
-                                  height: 5.0,
-                                  width: 5.0,
-                                  decoration: BoxDecoration(
-                                    color: _themeProvider.darkTheme
-                                        ? Colors.white
-                                        : kPrimaryBlueColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              )
-                            : Container()
-                      ],
-                    ),
+                    // Column(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     IconButton(
+                    //       onPressed: () => _bottomBarProviders.currentIndex = 3,
+                    //       icon: CircleAvatar(
+                    //         backgroundImage: const AssetImage('assets/dp.png'),
+                    //         // backgroundImage:
+                    //         //     _firebaseAuth.currentUser.photoURL == " "
+                    //         //         ? const AssetImage('assets/dp.png')
+                    //         //         : NetworkImage(
+                    //         //             _firebaseAuth.currentUser.photoURL),
+                    //       ),
+                    //     ),
+                    //     _bottomBarProviders.currentIndex == 3
+                    //         ? WidgetAnimator(
+                    //             child: Container(
+                    //               height: 5.0,
+                    //               width: 5.0,
+                    //               decoration: BoxDecoration(
+                    //                 color: _themeProvider.darkTheme
+                    //                     ? Colors.white
+                    //                     : kPrimaryBlueColor,
+                    //                 shape: BoxShape.circle,
+                    //               ),
+                    //             ),
+                    //           )
+                    //         : Container()
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

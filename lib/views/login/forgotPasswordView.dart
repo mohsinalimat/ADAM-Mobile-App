@@ -1,4 +1,4 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
@@ -6,6 +6,7 @@ import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   @override
@@ -16,8 +17,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final forgorEmailTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final node = FocusNode();
-
-  final _auth = Auth();
+  final _userAuth = UserAuth();
 
   bool _isLoading = false;
 
@@ -104,7 +104,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             setState(() {
                               _isLoading = true;
                             });
-                            var value = await _auth
+
+                            var result = await _userAuth
                                 .forgotPassword(
                                     forgorEmailTextController.text.trim())
                                 .whenComplete(() {
@@ -112,8 +113,65 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                 _isLoading = false;
                               });
                             });
-                            if (value is String) {
-                              print("Valueeee: " + value.toString());
+                            print(result);
+                            if (result is String) {
+                              forgorEmailTextController.clear();
+
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text("Reset Link!"),
+                                  content: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Text(
+                                          "Reset password by clicking the button below!"),
+                                      const SizedBox(
+                                        height: 25.0,
+                                      ),
+                                      CustomButton(
+                                        btnWidth: 250.0,
+                                        btnHeight: 45.0,
+                                        btnOnPressed: () async {
+                                          await launch(result.toString());
+
+                                          Navigator.popUntil(
+                                              context,
+                                              (route) =>
+                                                  route.settings?.name == "/");
+                                        },
+                                        btnColor: kLightBlueColor,
+                                        btnText: Text(
+                                          "Reset Password",
+                                          style: kBtnTextStyle,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Back"))
+                                  ],
+                                ),
+                              );
+                              // var snackBar = SnackBar(
+                              //     content: Row(
+                              //   children: [
+                              //     Icon(Icons.link, color: Colors.white),
+                              //     const SizedBox(width: 8.0),
+                              //     Expanded(
+                              //       child: Text(
+                              //         "Reset link has been sent to your Email",
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ));
+                              // ScaffoldMessenger.of(context)
+                              //     .showSnackBar(snackBar);
+                              // Navigator.pop(context);
+                            } else if (result == 204) {
                               var snackBar = SnackBar(
                                   backgroundColor: Colors.red,
                                   content: Row(
@@ -123,7 +181,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                         color: Colors.white,
                                       ),
                                       Text(
-                                        " $value",
+                                        " Account does not exists!",
                                         style: TextStyle(
                                           color: Colors.white,
                                         ),
@@ -133,24 +191,73 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             } else {
-                              forgorEmailTextController.clear();
                               var snackBar = SnackBar(
+                                  backgroundColor: Colors.red,
                                   content: Row(
-                                children: [
-                                  Icon(Icons.link, color: Colors.white),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: Text(
-                                      "Reset link has been sent to your Email",
-                                    ),
-                                  ),
-                                ],
-                              ));
+                                    children: [
+                                      Icon(
+                                        Icons.info,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        " Unknown error! Try Again!",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ));
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
-
-                              Navigator.pop(context);
                             }
+
+                            // var value = await _auth
+                            //     .forgotPassword(
+                            //         forgorEmailTextController.text.trim())
+                            //     .whenComplete(() {
+                            //   setState(() {
+                            //     _isLoading = false;
+                            //   });
+                            // });
+                            // if (value is String) {
+                            //   print("Valueeee: " + value.toString());
+                            // var snackBar = SnackBar(
+                            //     backgroundColor: Colors.red,
+                            //     content: Row(
+                            //       children: [
+                            //         Icon(
+                            //           Icons.info,
+                            //           color: Colors.white,
+                            //         ),
+                            //         Text(
+                            //           " $value",
+                            //           style: TextStyle(
+                            //             color: Colors.white,
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ));
+                            // ScaffoldMessenger.of(context)
+                            //     .showSnackBar(snackBar);
+                            // } else {
+                            // forgorEmailTextController.clear();
+                            // var snackBar = SnackBar(
+                            //     content: Row(
+                            //   children: [
+                            //     Icon(Icons.link, color: Colors.white),
+                            //     const SizedBox(width: 8.0),
+                            //     Expanded(
+                            //       child: Text(
+                            //         "Reset link has been sent to your Email",
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ));
+                            // ScaffoldMessenger.of(context)
+                            //     .showSnackBar(snackBar);
+
+                            // Navigator.pop(context);
+                            // }
                           }
                         },
                         btnColor: _themeProvider.darkTheme

@@ -43,7 +43,7 @@ class _FeedbackCardState extends State<FeedbackCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${widget.serviceCommentData.userFirstName} ${widget.serviceCommentData.userLastName}",
+                            "${widget.serviceCommentData.userFullName}",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 14.0),
                           ),

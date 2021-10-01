@@ -1,8 +1,8 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/userData.dart';
 import 'package:adam/validators/validators.dart';
-import 'package:adam/views/profile/changeEmailView.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/editableCustomTextField.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -16,13 +16,13 @@ import 'package:flutter/services.dart';
 
 class EditProfileView extends StatefulWidget {
   final User user;
-  final snapshot;
+  final UserData userData;
   final Function(bool) refreshCallBack;
 
   const EditProfileView({
     Key key,
     this.user,
-    this.snapshot,
+    this.userData,
     this.refreshCallBack,
   }) : super(key: key);
   @override
@@ -30,8 +30,10 @@ class EditProfileView extends StatefulWidget {
 }
 
 class _EditProfileViewState extends State<EditProfileView> {
+  final _userAuth = UserAuth();
+
   List<dynamic> _citiesName = [];
-  final _auth = Auth();
+
   final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneNumberController = TextEditingController();
@@ -55,13 +57,13 @@ class _EditProfileViewState extends State<EditProfileView> {
   String _oldCity = "";
 
   void _fetchingUserInfo() {
-    _oldName = fullNameController.text = widget.user.displayName;
-    _oldPhone = phoneNumberController.text = widget.snapshot["phoneNumber"];
-    _oldDob = dobController.text = widget.snapshot['dob'];
-    _oldEmail = emailController.text = widget.user.email;
-    _oldGender = _gender = widget.snapshot["gender"];
-    _oldCity = _city = widget.snapshot['city'];
-    _country = widget.snapshot['country'];
+    _oldName = fullNameController.text = widget.userData.fullName;
+    _oldPhone = phoneNumberController.text = widget.userData.phoneNumber;
+    _oldDob = dobController.text = widget.userData.dob;
+    _oldEmail = emailController.text = widget.userData.email;
+    _oldGender = _gender = widget.userData.gender;
+    _oldCity = _city = widget.userData.city;
+    _country = widget.userData.country;
   }
 
   bool _informationUpdated() {
@@ -378,59 +380,85 @@ class _EditProfileViewState extends State<EditProfileView> {
                               if (_informationUpdated()) {
                                 print(dobController.text.trim());
                                 if (_formKey.currentState.validate()) {
-                                  // data updated
-                                  Map<String, Object> newData = {
-                                    "phoneNumber":
-                                        phoneNumberController.text.trim(),
-                                    "gender": _gender,
-                                    "country": _country,
-                                    "city": _city,
-                                    "dob": dobController.text.trim(),
-                                    "phoneVerify": _oldPhone !=
-                                            phoneNumberController.text.trim()
-                                        ? false
-                                        : widget.snapshot['phoneVerify'],
-                                  };
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
 
-                                  // in case email is updated then move to password verification
-                                  if (_oldEmail !=
-                                      emailController.text.trim()) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ChangeEmailView(
-                                          fullName:
-                                              fullNameController.text.trim(),
-                                          updatedData: newData,
-                                          updatedEmail:
-                                              emailController.text.trim(),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
+                                  int result = await _userAuth
+                                      .editProfile(
+                                    fullNameController.text.trim(),
+                                    emailController.text.trim(),
+                                    phoneNumberController.text.trim(),
+                                    dobController.text.trim(),
+                                    _gender,
+                                    _city,
+                                    _country,
+                                  )
+                                      .whenComplete(() {
                                     setState(() {
-                                      _isLoading = true;
+                                      _isLoading = false;
                                     });
+                                  });
 
-                                    var value = await _auth
-                                        .updateData(
-                                      widget.user,
-                                      fullNameController.text.trim(),
-                                      newData,
-                                    )
-                                        .whenComplete(() {
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                    });
-                                    print("VALUE: $value");
-
-                                    if (value is String) {
-                                      _errorSaveProfile(value);
-                                    } else {
-                                      _saveSuccess();
-                                    }
+                                  if (result == 200) {
+                                    _saveSuccess();
+                                  } else {
+                                    _errorSaveProfile("Unknown Error!");
                                   }
+
+                                  // data updated
+                                  // Map<String, Object> newData = {
+                                  //   "phoneNumber":
+                                  //       phoneNumberController.text.trim(),
+                                  //   "gender": _gender,
+                                  //   "country": _country,
+                                  //   "city": _city,
+                                  //   "dob": dobController.text.trim(),
+                                  //   "phoneVerify": _oldPhone !=
+                                  //           phoneNumberController.text.trim()
+                                  //       ? false
+                                  //       : widget.userData.isPhoneVerified,
+                                  // };
+
+                                  // // in case email is updated then move to password verification
+                                  // if (_oldEmail !=
+                                  //     emailController.text.trim()) {
+                                  //   Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (_) => ChangeEmailView(
+                                  //         fullName:
+                                  //             fullNameController.text.trim(),
+                                  //         updatedData: newData,
+                                  //         updatedEmail:
+                                  //             emailController.text.trim(),
+                                  //       ),
+                                  //     ),
+                                  //   );
+                                  // } else {
+                                  //   setState(() {
+                                  //     _isLoading = true;
+                                  //   });
+
+                                  //   var value = await _auth
+                                  //       .updateData(
+                                  //     widget.user,
+                                  //     fullNameController.text.trim(),
+                                  //     newData,
+                                  //   )
+                                  //       .whenComplete(() {
+                                  //     setState(() {
+                                  //       _isLoading = false;
+                                  //     });
+                                  //   });
+                                  //   print("VALUE: $value");
+
+                                  //   if (value is String) {
+                                  //     _errorSaveProfile(value);
+                                  //   } else {
+                                  //     _saveSuccess();
+                                  //   }
+                                  // }
                                 }
                               } else {
                                 Navigator.pop(context);
@@ -476,7 +504,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     Future.delayed(Duration(seconds: 1), () {
-      Navigator.pop(context);
+      Navigator.of(context).pop(true);
     });
     widget.refreshCallBack(true);
   }

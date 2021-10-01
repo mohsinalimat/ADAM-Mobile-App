@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/userData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -14,16 +17,21 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   void _authCheck() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    String userId = pref.getString("userId");
-    if (userId == null) {
-      print("ALREADY LOGGED IN $userId");
+    String stringfyJson = pref.getString("userData");
+    UserData userData;
+    if (stringfyJson != null) {
+      Map userDataObject = jsonDecode(stringfyJson);
+      userData = UserData.fromJSON(userDataObject);
+    }
+    if (userData != null) {
+      print("ALREADY LOGGED IN ${userData.token}");
       Future.delayed(Duration(seconds: 3), () {
-        Navigator.pushReplacementNamed(context, '/');
+        Navigator.pushReplacementNamed(context, '/mainView');
       });
     } else {
       print("NO USER FOUND LOGGED IN!");
       Future.delayed(Duration(seconds: 3), () {
-        Navigator.pushNamed(context, '/mainView');
+        Navigator.pushNamed(context, '/');
       });
     }
   }

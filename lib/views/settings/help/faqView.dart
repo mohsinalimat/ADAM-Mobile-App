@@ -145,9 +145,10 @@ class _FAQViewState extends State<FAQView> {
                     ),
                     expandedAlignment: Alignment.centerLeft,
                     expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                    iconColor: _themeProvider.darkTheme
-                        ? Colors.white
-                        : Theme.of(context).primaryColor,
+
+                    // iconColor: _themeProvider.darkTheme
+                    //     ? Colors.white
+                    //     : Theme.of(context).primaryColor,
                     title: Text(
                       _currentIndex == 0
                           ? _topQuestions[i]

@@ -19,7 +19,7 @@ class Service {
   final String serviceIcon;
   final List<dynamic> serviceColor;
   final List<ServiceType> serviceType;
-  final double serviceRatings;
+  final int serviceRatings;
   final List<ServiceComment> serviceComments;
 
   Service({
@@ -48,7 +48,8 @@ class Service {
       serviceIcon: json['service_icon'],
       serviceColor: json['service_color'],
       serviceType: servicesTypes,
-      serviceRatings: json['service_feedback']['ratings'],
+      serviceRatings:
+          double.parse(json['service_feedback']['ratings'].toString()).toInt(),
       serviceComments: feedbacks,
     );
   }
@@ -71,8 +72,7 @@ class ServiceType {
 
 class ServiceComment {
   final String userId;
-  final String userFirstName;
-  final String userLastName;
+  final String userFullName;
   final String userRatings;
   final String comment;
   final int vote;
@@ -81,8 +81,7 @@ class ServiceComment {
     this.userId,
     this.comment,
     this.vote,
-    this.userFirstName,
-    this.userLastName,
+    this.userFullName,
     this.userRatings,
   });
 
@@ -91,9 +90,37 @@ class ServiceComment {
       userId: json['userId'],
       comment: json['comment'],
       vote: json['votes'],
-      userFirstName: json['cust_firstName'],
-      userLastName: json['cust_lastName'],
+      userFullName: json['cust_fullName'],
       userRatings: json['user_rating'].toString(),
+    );
+  }
+}
+
+// USER MODELS
+class SubscribedServices {
+  final List subscribedServices;
+
+  SubscribedServices({this.subscribedServices});
+
+  factory SubscribedServices.fromJson(Map<String, dynamic> json) {
+    return SubscribedServices(
+      subscribedServices: json['subscribedServices'],
+    );
+  }
+}
+
+class SubscribedService {
+  final bool isRunning;
+  final bool isPremium;
+  final Service service;
+
+  SubscribedService({this.isRunning, this.service, this.isPremium});
+
+  factory SubscribedService.fromJson(Map<String, dynamic> json) {
+    return SubscribedService(
+      isRunning: json['isRunning'],
+      service: json['serviceData'],
+      isPremium: json['isPremium'],
     );
   }
 }

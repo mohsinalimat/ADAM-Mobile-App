@@ -1,13 +1,21 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/views/services/instagram/instagram_view.dart';
+import 'package:adam/views/services/linkedin/linkedin_view.dart';
 import 'package:adam/views/services/onGoingServiceView.dart';
 import 'package:adam/views/services/serviceNotRunning.dart';
+import 'package:adam/views/services/twitter/twitter_view.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class YourServiceCard extends StatelessWidget {
+  final bool isRunning;
+  final bool isPremium;
+  final IconData serviceIcon;
+  final String serviceTitle;
+
   const YourServiceCard({
     Key key,
     this.isRunning = false,
@@ -15,10 +23,7 @@ class YourServiceCard extends StatelessWidget {
     @required this.serviceIcon,
     @required this.serviceTitle,
   }) : super(key: key);
-  final bool isRunning;
-  final bool isPremium;
-  final IconData serviceIcon;
-  final String serviceTitle;
+
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
@@ -105,9 +110,14 @@ class YourServiceCard extends StatelessWidget {
                             ),
                             Expanded(
                               child: LinearProgressIndicator(
-                                color: _themeProvider.darkTheme
-                                    ? kMediumGreenColor
-                                    : kLightGreenColor,
+                                valueColor: _themeProvider.darkTheme
+                                    ? AlwaysStoppedAnimation<Color>(
+                                        kMediumGreenColor)
+                                    : AlwaysStoppedAnimation<Color>(
+                                        kLightGreenColor),
+                                // color: _themeProvider.darkTheme
+                                //     ? kMediumGreenColor
+                                //     : kLightGreenColor,
                               ),
                             ),
                           ],
@@ -126,21 +136,54 @@ class YourServiceCard extends StatelessWidget {
               btnWidth: 200,
               btnHeight: 40.0,
               btnOnPressed: () {
-                if (isRunning) {
+                if (serviceTitle == "Instagram Marketing") {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => OnGoingServiceView(
-                                serviceName: serviceTitle,
-                              )));
-                } else {
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InstagramView(
+                        isPrem: isPremium,
+                      ),
+                    ),
+                  );
+                } else if (serviceTitle == "Twitter Marketing") {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => ServiceNotRunning(
-                                serviceName: serviceTitle,
-                              )));
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TwitterView(
+                        isPrem: isPremium,
+                      ),
+                    ),
+                  );
+                } else if (serviceTitle == "LinkedIn Marketing") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LinkedinView(
+                        isPrem: isPremium,
+                      ),
+                    ),
+                  );
                 }
+                // if (isRunning) {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (_) => OnGoingServiceView(
+                //         serviceName: serviceTitle,
+                //       ),
+                //     ),
+                //   );
+                // } else {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (_) => ServiceNotRunning(
+                //         serviceName: serviceTitle,
+                //         isPremium: isPremium,
+                //       ),
+                //     ),
+                //   );
+                // }
               },
               btnColor: _themeProvider.darkTheme
                   ? kMediumBlueColor

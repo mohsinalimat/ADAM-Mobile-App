@@ -51,9 +51,12 @@ class OnGoingServiceView extends StatelessWidget {
                     ),
                     Expanded(
                       child: LinearProgressIndicator(
-                        color: _themeProvider.darkTheme
-                            ? kMediumGreenColor
-                            : kLightGreenColor,
+                        valueColor: _themeProvider.darkTheme
+                            ? AlwaysStoppedAnimation<Color>(kMediumGreenColor)
+                            : AlwaysStoppedAnimation<Color>(kLightGreenColor),
+                        // color: _themeProvider.darkTheme
+                        //     ? kMediumGreenColor
+                        //     : kLightGreenColor,
                       ),
                     ),
                   ],

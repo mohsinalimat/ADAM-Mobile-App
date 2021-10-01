@@ -4,10 +4,17 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>    
+    <application android:usesCleartextTraffic="true"/>
+
+
    <application
+        android:name="io.flutter.app.FlutterApplication"
         android:label="ADAM"
         android:icon="@mipmap/ic_launcher">
+        <uses-library
+        android:name="org.apache.http.legacy"
+        android:required="false" />
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
         <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED"></action>
@@ -33,6 +40,8 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data android:name="io.flutter.network-policy"
+              android:resource="@xml/network_system_config"/>
             <!-- Displays an Android View that continues showing the launch screen
                  Drawable until Flutter paints its first frame, then this splash
                  screen fades out. A splash screen is useful to avoid any visual

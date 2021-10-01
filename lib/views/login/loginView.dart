@@ -1,4 +1,4 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/validators/validators.dart';
@@ -15,7 +15,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _auth = Auth();
+  final _userAuth = UserAuth();
 
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
@@ -142,6 +142,37 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
+  // // `firebase login`
+  // void _login() async {
+  //   if (_formKey.currentState.validate()) {
+  //     FocusScope.of(context).unfocus();
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+
+  //     var value = await _auth
+  //         .login(emailTextController.text.trim(),
+  //             passwordTextController.text.trim())
+  //         .whenComplete(() {
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //     });
+
+  //     if (value is String) {
+  //       _errorLogin(value);
+  //     } else {
+  //       Navigator.pushNamed(context, "/mainView");
+  //       emailTextController.clear();
+  //       passwordTextController.clear();
+  //       FocusScope.of(context).unfocus();
+  //     }
+  //   } else {
+  //     print("Text Fields Emapty!");
+  //   }
+  // }
+
+  // `node login`
   void _login() async {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
@@ -149,25 +180,30 @@ class _LoginViewState extends State<LoginView> {
         _isLoading = true;
       });
 
-      var value = await _auth
-          .login(emailTextController.text.trim(),
-              passwordTextController.text.trim())
+      int result = await _userAuth
+          .login(
+        email: emailTextController.text.trim(),
+        password: passwordTextController.text.trim(),
+      )
           .whenComplete(() {
         setState(() {
           _isLoading = false;
         });
       });
-
-      if (value is String) {
-        _errorLogin(value);
-      } else {
-        Navigator.pushNamed(context, "/mainView");
+      print(result);
+      if (result == 200) {
         emailTextController.clear();
         passwordTextController.clear();
-        FocusScope.of(context).unfocus();
+        Navigator.pushNamed(context, '/mainView');
+      } else if (result == 204) {
+        _errorLogin("Account does not exists!");
+      } else if (result == 205) {
+        _errorLogin("Email/Password does not match!");
+      } else if (result == 401) {
+        _errorLogin("Token Expired!");
+      } else {
+        _errorLogin("Undefined error!");
       }
-    } else {
-      print("Text Fields Emapty!");
     }
   }
 

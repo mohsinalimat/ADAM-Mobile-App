@@ -1,4 +1,4 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/views/settings/settingsView.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class MyDrawer extends StatelessWidget {
-  final _auth = Auth();
+  final _userAuth = UserAuth();
   final _drawerOptions = [
     "Account",
     "Subscription History",
@@ -115,8 +115,12 @@ class MyDrawer extends StatelessWidget {
                           Icons.exit_to_app_rounded,
                           color: Colors.white,
                         ),
-                        title: Text(
+                        title: const Text(
                           'Logout',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        subtitle: const Text(
+                          "See you soon :)",
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
@@ -161,7 +165,9 @@ class MyDrawer extends StatelessWidget {
         ],
       ),
     );
+    // await _auth.signOut(context);
+    Navigator.popUntil(context, (route) => route.settings?.name == "/");
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    await _auth.signOut(context);
+    await _userAuth.logout(context);
   }
 }

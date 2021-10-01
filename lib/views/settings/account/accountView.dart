@@ -13,12 +13,14 @@ class AccountView extends StatelessWidget {
         padding: const EdgeInsets.only(top: 10.0, left: 15.0),
         children: [
           ListTile(
-            leading: Icon(Icons.password),
+            // leading: Icon(Icons.password),
+            leading: Icon(Icons.code),
             title: Text("Change password"),
             onTap: () => Navigator.pushNamed(context, '/changePassword'),
           ),
           ListTile(
-            leading: Icon(Icons.disabled_by_default_rounded),
+            leading: Icon(Icons.sync_disabled),
+            // leading: Icon(Icons.disabled_by_default_rounded),
             title: Text("Disable account request"),
             onTap: () => Navigator.pushNamed(context, '/disableAccount'),
           ),

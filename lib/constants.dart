@@ -67,3 +67,58 @@ const String apiKey =
 
 const String secretKey =
     "sk_test_51IP4cYA0otFr5s95LfrEMzPlF7jRc7NB4Ivj8zUqs2uJIs6yKPGsyMSSMXcZOB4iRzlQZKvQfaWEvPACpi64XX3800ZKcjxiQf";
+
+/// Dummy Data
+const List<String> dataName = [
+  "Muhammad Hamza",
+  "Usman Yaseen",
+  "Raheel Siq",
+  "Xain Shabir",
+  "Baig Shaib",
+  "Khan Khan",
+  "Muhammad Hamza",
+  "Usman Yaseen",
+  "Raheel Siq",
+  "Xain Shabir",
+  "Baig Shaib",
+  "Khan Khan",
+  "Muhammad Hamza",
+  "Usman Yaseen",
+  "Raheel Siq",
+  "Xain Shabir",
+  "Baig Shaib",
+  "Khan Khan",
+  "Muhammad Hamza",
+  "Usman Yaseen",
+  "Raheel Siq",
+  "Xain Shabir",
+  "Baig Shaib",
+  "Khan Khan",
+];
+
+const List<String> dataUsername = [
+  "@mhmzdev",
+  "@uyaseen",
+  "@raweheel",
+  "@zainXzian",
+  "@baigbaigbaig",
+  "@gkhang",
+  "@mhmzdev",
+  "@uyaseen",
+  "@raweheel",
+  "@zainXzian",
+  "@baigbaigbaig",
+  "@gkhang",
+  "@mhmzdev",
+  "@uyaseen",
+  "@raweheel",
+  "@zainXzian",
+  "@baigbaigbaig",
+  "@gkhang",
+  "@mhmzdev",
+  "@uyaseen",
+  "@raweheel",
+  "@zainXzian",
+  "@baigbaigbaig",
+  "@gkhang",
+];
