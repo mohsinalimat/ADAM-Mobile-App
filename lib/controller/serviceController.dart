@@ -37,6 +37,32 @@ class ServiceController {
     }
   }
 
+  Future<int> unsubscribeService(String serviceId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+    String url = "https://adam-web-api.herokuapp.com/user/unsub-service";
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Authorization': "Bearer $_token",
+      },
+      body: {
+        'userId': _userId,
+        'serviceId': serviceId,
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      print('unsubscribed!');
+      return response.statusCode;
+    } else {
+      print('some error!');
+      return response.statusCode;
+    }
+  }
+
   Future getSubscribedServices() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
