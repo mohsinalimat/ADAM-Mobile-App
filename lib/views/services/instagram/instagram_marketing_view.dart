@@ -1,12 +1,9 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 bool instaMarketingRunning = false;

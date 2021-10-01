@@ -3,7 +3,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/views/home/homeView.dart';
+import 'package:adam/views/home/home_view.dart';
 import 'package:adam/views/mydrawer.dart';
 import 'package:adam/views/profile/profileView.dart';
 import 'package:adam/views/settings/settingsView.dart';

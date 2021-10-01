@@ -1,6 +1,5 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/views/profile/phoneVerificationView.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

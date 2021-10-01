@@ -5,20 +5,17 @@ import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/model/userData.dart';
-
 import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/views/home/manage_services_view.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:adam/widgets/serviceCard.dart';
 import 'package:adam/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:clippy_flutter/diagonal.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -120,21 +117,33 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   const SizedBox(height: 30.0),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Your Services",
                         style: Theme.of(context).textTheme.headline1,
                       ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ManageServicesView(
+                              services: subscribedServices,
+                            ),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Icon(Icons.settings),
+                        ),
+                      ),
                       InkWell(
                         onTap: _refreshServices,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: const Icon(
-                            Icons.refresh_rounded,
-                          ),
+                          child: const Icon(Icons.refresh_rounded),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20.0),
@@ -283,7 +292,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _refreshServices() {
-   _getSubscribedServicesList();
+    _getSubscribedServicesList();
     var snackBar = SnackBar(
       backgroundColor: kSecondaryBlueColor,
       content: Row(

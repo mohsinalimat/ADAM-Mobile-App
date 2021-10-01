@@ -7,7 +7,6 @@ import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/verificationBadges.dart';
-import 'package:adam/views/settings/settingsView.dart';
 import 'package:adam/widgets/customLoader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -388,14 +387,7 @@ class _ProfileViewState extends State<ProfileView> {
 
       if (file != null) {
         image = File(file.path);
-      } else {
-        setState(() {
-          _uploading = false;
-        });
-      }
-
-      Navigator.pop(context);
-
+        
       // creating ref at Firebase Storage with userID
       Reference ref = firebaseStorage.ref(_userId).child("dp");
 
@@ -407,6 +399,14 @@ class _ProfileViewState extends State<ProfileView> {
         // refreshing the UI when photo updated
         _getUploadedPic();
       });
+      } else {
+        setState(() {
+          _uploading = false;
+        });
+      }
+
+      Navigator.pop(context);
+
     } on FirebaseException catch (e) {
       print(e);
     }
@@ -428,24 +428,24 @@ class _ProfileViewState extends State<ProfileView> {
 
       if (file != null) {
         image = File(file.path);
+        // creating ref at Firebase Storage with userID
+        Reference ref = firebaseStorage.ref(_userId).child("dp");
+
+        ref.putFile(image).whenComplete(() {
+          print("Pic Uploaded Successfully!");
+          setState(() {
+            _uploading = false;
+          });
+          // refreshing the UI when photo updated
+          _getUploadedPic();
+        });
       } else {
         setState(() {
           _uploading = false;
         });
       }
+
       Navigator.pop(context);
-
-      // creating ref at Firebase Storage with userID
-      Reference ref = firebaseStorage.ref(_userId).child("dp");
-
-      ref.putFile(image).whenComplete(() {
-        print("Pic Uploaded Successfully!");
-        setState(() {
-          _uploading = false;
-        });
-        // refreshing the UI when photo updated
-        _getUploadedPic();
-      });
     } on FirebaseException catch (e) {
       print(e);
     }
@@ -502,35 +502,5 @@ class _ProfileViewState extends State<ProfileView> {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-
-    // updating user profile photo at Firebase
-    // await _firebaseAuth.currentUser
-    //     .updateProfile(
-    //   photoURL: photoUrl,
-    // )
-    //     .whenComplete(() {
-    //   print("PHOTO URL SET FOR THE CURRENT USER $photoUrl");
-    //   setState(() {});
-    // });
-  }
-
-  void _signOut(BuildContext context) async {
-    var snackBar = SnackBar(
-      backgroundColor: Colors.green,
-      content: Row(
-        children: [
-          const Icon(Icons.check, color: Colors.white),
-          const SizedBox(width: 8.0),
-          const Text(
-            "Sign Out Successful!",
-            style: TextStyle(color: Colors.white),
-          )
-        ],
-      ),
-    );
-    Navigator.popUntil(context, (route) => route.settings?.name == "/");
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    await _userAuth.logout(context);
-    // await _auth.signOut(context);
   }
 }

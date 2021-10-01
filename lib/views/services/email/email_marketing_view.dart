@@ -2,7 +2,6 @@ import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
-import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -89,16 +89,12 @@ class _ChatViewState extends State<ChatView> {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                SizedBox(
-                  height: 10.0,
-                ),
+                SizedBox(height: 10.0),
                 Text(
                   "Live Chat",
                   style: Theme.of(context).textTheme.headline1,
                 ),
-                SizedBox(
-                  height: 5.0,
-                ),
+                SizedBox(height: 5.0),
                 Text("Live chat with ADAM team!"),
                 SizedBox(
                   height: 20.0,
