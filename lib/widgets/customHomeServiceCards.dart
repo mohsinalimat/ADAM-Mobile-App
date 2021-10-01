@@ -46,13 +46,7 @@ class YourServiceCard extends StatelessWidget {
                 child: Container(
                   height: 30.0,
                   width: 150,
-                  color: isPremium
-                      ? _themeProvider.darkTheme
-                          ? kMediumGreenColor
-                          : kLightGreenColor
-                      : _themeProvider.darkTheme
-                          ? kMediumBlueColor
-                          : kLightBlueColor,
+                  color: isPremium ? kLightGreenColor : kLightBlueColor,
                   child: Center(
                     child: Text(
                       isPremium ? "Premium" : "Standard",
