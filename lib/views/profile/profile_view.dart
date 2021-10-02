@@ -41,14 +41,6 @@ class _ProfileViewState extends State<ProfileView> {
   String photoUrl = "";
   bool _uploading = false;
 
-  // callBack to refresh the screen after updating the data
-  bool refreshProfile = false;
-  callBack(boolVar) {
-    setState(() {
-      refreshProfile = boolVar;
-    });
-  }
-
   // getting user data from local storege
   UserData userData;
   void _getUserDataLocally() async {
@@ -161,9 +153,7 @@ class _ProfileViewState extends State<ProfileView> {
                                   },
                                   pageBuilder: (context, a1, a2) =>
                                       EditProfileView(
-                                    // user: _firebaseAuth.currentUser,
                                     userData: userData,
-                                    refreshCallBack: callBack,
                                   ),
                                 ),
                               );
@@ -387,18 +377,18 @@ class _ProfileViewState extends State<ProfileView> {
 
       if (file != null) {
         image = File(file.path);
-        
-      // creating ref at Firebase Storage with userID
-      Reference ref = firebaseStorage.ref(_userId).child("dp");
 
-      ref.putFile(image).whenComplete(() {
-        print("Pic Uploaded Successfully!");
-        setState(() {
-          _uploading = false;
+        // creating ref at Firebase Storage with userID
+        Reference ref = firebaseStorage.ref(_userId).child("dp");
+
+        ref.putFile(image).whenComplete(() {
+          print("Pic Uploaded Successfully!");
+          setState(() {
+            _uploading = false;
+          });
+          // refreshing the UI when photo updated
+          _getUploadedPic();
         });
-        // refreshing the UI when photo updated
-        _getUploadedPic();
-      });
       } else {
         setState(() {
           _uploading = false;
@@ -406,7 +396,6 @@ class _ProfileViewState extends State<ProfileView> {
       }
 
       Navigator.pop(context);
-
     } on FirebaseException catch (e) {
       print(e);
     }

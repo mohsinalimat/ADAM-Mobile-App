@@ -2,6 +2,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/userAllReviews.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
 import 'package:adam/views/stripe/stripeServer.dart';
@@ -163,7 +164,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                           Color(int.parse(widget.service.serviceColor[0])),
                       mini: true,
                       heroTag: widget.service.serviceIcon,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.of(context).pop(true),
                       child: Icon(
                         Icons.arrow_back,
                       ),
@@ -178,7 +179,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                       const Text("Campaign"),
                       const SizedBox(height: 20.0),
                       Text(
-                        "With Facebook marketing campaign you can now grow your business, market your brand or any organization with number of inbox messages, posts in multiple groups and much more!\n\nSo, subscribe to your favorite serivce and get started now!",
+                        "With ${widget.service.serviceName} campaign you can now grow your business, market your brand or any organization with number of inbox messages, posts in multiple groups and much more!\n\nSo, subscribe to your favorite serivce and get started now!",
                       ),
                     ],
                   ),
@@ -315,7 +316,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     await _flutterLocalNotificationsPlugin.show(
       0,
       widget.service.serviceName,
-      'Service has been subscribed successfully!',
+      "Service has been subscribed successfully!",
       platform,
       payload: 'xperia',
     );
@@ -429,12 +430,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     } else {
       _reviewController.clear();
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            duration: Duration(seconds: 1),
-            backgroundColor: Colors.red,
-            content: Text("Undefined error!")),
-      );
+      customSnackBar(context, Colors.red, Text("Something went wrong!"));
     }
   }
 

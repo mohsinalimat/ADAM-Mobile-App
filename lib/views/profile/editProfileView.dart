@@ -2,6 +2,7 @@ import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/editableCustomTextField.dart';
@@ -17,13 +18,11 @@ import 'package:flutter/services.dart';
 class EditProfileView extends StatefulWidget {
   final User user;
   final UserData userData;
-  final Function(bool) refreshCallBack;
 
   const EditProfileView({
     Key key,
     this.user,
     this.userData,
-    this.refreshCallBack,
   }) : super(key: key);
   @override
   _EditProfileViewState createState() => _EditProfileViewState();
@@ -486,27 +485,27 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   void _saveSuccess() {
-    var snackBar = SnackBar(
-      content: Row(
-        children: [
-          const Icon(
-            Icons.check,
-            color: Colors.white,
-          ),
-          const SizedBox(width: 8.0),
-          const Text(
-            "Profile Updated!",
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
-      backgroundColor: kSecondaryBlueColor,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.of(context).pop(true);
-    });
-    widget.refreshCallBack(true);
+    customSnackBar(
+        context,
+        kSecondaryBlueColor,
+        Row(
+          children: [
+            const Icon(
+              Icons.check,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8.0),
+            const Text(
+              "Profile Updated!",
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ));
+    // Future.delayed(Duration(seconds: 1), () {
+    //   Navigator.of(context).pop(true);
+    // });
+    Navigator.of(context).pop(true);
+    // widget.refreshCallBack(true);
   }
 
   void _errorSaveProfile(String value) {

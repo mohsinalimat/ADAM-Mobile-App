@@ -5,7 +5,7 @@ import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/home/home_view.dart';
 import 'package:adam/views/mydrawer.dart';
-import 'package:adam/views/profile/profileView.dart';
+import 'package:adam/views/profile/profile_view.dart';
 import 'package:adam/views/settings/settingsView.dart';
 import 'package:adam/views/stats/stats_view.dart';
 import 'package:flutter/material.dart';
@@ -46,24 +46,6 @@ class _DashboardState extends State<Dashboard>
     Icons.settings,
     Icons.person,
   ];
-
-  // void _getToken() async {
-  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  //   String userNotificationToken = sharedPreferences.getString("notifyToken");
-  //   if (userNotificationToken != null) {
-  //     print("TOKEN ALREADY THERE!");
-  //   } else {
-  //     print("NEW TOKEN HAS BEEN GENERATED!");
-  //     userNotificationToken = await _firebaseMessaging.getToken();
-  //     sharedPreferences.setString("notifyToken", userNotificationToken);
-  //     FirebaseFirestore.instance
-  //         .collection("notificationsToken")
-  //         .doc(_firebaseAuth.currentUser.uid)
-  //         .set({
-  //       "token": userNotificationToken,
-  //     });
-  //   }
-  // }
 
   @override
   void initState() {

@@ -1,4 +1,6 @@
+import 'package:adam/constants.dart';
 import 'package:adam/model/service.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackCard extends StatefulWidget {
@@ -130,6 +132,31 @@ class _FeedbackCardState extends State<FeedbackCard> {
                               _prevVote = _vote - 1;
                               _voteGiven = true;
                             });
+                            customSnackBar(
+                                context,
+                                kSecondaryBlueColor,
+                                Row(
+                                  children: [
+                                    const Text("Thank you for the response!"),
+                                    Spacer(),
+                                    InkWell(
+                                      onTap: () {
+                                        if (_vote > _prevVote) {
+                                          setState(() {
+                                            _vote--;
+                                            _voteGiven = false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _vote++;
+                                            _voteGiven = false;
+                                          });
+                                        }
+                                      },
+                                      child: const Text('Undo'),
+                                    )
+                                  ],
+                                ));
                           },
                           child: Text("Yes"),
                         ),
@@ -142,6 +169,32 @@ class _FeedbackCardState extends State<FeedbackCard> {
                                 _voteGiven = true;
                               });
                             }
+                            customSnackBar(
+                              context,
+                              kSecondaryBlueColor,
+                              Row(
+                                children: [
+                                  const Text("Thank you for the response!"),
+                                  Spacer(),
+                                  InkWell(
+                                    onTap: () {
+                                      if (_vote > _prevVote) {
+                                        setState(() {
+                                          _vote--;
+                                          _voteGiven = false;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _vote++;
+                                          _voteGiven = false;
+                                        });
+                                      }
+                                    },
+                                    child: const Text('Undo'),
+                                  )
+                                ],
+                              ),
+                            );
                           },
                           child: Text("No"),
                         ),
@@ -149,28 +202,29 @@ class _FeedbackCardState extends State<FeedbackCard> {
                     ),
                   ],
                 )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Thank you for the response!"),
-                    TextButton(
-                      onPressed: () {
-                        if (_vote > _prevVote) {
-                          setState(() {
-                            _vote--;
-                            _voteGiven = false;
-                          });
-                        } else {
-                          setState(() {
-                            _vote++;
-                            _voteGiven = false;
-                          });
-                        }
-                      },
-                      child: Text("Undo"),
-                    ),
-                  ],
-                )
+              : Container()
+          // : Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text("Thank you for the response!"),
+          //       TextButton(
+          //         onPressed: () {
+          //           if (_vote > _prevVote) {
+          //             setState(() {
+          //               _vote--;
+          //               _voteGiven = false;
+          //             });
+          //           } else {
+          //             setState(() {
+          //               _vote++;
+          //               _voteGiven = false;
+          //             });
+          //           }
+          //         },
+          //         child: Text("Undo"),
+          //       ),
+          //     ],
+          //   )
         ],
       ),
     );

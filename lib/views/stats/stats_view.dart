@@ -13,7 +13,7 @@ class StatsView extends StatefulWidget {
 }
 
 class _StatsViewState extends State<StatsView> {
-  StatsFilter _filter = StatsFilter.Daily;
+  StatsFilter _filter = StatsFilter.Weekly;
   String _followersDummy = "2303";
 
   String _currentService = "Instagram Marketing";
@@ -23,61 +23,6 @@ class _StatsViewState extends State<StatsView> {
     "LinkedIn Marketing",
     "Twitter Marketing",
   ];
-
-  List<BarChartModel> _dataInstagram = [
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hmz",
-      followers: 22,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "aa",
-      followers: 12,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hsssmz",
-      followers: 36,
-    ),
-  ];
-
-  List<BarChartModel> _dataTwitter = [
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hmz",
-      followers: 82,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "aa",
-      followers: 33,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hsssmz",
-      followers: 32,
-    ),
-  ];
-
-  List<BarChartModel> _dataLinkedIn = [
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hmz",
-      followers: 11,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "aa",
-      followers: 19,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hsssmz",
-      followers: 32,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -157,43 +102,44 @@ class _StatsViewState extends State<StatsView> {
               ),
             ),
             const SizedBox(height: 20.0),
-            Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio(
-                    value: StatsFilter.Daily,
-                    groupValue: _filter,
-                    onChanged: (value) {
-                      setState(() {
-                        _filter = value;
-                      });
-                    },
-                  ),
-                  const Text("Daily"),
-                  Radio(
-                    value: StatsFilter.Weekly,
-                    groupValue: _filter,
-                    onChanged: (value) {
-                      setState(() {
-                        _filter = value;
-                      });
-                    },
-                  ),
-                  const Text("Weekly"),
-                  Radio(
-                    value: StatsFilter.Monthly,
-                    groupValue: _filter,
-                    onChanged: (value) {
-                      setState(() {
-                        _filter = value;
-                      });
-                    },
-                  ),
-                  const Text("Monthly"),
-                ],
-              ),
-            ),
+            // Center(
+            //   child: Row(
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Radio(
+            //         value: StatsFilter.Daily,
+            //         groupValue: _filter,
+            //         onChanged: (value) {
+            //           setState(() {
+            //             _filter = value;
+            //           });
+            //         },
+            //       ),
+            //       const Text("Daily"),
+            //       Radio(
+            //         value: StatsFilter.Weekly,
+            //         groupValue: _filter,
+            //         onChanged: (value) {
+            //           setState(() {
+            //             _filter = value;
+            //           });
+            //         },
+            //       ),
+            //       const Text("Weekly"),
+            //       Radio(
+            //         value: StatsFilter.Monthly,
+            //         groupValue: _filter,
+            //         onChanged: (value) {
+            //           setState(() {
+            //             _filter = value;
+            //           });
+            //         },
+            //       ),
+            //       const Text("Monthly"),
+            //     ],
+            //   ),
+            // ),
+     
           ],
         ),
       ),
@@ -203,4 +149,59 @@ class _StatsViewState extends State<StatsView> {
   void _generateDummyFollowers() => setState(() {
         _followersDummy = (Random().nextInt(3500) + 200).toString();
       });
+
+  // daily
+  List<BarChartModel> _dataInstagram = [
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "hmz",
+      followers: 22,
+    ),
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "aa",
+      followers: 12,
+    ),
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "hsssmz",
+      followers: 36,
+    ),
+  ];
+
+  List<BarChartModel> _dataTwitter = [
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "hmz",
+      followers: 82,
+    ),
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "aa",
+      followers: 33,
+    ),
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "hsssmz",
+      followers: 32,
+    ),
+  ];
+
+  List<BarChartModel> _dataLinkedIn = [
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "hmz",
+      followers: 11,
+    ),
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "aa",
+      followers: 19,
+    ),
+    BarChartModel(
+      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
+      followerName: "hsssmz",
+      followers: 32,
+    ),
+  ];
 }

@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 enum SMSAction {
   Upload,
   DataBank,
-  Scrape,
 }
 
 class SMSMarketingView extends StatefulWidget {
@@ -106,20 +105,6 @@ class _SMSMarketingViewState extends State<SMSMarketingView> {
                         },
                       ),
                       const Text("Use our data bank"),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Radio(
-                        value: SMSAction.Scrape,
-                        groupValue: _currentAction,
-                        onChanged: (value) {
-                          setState(() {
-                            _currentAction = value;
-                          });
-                        },
-                      ),
-                      const Text("Scrape Data"),
                     ],
                   ),
                   const SizedBox(height: 10.0),

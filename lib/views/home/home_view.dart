@@ -6,6 +6,7 @@ import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/model/userData.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/home/manage_services_view.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:adam/widgets/serviceCard.dart';
@@ -23,19 +24,18 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  // scroll effect
+  ScrollController _controller = ScrollController();
+  _animateToIndex(i) => _controller.animateTo(100 * i,
+      duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+
   final ServiceController serviceController = ServiceController();
   int _currentIndex = 0;
 
-  List subscribedServices = [];
+  // future instance to presist FutureBuilder from calling again and again
+  Future _servicesSubscribedFuture;
 
-  void _getSubscribedServicesList() async {
-    SubscribedServices value = await serviceController.getSubscribedServices();
-    if (mounted) {
-      setState(() {
-        subscribedServices = List.from(value.subscribedServices);
-      });
-    }
-  }
+  List subscribedServices = []; // dummy list to create the dots
 
   // get local user object
   UserData _userData;
@@ -48,8 +48,20 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  bool refreshProfile = false;
+  callBack(boolVar) {
+    if (boolVar) {
+      setState(() {
+        refreshProfile = boolVar;
+        _servicesSubscribedFuture = serviceController.getSubscribedServices();
+      });
+      _getSubscribedServicesList();
+    }
+  }
+
   @override
   void initState() {
+    _servicesSubscribedFuture = serviceController.getSubscribedServices();
     _getSubscribedServicesList();
     _getLocalUserData();
     super.initState();
@@ -65,6 +77,7 @@ class _HomeViewState extends State<HomeView> {
             child: CircularProgressIndicator(),
           )
         : SingleChildScrollView(
+            controller: _controller,
             child: Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
@@ -126,14 +139,20 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       Spacer(),
                       InkWell(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ManageServicesView(
-                              services: subscribedServices,
+                        onTap: () async {
+                          var value = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ManageServicesView(
+                                services: subscribedServices,
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+
+                          if (value != null && value) {
+                            callBack(value);
+                          }
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: const Icon(Icons.settings),
@@ -150,13 +169,11 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   const SizedBox(height: 20.0),
                   FutureBuilder(
-                    future: serviceController.getSubscribedServices(),
+                    future: _servicesSubscribedFuture,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data.subscribedServices.length == 0) {
-                          return Center(
-                            child: Text("No Service Subscribed!"),
-                          );
+                          return _noServiceFound();
                         } else {
                           return CarouselSlider.builder(
                             itemCount: snapshot.data.subscribedServices.length,
@@ -218,7 +235,9 @@ class _HomeViewState extends State<HomeView> {
                   const SizedBox(height: 10.0),
                   subscribedServices.length == 0
                       ? Center(
-                          child: Container(height: 27.0),
+                          child: Container(
+                              height:
+                                  subscribedServices.length == 0 ? 0.0 : 27.0),
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -240,7 +259,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             );
                           }).toList()),
-                  const SizedBox(height: 30.0),
+                  SizedBox(height: subscribedServices.length == 0 ? 0 : 30.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -266,6 +285,7 @@ class _HomeViewState extends State<HomeView> {
                               itemBuilder: (BuildContext context, int index) {
                                 return ServiceCard(
                                   service: snapshot.data.services[index],
+                                  refreshFtn: callBack,
                                 );
                               },
                             );
@@ -293,11 +313,64 @@ class _HomeViewState extends State<HomeView> {
           );
   }
 
-  void _refreshServices() {
-    _getSubscribedServicesList();
-    var snackBar = SnackBar(
-      backgroundColor: kSecondaryBlueColor,
-      content: Row(
+  // scroll effect widget if no services are found
+  Widget _noServiceFound() {
+    return Center(
+      child: Container(
+        height: 330.0,
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "No Services Found!",
+                  style: Theme.of(context).textTheme.headline2,
+                ),
+                const SizedBox(height: 8.0),
+                const Text("Subscribe a Service to get started!"),
+                const SizedBox(height: 20.0),
+                SizedBox(
+                  height: 50.0,
+                  child: FloatingActionButton(
+                    elevation: 2.5,
+                    heroTag: 'noservice',
+                    onPressed: () {
+                      _animateToIndex(4.0);
+                    },
+                    child: const Icon(
+                      Icons.arrow_downward,
+                      size: 25.0,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // getting list of subscribed services of current user
+  Future<void> _getSubscribedServicesList() async {
+    SubscribedServices value = await _servicesSubscribedFuture;
+    if (mounted) {
+      setState(() {
+        subscribedServices = List.from(value.subscribedServices);
+      });
+    }
+  }
+
+  // to referch the services of user
+  void _refreshServices() async {
+    await _getSubscribedServicesList();
+    customSnackBar(
+      context,
+      kSecondaryBlueColor,
+      Row(
         children: [
           const Icon(Icons.refresh_rounded, color: Colors.white),
           const SizedBox(width: 5.0),
@@ -305,9 +378,5 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
   }
 }

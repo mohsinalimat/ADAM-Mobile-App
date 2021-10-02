@@ -264,7 +264,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             ? kMediumBlueColor
                             : kPrimaryBlueColor,
                         btnText: _isLoading
-                            ? kLoader
+                            ? kLoaderWhite
                             : Text(
                                 "Send",
                                 style: kBtnTextStyle,

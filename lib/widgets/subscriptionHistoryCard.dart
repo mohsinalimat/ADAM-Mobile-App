@@ -1,18 +1,24 @@
-
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:adam/constants.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
 
-import 'customBtn.dart';
-
 class SubscriptionHistoryCard extends StatefulWidget {
+  final String serviceName;
+  final String date;
+  final bool isPrem;
   SubscriptionHistoryCard({
+    @required this.date,
+    @required this.isPrem,
+    @required this.serviceName,
     Key key,
   }) : super(key: key);
 
@@ -27,53 +33,58 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("10-05-2021"),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    "Facebook Marketing Campaign",
-                    style: Theme.of(context).textTheme.headline2,
-                  ),
-                  const SizedBox(height: 5.0),
-                  Text("Standard")
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    "\$ 89.00",
-                    style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.headline2.fontSize -
-                                1.5),
-                  ),
-                  const SizedBox(height: 5.0),
-                  CustomButton(
-                    btnWidth: 80,
-                    btnHeight: 30.0,
-                    btnOnPressed: () => _viewHistory(context),
-                    btnColor: kPrimaryBlueColor,
-                    btnText: Text(
-                      "View",
-                      style: kBtnTextStyle,
-                    ),
-                  )
-                ],
-              ),
+    final _themeProviders = Provider.of<ThemeProvider>(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+          color: _themeProviders.darkTheme ? Colors.grey[800] : Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              offset: Offset(0, 2.0),
+              blurRadius: 8.0,
+              spreadRadius: 8.0,
             )
-          ],
-        ),
+          ]),
+      height: 115.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Diagonal(
+                clipHeight: 20.0,
+                axis: Axis.vertical,
+                position: DiagonalPosition.TOP_RIGHT,
+                child: Container(
+                  height: 30.0,
+                  width: 150,
+                  color: widget.isPrem ? kLightGreenColor : kLightBlueColor,
+                  child: Center(
+                    child: Text(
+                      widget.isPrem ? "Premium" : "Standard",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => _viewHistory(context),
+                child: const Text("View"),
+              ),
+            ],
+          ),
+          Text(
+            widget.serviceName,
+            style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+                color: _themeProviders.darkTheme ? Colors.white : Colors.black),
+          ),
+          const SizedBox(height: 5.0),
+          Text('Renew Subscription: ${widget.date}')
+        ],
       ),
     );
   }
@@ -110,7 +121,7 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
                 style: TextStyle(fontSize: 12.0),
               ),
               Text(
-                "Facebook Marketing Campaign",
+                widget.serviceName,
                 style: TextStyle(fontSize: 13.0),
               ),
               const SizedBox(height: 10.0),
@@ -119,7 +130,7 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
                 style: TextStyle(fontSize: 12.0),
               ),
               Text(
-                "Standard",
+                widget.isPrem ? "Premium" : "Standard",
                 style: TextStyle(fontSize: 13.0),
               ),
               const SizedBox(height: 10.0),
@@ -128,7 +139,7 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
                 style: TextStyle(fontSize: 12.0),
               ),
               Text(
-                "10-05-2021",
+                widget.date,
                 style: TextStyle(fontSize: 13.0),
               ),
               const SizedBox(height: 10.0),

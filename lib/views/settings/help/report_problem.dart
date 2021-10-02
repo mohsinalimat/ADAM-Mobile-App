@@ -1,5 +1,6 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
@@ -48,12 +49,12 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                   const SizedBox(height: 35.0),
                   CustomTextField(
                     textEditingController: _subjectFieldController,
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.done,
                     textInputType: TextInputType.text,
                     hintText: "Problem title/subject",
                     icon: Icons.subject_rounded,
                     validatorFtn: (value) {
-                      if (value == null) {
+                      if (value.isEmpty) {
                         return "Subject cannot be empty!";
                       }
                       return null;
@@ -66,7 +67,15 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                       maxLines: 5,
                       controller: _detailsFieldController,
                       keyboardType: TextInputType.multiline,
-                      textInputAction: TextInputAction.newline,
+                      textInputAction: TextInputAction.done,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "Details cannot be empty!";
+                        } else if (value.length < 15) {
+                          return "Detials cannot be less than 15 characters!";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                         hintText: "Describe your problem in details",
                         hintStyle: Theme.of(context).textTheme.caption,
@@ -91,8 +100,27 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                   const SizedBox(height: 30.0),
                   CustomButton(
                     btnWidth: 100.0,
-                    btnHeight: 40.0,
-                    btnOnPressed: () {},
+                    btnHeight: 45.0,
+                    btnOnPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        print('valid');
+                        Navigator.pop(context);
+                        customSnackBar(
+                          context,
+                          kSecondaryBlueColor,
+                          Row(
+                            children: [
+                              const Icon(Icons.check, color: Colors.white),
+                              const SizedBox(width: 8.0),
+                              const Text(
+                                  'Submitted! We will get back to you soon.'),
+                            ],
+                          ),
+                        );
+                        _subjectFieldController.clear();
+                        _detailsFieldController.clear();
+                      }
+                    },
                     btnColor: kPrimaryBlueColor,
                     btnText: Text(
                       "Submit",

@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 enum EmailAction {
   Upload,
   DataBank,
-  Scrape,
 }
 
 class EmailMarketingView extends StatefulWidget {
@@ -102,20 +101,6 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
                         },
                       ),
                       const Text("Use our data bank"),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Radio(
-                        value: EmailAction.Scrape,
-                        groupValue: _currentAction,
-                        onChanged: (value) {
-                          setState(() {
-                            _currentAction = value;
-                          });
-                        },
-                      ),
-                      const Text("Scrape Data"),
                     ],
                   ),
                   const SizedBox(height: 10.0),

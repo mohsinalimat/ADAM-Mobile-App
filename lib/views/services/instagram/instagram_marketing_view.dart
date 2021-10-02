@@ -1,6 +1,7 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
@@ -21,10 +22,24 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
   final _instaUsernameController = TextEditingController();
   final _instaPasswordController = TextEditingController();
   final _marketingMsg = TextEditingController();
-  bool _focusMsg = false;
 
   // marketing data
   List _scrapedUsersData = [];
+
+  // placeholding data
+  void _placeholdingData() {
+    _instaUsernameController.text = "nameishaiderali";
+    _instaPasswordController.text = "hamza1998";
+    _targetProfileController.text = 'bareera099';
+    _marketingMsg.text =
+        "Hi there! Hope you are doing well. Would love to connect with you for valuable content :)\n\nSo, hit me up with Follow button\nCheers :D";
+  }
+
+  @override
+  void initState() {
+    _placeholdingData();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -146,8 +161,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                       maxLines: 5,
                       controller: _marketingMsg,
                       keyboardType: TextInputType.multiline,
-                      textInputAction: TextInputAction.done,
-                      autofocus: _focusMsg,
+                      textInputAction: TextInputAction.newline,
                       // validator: (value) {
                       //   if (value.isEmpty) {
                       //     return "Please provide some content!";
@@ -284,6 +298,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
     );
   }
 
+  // scrape the user data information
   void _scrapeData() async {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
@@ -292,10 +307,18 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      var data = await InstagramMarketing().scrapeUserData().whenComplete(() {
-        setState(() {
-          _isWorking = false;
-        });
+      var data = await InstagramMarketing()
+          .scrapeUserData(
+        _instaUsernameController.text.trim(),
+        _instaPasswordController.text.trim(),
+        _targetProfileController.text.trim(),
+      )
+          .whenComplete(() {
+        if (mounted) {
+          setState(() {
+            _isWorking = false;
+          });
+        }
       });
 
       print("FTN CALLED AT FRONT END!!");
@@ -310,7 +333,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  'Unexpected error! Please try again later.',
+                  'Please try again after 90 secs to avoid ban :)',
                   style: TextStyle(color: Colors.white),
                 ),
               ],
@@ -338,11 +361,9 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
     }
   }
 
+  // start sending DMs to scraped users
   void _sendDMs() async {
     if (_marketingMsg.text.isEmpty) {
-      setState(() {
-        _focusMsg = true;
-      });
       customSnackBar(
           context,
           Colors.red,
@@ -360,15 +381,25 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      var data = await InstagramMarketing()
-          .sendDM(_marketingMsg.text.trim())
-          .whenComplete(() {
-        setState(() {
-          _isWorking = false;
-        });
+      Future.delayed(Duration(seconds: 60), () {
+        print('60 sec done!');
       });
 
       print("FTN CALLED AT FRONT END!!");
+
+      var data = await InstagramMarketing()
+          .sendDM(
+        _marketingMsg.text.trim(),
+        _instaUsernameController.text.trim(),
+        _instaPasswordController.text.trim(),
+      )
+          .whenComplete(() {
+        if (mounted) {
+          setState(() {
+            _isWorking = false;
+          });
+        }
+      });
 
       if (data is String) {
         print(data);
@@ -380,7 +411,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  'Unexpected error! Please try again later.',
+                  'Please try again after 90 secs to avoid ban :)',
                   style: TextStyle(color: Colors.white),
                 ),
               ],
@@ -398,7 +429,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                 const Icon(Icons.check, color: Colors.white),
                 const SizedBox(width: 8.0),
                 const Text(
-                  "Messages sent successfully!",
+                  "Messages has been sent successfully!",
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -406,15 +437,4 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
       }
     }
   }
-}
-
-void customSnackBar(BuildContext context, Color color, Widget child) {
-  var snackBar = SnackBar(
-    backgroundColor: color,
-    content: child,
-  );
-
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(snackBar);
 }

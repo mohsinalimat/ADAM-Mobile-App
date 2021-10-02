@@ -1,4 +1,6 @@
+import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -49,14 +51,12 @@ class _ThemeViewState extends State<ThemeView> {
                       items: _fontSizeList
                           .map((value) => DropdownMenuItem(
                                 onTap: () {
-                                  var snackBar = SnackBar(
-                                    duration: Duration(milliseconds: 500),
-                                    content: Text(
-                                      "Font size changed: $value",
-                                    ),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
+                                  customSnackBar(
+                                      context,
+                                      kSecondaryBlueColor,
+                                      Text(
+                                        "Font size changed: $value",
+                                      ));
                                 },
                                 value: value,
                                 child: Text(

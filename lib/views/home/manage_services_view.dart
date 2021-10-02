@@ -34,7 +34,7 @@ class _ManageServicesViewState extends State<ManageServicesView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       BackButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Navigator.of(context).pop(true),
                       ),
                       const LogoDisplay(),
                     ],
@@ -49,7 +49,7 @@ class _ManageServicesViewState extends State<ManageServicesView> {
                   const SizedBox(height: 20.0),
                   widget.services.length == 0
                       ? Container(
-                          height: MediaQuery.of(context).size.height * 0.2,
+                          height: MediaQuery.of(context).size.height * 0.55,
                           child: Center(
                             child: const Text(
                                 'No Services has been subscribed yet!'),
