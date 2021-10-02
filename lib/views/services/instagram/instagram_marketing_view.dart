@@ -1,4 +1,5 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
@@ -19,8 +20,11 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
   final _targetProfileController = TextEditingController();
   final _instaUsernameController = TextEditingController();
   final _instaPasswordController = TextEditingController();
-
   final _marketingMsg = TextEditingController();
+  bool _focusMsg = false;
+
+  // marketing data
+  List _scrapedUsersData = [];
 
   @override
   void dispose() {
@@ -35,6 +39,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
       absorbing: _isWorking,
       child: GestureDetector(
@@ -68,91 +73,71 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                   const Text(
                       "* Your data is kept private and never used for illegal purposes, read more at Settings > Help > Privacy Policy"),
                   const SizedBox(height: 15.0),
-                  CustomTextField(
-                    textEditingController: _instaUsernameController,
-                    textInputAction: TextInputAction.next,
-                    textInputType: TextInputType.text,
-                    hintText: "Instagram Username",
-                    icon: Icons.person,
-                    validatorFtn: (value) {
-                      if (value.isEmpty) {
-                        return "Username cannot be empty!";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 15.0),
-                  CustomTextField(
-                    isPassword: true,
-                    textEditingController: _instaPasswordController,
-                    textInputAction: TextInputAction.done,
-                    textInputType: TextInputType.text,
-                    hintText: "Instagram Password",
-                    icon: Icons.lock,
-                    validatorFtn: (value) {
-                      if (value.isEmpty) {
-                        return "Pasword cannot be empty!";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 30.0),
-                  const Text("* You must be following this account!"),
-                  const SizedBox(height: 10.0),
-                  CustomTextField(
-                    validatorFtn: (value) {
-                      if (value.isEmpty) {
-                        return "Target profile cannot be empty!";
-                      }
-                      return null;
-                    },
-                    textEditingController: _targetProfileController,
-                    textInputAction: TextInputAction.done,
-                    textInputType: TextInputType.text,
-                    hintText: "Target Username",
-                    icon: Icons.person,
-                  ),
-                  const SizedBox(height: 10.0),
-                  CustomButton(
-                    btnWidth: 100.0,
-                    btnHeight: 45.0,
-                    btnOnPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        FocusScope.of(context).unfocus();
-
-                        setState(() {
-                          _isWorking = true;
-                        });
-
-                        Future.delayed(Duration(seconds: 8), () {
-                          setState(() {
-                            _isWorking = false;
-                            _dataScraped = true;
-                          });
-                        });
-
-                        // var value = await InstagramMarketing()
-                        //     .scrapeUserData()
-                        //     .whenComplete(() {
-                        //   setState(() {
-                        //     _isWorking = false;
-                        //   });
-                        // });
-
-                        // if (value is String) {
-                        //   print(value);
-                        // }
-                      }
-                    },
-                    btnColor: kLightGreenColor,
-                    btnText: _isWorking
-                        ? kLoaderWhite
-                        : Text(
-                            "Scrape Data",
-                            style: kBtnTextStyle,
-                          ),
-                  ),
-                  const SizedBox(height: 15.0),
+                  _dataScraped
+                      ? Container()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            CustomTextField(
+                              textEditingController: _instaUsernameController,
+                              textInputAction: TextInputAction.next,
+                              textInputType: TextInputType.text,
+                              hintText: "Instagram Username",
+                              icon: Icons.person,
+                              validatorFtn: (value) {
+                                if (value.isEmpty) {
+                                  return "Username cannot be empty!";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 15.0),
+                            CustomTextField(
+                              isPassword: true,
+                              textEditingController: _instaPasswordController,
+                              textInputAction: TextInputAction.done,
+                              textInputType: TextInputType.text,
+                              hintText: "Instagram Password",
+                              icon: Icons.lock,
+                              validatorFtn: (value) {
+                                if (value.isEmpty) {
+                                  return "Pasword cannot be empty!";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20.0),
+                            const Text("* You must be following this account!"),
+                            const SizedBox(height: 10.0),
+                            CustomTextField(
+                              validatorFtn: (value) {
+                                if (value.isEmpty) {
+                                  return "Target profile cannot be empty!";
+                                }
+                                return null;
+                              },
+                              textEditingController: _targetProfileController,
+                              textInputAction: TextInputAction.done,
+                              textInputType: TextInputType.text,
+                              hintText: "Target Username",
+                              icon: Icons.person,
+                            ),
+                            const SizedBox(height: 10.0),
+                            CustomButton(
+                              btnWidth: 100.0,
+                              btnHeight: 45.0,
+                              btnOnPressed: _scrapeData,
+                              btnColor: kLightGreenColor,
+                              btnText: _isWorking
+                                  ? kLoaderWhite
+                                  : Text(
+                                      "Scrape Data",
+                                      style: kBtnTextStyle,
+                                    ),
+                            ),
+                            const SizedBox(height: 15.0),
+                          ],
+                        ),
                   AnimatedContainer(
                     duration: Duration(milliseconds: 250),
                     height: _dataScraped ? 140.0 : 0.0,
@@ -162,6 +147,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                       controller: _marketingMsg,
                       keyboardType: TextInputType.multiline,
                       textInputAction: TextInputAction.done,
+                      autofocus: _focusMsg,
                       // validator: (value) {
                       //   if (value.isEmpty) {
                       //     return "Please provide some content!";
@@ -196,19 +182,14 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                       ? CustomButton(
                           btnWidth: 100.0,
                           btnHeight: 45.0,
-                          btnOnPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              setState(() {
-                                _dataScraped = false;
-                                // instaMarketingRunning = true;
-                              });
-                            }
-                          },
+                          btnOnPressed: _sendDMs,
                           btnColor: kLightBlueColor,
-                          btnText: Text(
-                            "Start Marketing",
-                            style: kBtnTextStyle,
-                          ),
+                          btnText: _isWorking
+                              ? kLoaderWhite
+                              : const Text(
+                                  "Start Marketing",
+                                  style: kBtnTextStyle,
+                                ),
                         )
                       : Container(),
                   const SizedBox(height: 25.0),
@@ -223,11 +204,73 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           children: List.generate(
-                            dataName.length,
+                            _scrapedUsersData.length,
                             (index) => Card(
-                              child: ListTile(
-                                title: Text(dataName[index]),
-                                subtitle: Text(dataUsername[index]),
+                              child: ExpansionTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      _scrapedUsersData[index].photoUrl),
+                                ),
+                                title: Text(
+                                  _scrapedUsersData[index].username,
+                                  style: TextStyle(
+                                    color: _themeProvider.darkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  _scrapedUsersData[index].profileUrl,
+                                  style: TextStyle(
+                                    color: _themeProvider.darkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                                children: [
+                                  Text(
+                                    "Bio:",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.0),
+                                  ),
+                                  _scrapedUsersData[index].bio == ""
+                                      ? Text('*No Bio Found*')
+                                      : Text(_scrapedUsersData[index].bio),
+                                  const SizedBox(height: 5.0),
+                                  Text(
+                                    "Followers:",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.0),
+                                  ),
+                                  Text(_scrapedUsersData[index]
+                                      .followers
+                                      .toString()),
+                                  const SizedBox(height: 5.0),
+                                  Text(
+                                    "Following:",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.0),
+                                  ),
+                                  Text(_scrapedUsersData[index]
+                                      .following
+                                      .toString()),
+                                  const SizedBox(height: 5.0),
+                                  Text(
+                                    "Posts:",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.0),
+                                  ),
+                                  Text(_scrapedUsersData[index]
+                                      .mediaCount
+                                      .toString()),
+                                ],
+                                childrenPadding: const EdgeInsets.all(8.0),
+                                expandedCrossAxisAlignment:
+                                    CrossAxisAlignment.stretch,
                               ),
                             ),
                           ),
@@ -240,4 +283,138 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
       ),
     );
   }
+
+  void _scrapeData() async {
+    if (_formKey.currentState.validate()) {
+      FocusScope.of(context).unfocus();
+
+      setState(() {
+        _isWorking = true;
+      });
+
+      var data = await InstagramMarketing().scrapeUserData().whenComplete(() {
+        setState(() {
+          _isWorking = false;
+        });
+      });
+
+      print("FTN CALLED AT FRONT END!!");
+
+      if (data is String) {
+        print(data);
+        customSnackBar(
+            context,
+            Colors.red,
+            Row(
+              children: [
+                const Icon(Icons.info, color: Colors.white),
+                const SizedBox(width: 8.0),
+                Text(
+                  'Unexpected error! Please try again later.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ));
+      } else {
+        print(data.scrapedUsers.length);
+        setState(() {
+          _dataScraped = true;
+          _scrapedUsersData = data.scrapedUsers;
+        });
+        customSnackBar(
+            context,
+            kLightGreenColor,
+            Row(
+              children: [
+                const Icon(Icons.check, color: Colors.white),
+                const SizedBox(width: 8.0),
+                const Text(
+                  "Data scraped successfully!",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ));
+      }
+    }
+  }
+
+  void _sendDMs() async {
+    if (_marketingMsg.text.isEmpty) {
+      setState(() {
+        _focusMsg = true;
+      });
+      customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text("Enter some messaging content please!!")
+            ],
+          ));
+    } else {
+      FocusScope.of(context).unfocus();
+
+      setState(() {
+        _isWorking = true;
+      });
+
+      var data = await InstagramMarketing()
+          .sendDM(_marketingMsg.text.trim())
+          .whenComplete(() {
+        setState(() {
+          _isWorking = false;
+        });
+      });
+
+      print("FTN CALLED AT FRONT END!!");
+
+      if (data is String) {
+        print(data);
+        customSnackBar(
+            context,
+            Colors.red,
+            Row(
+              children: [
+                const Icon(Icons.info, color: Colors.white),
+                const SizedBox(width: 8.0),
+                Text(
+                  'Unexpected error! Please try again later.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ));
+      } else {
+        setState(() {
+          _dataScraped = false;
+        });
+        _marketingMsg.clear();
+        customSnackBar(
+            context,
+            kLightGreenColor,
+            Row(
+              children: [
+                const Icon(Icons.check, color: Colors.white),
+                const SizedBox(width: 8.0),
+                const Text(
+                  "Messages sent successfully!",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ));
+      }
+    }
+  }
+}
+
+void customSnackBar(BuildContext context, Color color, Widget child) {
+  var snackBar = SnackBar(
+    backgroundColor: color,
+    content: child,
+  );
+
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(snackBar);
 }

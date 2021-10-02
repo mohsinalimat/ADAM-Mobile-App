@@ -30,9 +30,11 @@ class _HomeViewState extends State<HomeView> {
 
   void _getSubscribedServicesList() async {
     SubscribedServices value = await serviceController.getSubscribedServices();
-    setState(() {
-      subscribedServices = List.from(value.subscribedServices);
-    });
+    if (mounted) {
+      setState(() {
+        subscribedServices = List.from(value.subscribedServices);
+      });
+    }
   }
 
   // get local user object
@@ -251,7 +253,7 @@ class _HomeViewState extends State<HomeView> {
                           icon: Icon(Icons.favorite_outline_rounded)),
                     ],
                   ),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 10.0),
                   FutureBuilder(
                       future: serviceController.getServices(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
