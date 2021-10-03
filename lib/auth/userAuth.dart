@@ -184,4 +184,71 @@ class UserAuth {
       return response.statusCode;
     }
   }
+
+  Future changePassword(String pass, String confirmPass) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+
+    String url = "https://adam-web-api.herokuapp.com/user/update-password";
+
+    var body = {
+      'password': pass,
+      'cPassword': confirmPass,
+      'userId': _userId,
+    };
+
+    var headers = {
+      'Authorization': "Bearer $_token",
+    };
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('pass updated!');
+      return response.statusCode;
+    } else {
+      print('some error!');
+      return response.statusCode;
+    }
+  }
+
+  Future<int> deleteAccount(String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+
+    String url = "https://adam-web-api.herokuapp.com/user/delete-account";
+
+    var body = {
+      'password': password,
+      'userId': _userId,
+    };
+
+    var headers = {
+      'Authorization': "Bearer $_token",
+    };
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('account deleted!');
+      return response.statusCode;
+    } else if (response.statusCode == 204) {
+      print('password mismatched!');
+      return response.statusCode;
+    } else {
+      print('some error!');
+      return response.statusCode;
+    }
+  }
 }
