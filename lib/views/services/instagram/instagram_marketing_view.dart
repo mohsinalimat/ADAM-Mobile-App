@@ -1,6 +1,7 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/scraping/instagram/scraped_user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
@@ -32,7 +33,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
     _instaPasswordController.text = "hamza1998";
     _targetProfileController.text = 'bareera099';
     _marketingMsg.text =
-        "Hi there! Hope you are doing well. Would love to connect with you for valuable content :)\n\nSo, hit me up with Follow button\nCheers :D";
+        "Hi there! Hope you are doing well. Would love to connect with you for valuable content :)\n\nSo, hit me up with that Follow button\nCheers :D";
   }
 
   @override
@@ -54,7 +55,6 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
       absorbing: _isWorking,
       child: GestureDetector(
@@ -69,7 +69,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -80,6 +80,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 10.0),
                   Text(
                     "Instagram Marketing",
                     style: Theme.of(context).textTheme.headline1,
@@ -162,14 +163,6 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                       controller: _marketingMsg,
                       keyboardType: TextInputType.multiline,
                       textInputAction: TextInputAction.newline,
-                      // validator: (value) {
-                      //   if (value.isEmpty) {
-                      //     return "Please provide some content!";
-                      //   } else if (value.length < 25) {
-                      //     return "Content can't be less than 25 characters!";
-                      //   }
-                      //   return null;
-                      // },
                       decoration: InputDecoration(
                         hintText: "Enter your marketing content here...",
                         hintStyle: Theme.of(context).textTheme.caption,
@@ -219,73 +212,8 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                           shrinkWrap: true,
                           children: List.generate(
                             _scrapedUsersData.length,
-                            (index) => Card(
-                              child: ExpansionTile(
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                      _scrapedUsersData[index].photoUrl),
-                                ),
-                                title: Text(
-                                  _scrapedUsersData[index].username,
-                                  style: TextStyle(
-                                    color: _themeProvider.darkTheme
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  _scrapedUsersData[index].profileUrl,
-                                  style: TextStyle(
-                                    color: _themeProvider.darkTheme
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                                children: [
-                                  Text(
-                                    "Bio:",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                  ),
-                                  _scrapedUsersData[index].bio == ""
-                                      ? Text('*No Bio Found*')
-                                      : Text(_scrapedUsersData[index].bio),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                    "Followers:",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                  ),
-                                  Text(_scrapedUsersData[index]
-                                      .followers
-                                      .toString()),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                    "Following:",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                  ),
-                                  Text(_scrapedUsersData[index]
-                                      .following
-                                      .toString()),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                    "Posts:",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16.0),
-                                  ),
-                                  Text(_scrapedUsersData[index]
-                                      .mediaCount
-                                      .toString()),
-                                ],
-                                childrenPadding: const EdgeInsets.all(8.0),
-                                expandedCrossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
-                              ),
+                            (index) => InstaScrapedUserDataCard(
+                              instaScrapedUser: _scrapedUsersData[index],
                             ),
                           ),
                         )
@@ -381,10 +309,6 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      Future.delayed(Duration(seconds: 60), () {
-        print('60 sec done!');
-      });
-
       print("FTN CALLED AT FRONT END!!");
 
       var data = await InstagramMarketing()
@@ -422,19 +346,79 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         });
         _marketingMsg.clear();
         customSnackBar(
-            context,
-            kLightGreenColor,
-            Row(
-              children: [
-                const Icon(Icons.check, color: Colors.white),
-                const SizedBox(width: 8.0),
-                const Text(
-                  "Messages has been sent successfully!",
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            ));
+          context,
+          kLightGreenColor,
+          Row(
+            children: [
+              const Icon(Icons.check, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text(
+                "Messages has been sent successfully!",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        );
       }
     }
+  }
+}
+
+class InstaScrapedUserDataCard extends StatelessWidget {
+  final InstaScrapedUser instaScrapedUser;
+
+  const InstaScrapedUserDataCard({Key key, @required this.instaScrapedUser})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    return Card(
+      child: ExpansionTile(
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(instaScrapedUser.photoUrl),
+        ),
+        title: Text(
+          instaScrapedUser.username,
+          style: TextStyle(
+            color: _themeProvider.darkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+        subtitle: Text(
+          instaScrapedUser.profileUrl,
+          style: TextStyle(
+            color: _themeProvider.darkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+        children: [
+          Text(
+            "Bio:",
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+          ),
+          instaScrapedUser.bio == ""
+              ? Text('*No Bio Found*')
+              : Text(instaScrapedUser.bio),
+          const SizedBox(height: 5.0),
+          Text(
+            "Followers:",
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+          ),
+          Text(instaScrapedUser.followers.toString()),
+          const SizedBox(height: 5.0),
+          Text(
+            "Following:",
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+          ),
+          Text(instaScrapedUser.following.toString()),
+          const SizedBox(height: 5.0),
+          Text(
+            "Posts:",
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+          ),
+          Text(instaScrapedUser.mediaCount.toString()),
+        ],
+        childrenPadding: const EdgeInsets.all(8.0),
+        expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+      ),
+    );
   }
 }

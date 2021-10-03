@@ -30,6 +30,24 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   bool _isUpdating = false;
   ScheduleType _scheduleType = ScheduleType.Post;
 
+  List scheduledPosts = [
+    ScheduledPostCard(
+      caption: "Testing post here!",
+      date: "01-09-2021",
+      time: "02:23 PM",
+    ),
+    ScheduledPostCard(
+      caption: "Hey there i'm ADAM :)",
+      date: "02-09-2021",
+      time: "04:12 PM",
+    ),
+    ScheduledPostCard(
+      caption: "Hey there i'm ADAM :)",
+      date: "02-09-2021",
+      time: "04:12 PM",
+    ),
+  ];
+
   @override
   void dispose() {
     _contentController.dispose();
@@ -55,7 +73,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -66,6 +84,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 10.0),
                   Text(
                     "Instagram Account Scheduler",
                     style: Theme.of(context).textTheme.headline1,
@@ -112,7 +131,11 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  const Text('Add Image/Video: *'),
+                  Text(
+                    _scheduleType == ScheduleType.Post
+                        ? "Post Caption: *"
+                        : "Story Caption: *",
+                  ),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.89,
@@ -242,23 +265,30 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        print("VALID!");
-                      }
-                    },
+                    btnOnPressed:
+                        _scheduleType == ScheduleType.Post ? _post : _story,
                     btnColor: kPrimaryBlueColor,
-                    btnText: const Text('Schedule Post', style: kBtnTextStyle),
+                    btnText: _isUpdating
+                        ? kLoaderWhite
+                        : Text(
+                            _scheduleType == ScheduleType.Post
+                                ? "Scheduled Post"
+                                : "Scheduled Story",
+                            style: kBtnTextStyle),
                   ),
                   const SizedBox(height: 5.0),
                   TextButton(
                       onPressed: () {}, child: const Text("Save as Draft")),
                   const SizedBox(height: 10.0),
                   Text(
-                    "Scheduled Posts",
+                    _scheduleType == ScheduleType.Post
+                        ? "Scheduled Posts"
+                        : "Scheduled Story",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  for (int i = 0; i < 3; i++) ScheduledPostCard(),
+                  const SizedBox(height: 8.0),
+                  for (int i = 0; i < scheduledPosts.length - 1; i++)
+                    scheduledPosts[i],
                 ],
               ),
             ),
@@ -267,9 +297,31 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
       ),
     );
   }
+
+  // post method
+  void _post() async {
+    if (_formKey.currentState.validate()) {
+      
+    }
+  }
+
+  // story method
+  void _story() async {
+    if (_formKey.currentState.validate()) {}
+  }
 }
 
 class ScheduledPostCard extends StatelessWidget {
+  final String caption;
+  final String date;
+  final String time;
+
+  const ScheduledPostCard({
+    Key key,
+    this.caption = "Some caption here",
+    this.date = "12-10-2022",
+    this.time = "12:00 PM",
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final _themeProviders = Provider.of<ThemeProvider>(context);
@@ -279,38 +331,39 @@ class ScheduledPostCard extends StatelessWidget {
           backgroundImage: AssetImage('assets/phoneVerify.gif'),
         ),
         title: Text(
-          "Some caption here...",
+          // "${caption.substring(0, 17)}...",
+          caption,
           style: TextStyle(
             color: _themeProviders.darkTheme ? Colors.white : kPrimaryBlueColor,
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: Text("12-10-2022 at 12:00 PM"),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Icon(
-                  Icons.edit,
-                  color: kLightGreenColor,
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-              ),
-            ),
-          ],
-        ),
+        subtitle: Text("$date at $time"),
+        // trailing: Row(
+        //   mainAxisSize: MainAxisSize.min,
+        //   children: [
+        //     InkWell(
+        //       onTap: () {},
+        //       child: Padding(
+        //         padding: const EdgeInsets.all(5.0),
+        //         child: Icon(
+        //           Icons.edit,
+        //           color: kLightGreenColor,
+        //         ),
+        //       ),
+        //     ),
+        //     InkWell(
+        //       onTap: () {},
+        //       child: Padding(
+        //         padding: const EdgeInsets.all(5.0),
+        //         child: Icon(
+        //           Icons.delete,
+        //           color: Colors.red,
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }
