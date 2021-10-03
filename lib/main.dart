@@ -1,37 +1,4 @@
-import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/controller/themeController/themeStyles.dart';
-import 'package:adam/providers/bottomNavBarProvider.dart';
-import 'package:adam/splashScreen.dart';
-import 'package:adam/views/chat/chat_view.dart';
-import 'package:adam/views/emailNotVerfiedView.dart';
-import 'package:adam/views/home/favoriteView.dart';
-import 'package:adam/views/profile/changeEmailView.dart';
-import 'package:adam/views/profile/changePasswordView.dart';
-import 'package:adam/views/services/linkedin/linkedin_marketing_view.dart';
-import 'package:adam/views/services/twitter/twitter_marketing_view.dart';
-import 'package:adam/views/settings/account/deleteAccountView.dart';
-import 'package:adam/views/profile/editProfileView.dart';
-import 'package:adam/views/login/forgotPasswordView.dart';
-import 'package:adam/views/login/loginView.dart';
-import 'package:adam/views/dashboard.dart';
-import 'package:adam/views/profile/phoneVerificationView.dart';
-import 'package:adam/views/profile/profile_view.dart';
-import 'package:adam/views/settings/account/accountView.dart';
-import 'package:adam/views/settings/account/disableAccountRequestView.dart';
-import 'package:adam/views/settings/help/appInfo.dart';
-import 'package:adam/views/settings/help/faqView.dart';
-import 'package:adam/views/settings/help/helpView.dart';
-import 'package:adam/views/settings/help/report_problem.dart';
-import 'package:adam/views/settings/notificationView.dart';
-import 'package:adam/views/settings/help/privacyPolicy.dart';
-import 'package:adam/views/settings/settingsView.dart';
-import 'package:adam/views/settings/themeView.dart';
-import 'package:adam/views/signup/signUpView.dart';
-import 'package:adam/views/subscriptionHistory/subscription_history_view.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:provider/provider.dart';
+import 'utils/main_imports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
