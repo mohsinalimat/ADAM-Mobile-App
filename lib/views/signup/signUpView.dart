@@ -634,7 +634,7 @@ class _SignUpViewState extends State<SignUpView> {
           ),
           const SizedBox(width: 8.0),
           Expanded(
-            child: const Text("Account created successfully! Check your email.",
+            child: const Text("Account created successfully!",
                 style: TextStyle(color: Colors.white)),
           ),
         ],
