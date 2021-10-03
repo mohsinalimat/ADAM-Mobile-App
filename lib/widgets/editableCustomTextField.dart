@@ -80,6 +80,7 @@ class _EditableCustomTextFieldState extends State<EditableCustomTextField> {
               errorText: widget.errorText,
               prefixIcon: Hero(
                 tag: widget.icon.toString(),
+                transitionOnUserGestures: true,
                 child: Icon(
                   widget.icon,
                   color: _themeProvider.darkTheme

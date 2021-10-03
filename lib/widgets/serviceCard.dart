@@ -1,5 +1,7 @@
+import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/service_subscription_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -135,27 +137,67 @@ class _ServiceCardState extends State<ServiceCard> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
                             _isFav = !_isFav;
                           });
-                          var snackBar = SnackBar(
-                            duration: Duration(milliseconds: 500),
-                            content: Row(children: [
-                              Icon(
-                                  _isFav
-                                      ? Icons.favorite_rounded
-                                      : Icons.favorite_border_rounded,
-                                  color: Colors.white),
-                              const SizedBox(width: 8.0),
-                              _isFav
-                                  ? const Text("Added to favorites!")
-                                  : const Text("Removed from favorites!"),
-                            ]),
-                          );
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(snackBar);
+                          if (_isFav) {
+                            int code = await ServiceController()
+                                .addFavorite(widget.service.serviceId);
+                            if (code == 200) {
+                              customSnackBar(
+                                context,
+                                Colors.red[700],
+                                Row(children: [
+                                  Icon(
+                                      _isFav
+                                          ? Icons.favorite_rounded
+                                          : Icons.favorite_border_rounded,
+                                      color: Colors.white),
+                                  const SizedBox(width: 8.0),
+                                  const Text("Added to favorites!")
+                                ]),
+                              );
+                            } else {
+                              customSnackBar(
+                                context,
+                                Colors.red,
+                                Row(children: [
+                                  const Icon(Icons.info, color: Colors.white),
+                                  const SizedBox(width: 8.0),
+                                  const Text("Unexpected error!")
+                                ]),
+                              );
+                            }
+                          } else {
+                            int code = await ServiceController()
+                                .deleteFavorite(widget.service.serviceId);
+                            if (code == 200) {
+                              customSnackBar(
+                                context,
+                                Colors.red[700],
+                                Row(children: [
+                                  Icon(
+                                      _isFav
+                                          ? Icons.favorite_rounded
+                                          : Icons.favorite_border_rounded,
+                                      color: Colors.white),
+                                  const SizedBox(width: 8.0),
+                                  const Text("Removed from favorites!"),
+                                ]),
+                              );
+                            } else {
+                              customSnackBar(
+                                context,
+                                Colors.red,
+                                Row(children: [
+                                  const Icon(Icons.info, color: Colors.white),
+                                  const SizedBox(width: 8.0),
+                                  const Text("Unexpected error!")
+                                ]),
+                              );
+                            }
+                          }
                         },
                         child: Icon(
                           _isFav
