@@ -35,7 +35,7 @@ dependencies:
   datetime_picker_formfield: ^2.0.0
   date_time_picker: ^2.1.0
   
-  shared_preferences: ^2.0.5
+  shared_preferences: ^2.0.0
 
   progress_indicators: ^1.0.0
   flutter_rating_bar: ^4.0.0
@@ -66,9 +66,9 @@ dependencies:
   flutter_dotenv: ^5.0.0
 
   # Firebase Plugins
-  firebase_auth: ^1.2.0
+  # firebase_auth: ^1.2.0
   firebase_core: ^1.7.0
-  cloud_firestore: ^2.2.0
+  # cloud_firestore: ^2.2.0
   firebase_storage: ^8.1.0
 
   pin_code_fields: ^7.2.0
@@ -78,6 +78,8 @@ dependencies:
   # saving subscription history
   path_provider: ^2.0.2
   screenshot: ^1.2.1
+
+  csv: ^5.0.0
 
   # share app
   share: ^2.0.4
