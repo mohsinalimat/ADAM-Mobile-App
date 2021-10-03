@@ -1,20 +1,20 @@
-class ScrapedUserList {
-  final List<ScrapedUser> scrapedUsers;
+class InstaScrapedUserList {
+  final List<InstaScrapedUser> scrapedUsers;
 
-  ScrapedUserList({this.scrapedUsers});
+  InstaScrapedUserList({this.scrapedUsers});
 
-  factory ScrapedUserList.fromJSON(Map<String, dynamic> json) {
+  factory InstaScrapedUserList.fromJSON(Map<String, dynamic> json) {
     print(json);
     Iterable users = json['followers_data'];
-    List<ScrapedUser> scrapedUser =
-        users.map((data) => ScrapedUser.fromJSON(data)).toList();
-    return ScrapedUserList(
+    List<InstaScrapedUser> scrapedUser =
+        users.map((data) => InstaScrapedUser.fromJSON(data)).toList();
+    return InstaScrapedUserList(
       scrapedUsers: scrapedUser,
     );
   }
 }
 
-class ScrapedUser {
+class InstaScrapedUser {
   final String username;
   final String bio;
   final String profileUrl;
@@ -23,7 +23,7 @@ class ScrapedUser {
   final int mediaCount;
   final String photoUrl;
 
-  ScrapedUser({
+  InstaScrapedUser({
     this.username,
     this.bio,
     this.profileUrl,
@@ -33,8 +33,8 @@ class ScrapedUser {
     this.photoUrl,
   });
 
-  factory ScrapedUser.fromJSON(Map<String, dynamic> json) {
-    return ScrapedUser(
+  factory InstaScrapedUser.fromJSON(Map<String, dynamic> json) {
+    return InstaScrapedUser(
       username: json['username'],
       bio: json['bio'],
       profileUrl: json['url'],
