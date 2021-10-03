@@ -68,7 +68,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
   final _standardFeatures = [
     ServiceFeatureWidget(
-      featureText: "Best Facebook Bot",
+      featureText: "Best Marketing Bot",
       isChecked: true,
     ),
     ServiceFeatureWidget(
@@ -103,7 +103,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
   final _premiumFeatures = [
     ServiceFeatureWidget(
-      featureText: "Best Facebook Bot",
+      featureText: "Best Marketing Bot",
       isChecked: true,
     ),
     ServiceFeatureWidget(
@@ -195,17 +195,23 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                     standardFeatures: _standardFeatures,
                     subcribe: _standardSubscription,
                   ),
-                  const SizedBox(height: 40.0),
-                  PremiumServiceSubscriptionCard(
-                    subscribing: _isSubscribingPrem,
-                    serviceType: widget.service.serviceType[1],
-                    colorTheme:
-                        Color(int.parse(widget.service.serviceColor[0])),
-                    iconData: widget.service.serviceIcon,
-                    standardFeatures: _premiumFeatures,
-                    subcribe: _premiumSubscription,
-                    // subcribe: _subscribe,
-                  ),
+                  widget.service.serviceName == "SMS Marketing" ||
+                          widget.service.serviceName == "Email Marketing"
+                      ? Container()
+                      : const SizedBox(height: 40.0),
+                  widget.service.serviceName == "SMS Marketing" ||
+                          widget.service.serviceName == "Email Marketing"
+                      ? Container()
+                      : PremiumServiceSubscriptionCard(
+                          subscribing: _isSubscribingPrem,
+                          serviceType: widget.service.serviceType[1],
+                          colorTheme:
+                              Color(int.parse(widget.service.serviceColor[0])),
+                          iconData: widget.service.serviceIcon,
+                          standardFeatures: _premiumFeatures,
+                          subcribe: _premiumSubscription,
+                          // subcribe: _subscribe,
+                        ),
                   const SizedBox(height: 20.0),
                   Divider(color: Colors.grey),
                   const SizedBox(height: 20.0),

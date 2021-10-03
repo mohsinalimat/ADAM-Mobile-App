@@ -2,7 +2,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/logoDisplay.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -93,11 +93,11 @@ class OnGoingServiceView extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 40.0,
-                        backgroundImage:
-                            FirebaseAuth.instance.currentUser.photoURL == " "
-                                ? AssetImage('assets/dp.png')
-                                : NetworkImage(
-                                    FirebaseAuth.instance.currentUser.photoURL),
+                        // backgroundImage:
+                        //     FirebaseAuth.instance.currentUser.photoURL == " "
+                        //         ? AssetImage('assets/dp.png')
+                        //         : NetworkImage(
+                        //             FirebaseAuth.instance.currentUser.photoURL),
                       ),
                       SizedBox(width: 10.0),
                       Column(
