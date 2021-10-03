@@ -24,7 +24,7 @@ class _ProfileViewState extends State<ProfileView> {
   final _userAuth = UserAuth();
   // final _firebaseAuth = FirebaseAuth.instance;
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  // FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  // FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;a
 
   // Profile Photo Buttons properties
   final _dpBtnColors = [Colors.red, Colors.purple, Colors.green];
@@ -67,177 +67,178 @@ class _ProfileViewState extends State<ProfileView> {
       absorbing: _uploading,
       child: userData == null
           ? CustomLoader()
-          : Scaffold(
-              body: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 10.0),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                            child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 90.0,
-                              backgroundColor: _themeProvider.darkTheme
-                                  ? kMediumGreenColor
-                                  : kLightGreenColor,
-                              child: CircleAvatar(
-                                radius: 88,
+          : ScaffoldMessenger(
+            child: Scaffold(
+                body: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 10.0),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                              child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 90.0,
                                 backgroundColor: _themeProvider.darkTheme
-                                    ? Colors.grey[800]
-                                    : Colors.white,
+                                    ? kMediumGreenColor
+                                    : kLightGreenColor,
                                 child: CircleAvatar(
-                                  radius: 85.0,
-                                  backgroundImage: userData.photo == " "
-                                      ? AssetImage('assets/dp.png')
-                                      : NetworkImage(userData.photo),
-                                  // backgroundImage:
-                                  //     _firebaseAuth.currentUser.photoURL == " "
-                                  //         ? AssetImage('assets/dp.png')
-                                  //         : NetworkImage(
-                                  //             _firebaseAuth.currentUser.photoURL),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: FloatingActionButton(
-                                heroTag: "profilePicBtn",
-                                backgroundColor: _themeProvider.darkTheme
-                                    ? Colors.grey[900]
-                                    : Colors.white,
-                                onPressed: _updateProfilePic,
-                                mini: true,
-                                child: _uploading
-                                    ? kLoader
-                                    : Icon(
-                                        Icons.camera_alt,
-                                        color: _themeProvider.darkTheme
-                                            ? Colors.white
-                                            : kPrimaryBlueColor,
-                                      ),
-                              ),
-                            )
-                          ],
-                        )),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Center(
-                        child: Text(userData.fullName,
-                            style: _textTheme.headline6),
-                      ),
-                      const SizedBox(height: 15.0),
-                      SizedBox(
-                        height: 42.0,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              var value = await Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      Duration(milliseconds: 750),
-                                  reverseTransitionDuration:
-                                      Duration(milliseconds: 750),
-                                  transitionsBuilder:
-                                      (context, ani1, ani2, child) {
-                                    return FadeTransition(
-                                      child: child,
-                                      opacity: ani1,
-                                    );
-                                  },
-                                  pageBuilder: (context, a1, a2) =>
-                                      EditProfileView(
-                                    userData: userData,
+                                  radius: 88,
+                                  backgroundColor: _themeProvider.darkTheme
+                                      ? Colors.grey[800]
+                                      : Colors.white,
+                                  child: CircleAvatar(
+                                    radius: 85.0,
+                                    backgroundImage: userData.photo == " "
+                                        ? AssetImage('assets/dp.png')
+                                        : NetworkImage(userData.photo),
+                                    // backgroundImage:
+                                    //     _firebaseAuth.currentUser.photoURL == " "
+                                    //         ? AssetImage('assets/dp.png')
+                                    //         : NetworkImage(
+                                    //             _firebaseAuth.currentUser.photoURL),
                                   ),
                                 ),
-                              );
-                              if (value == null) value = false;
-                              if (value) {
-                                _getUserDataLocally();
-                              }
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.edit,
-                                  color: Colors.white,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: FloatingActionButton(
+                                  backgroundColor: _themeProvider.darkTheme
+                                      ? Colors.grey[900]
+                                      : Colors.white,
+                                  onPressed: _updateProfilePic,
+                                  mini: true,
+                                  child: _uploading
+                                      ? kLoader
+                                      : Icon(
+                                          Icons.camera_alt,
+                                          color: _themeProvider.darkTheme
+                                              ? Colors.white
+                                              : kPrimaryBlueColor,
+                                        ),
                                 ),
-                                const SizedBox(width: 8.0),
-                                const Text("Edit Profile",
-                                    style: kBtnTextStyle),
-                              ],
-                            )),
-                      ),
-                      const SizedBox(height: 20.0),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: ProfileInfoWidget(
-                              icon: Icons.email,
-                              info: userData.email,
-                              infoTitle: "Email",
+                              )
+                            ],
+                          )),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Center(
+                          child: Text(userData.fullName,
+                              style: _textTheme.headline6),
+                        ),
+                        const SizedBox(height: 15.0),
+                        SizedBox(
+                          height: 42.0,
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                var value = await Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                        Duration(milliseconds: 750),
+                                    reverseTransitionDuration:
+                                        Duration(milliseconds: 750),
+                                    transitionsBuilder:
+                                        (context, ani1, ani2, child) {
+                                      return FadeTransition(
+                                        child: child,
+                                        opacity: ani1,
+                                      );
+                                    },
+                                    pageBuilder: (context, a1, a2) =>
+                                        EditProfileView(
+                                      userData: userData,
+                                    ),
+                                  ),
+                                );
+                                if (value == null) value = false;
+                                if (value) {
+                                  _getUserDataLocally();
+                                }
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  const Text("Edit Profile",
+                                      style: kBtnTextStyle),
+                                ],
+                              )),
+                        ),
+                        const SizedBox(height: 20.0),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: ProfileInfoWidget(
+                                icon: Icons.email,
+                                info: userData.email,
+                                infoTitle: "Email",
+                              ),
                             ),
-                          ),
-                          VerificationBadge(isEmailType: true),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: ProfileInfoWidget(
-                              icon: Icons.phone,
-                              info: userData.phoneNumber,
-                              infoTitle: "Phone",
+                            VerificationBadge(isEmailType: true),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: ProfileInfoWidget(
+                                icon: Icons.phone,
+                                info: userData.phoneNumber,
+                                infoTitle: "Phone",
+                              ),
                             ),
-                          ),
-                          userData.isPhoneVerified
-                              ? VerificationBadge(isEmailType: false)
-                              : PhoneNotVerified(
-                                  phoneNumber: userData.phoneNumber,
-                                )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      ProfileInfoWidget(
-                        icon: Icons.person,
-                        info: userData.gender,
-                        infoTitle: "Gender",
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      ProfileInfoWidget(
-                        icon: Icons.date_range,
-                        info: userData.dob,
-                        infoTitle: "Date of Birth",
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      ProfileInfoWidget(
-                        icon: Icons.location_city,
-                        info: "${userData.city}, ${userData.country}",
-                        infoTitle: "Address",
-                      ),
-                    ],
+                            userData.isPhoneVerified
+                                ? VerificationBadge(isEmailType: false)
+                                : PhoneNotVerified(
+                                    phoneNumber: userData.phoneNumber,
+                                  )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        ProfileInfoWidget(
+                          icon: Icons.person,
+                          info: userData.gender,
+                          infoTitle: "Gender",
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        ProfileInfoWidget(
+                          icon: Icons.date_range,
+                          info: userData.dob,
+                          infoTitle: "Date of Birth",
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        ProfileInfoWidget(
+                          icon: Icons.location_city,
+                          info: "${userData.city}, ${userData.country}",
+                          infoTitle: "Address",
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+          ),
     );
   }
 
@@ -468,7 +469,7 @@ class _ProfileViewState extends State<ProfileView> {
             const Icon(Icons.person, color: Colors.white),
             const SizedBox(width: 8.0),
             const Text(
-              "Picture Uploaded Successful!",
+              "Picture Uploaded Successfully!",
               style: TextStyle(color: Colors.white),
             )
           ],

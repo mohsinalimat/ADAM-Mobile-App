@@ -1,6 +1,7 @@
-import 'package:adam/auth/auth.dart';
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
@@ -16,11 +17,13 @@ class ChangePasswordView extends StatefulWidget {
 }
 
 class _ChangePasswordViewState extends State<ChangePasswordView> {
+  final UserAuth _userAuth = UserAuth();
+
   String _passCheck = "";
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   // final _oldPassController = TextEditingController();
-  final _auth = Auth();
+  // final _auth = Auth();
   final _formKey = GlobalKey<FormState>();
   bool _updatingPass = false;
 
@@ -79,23 +82,12 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           height: height * 0.01,
                         ),
                         Text(
-                          "Make sure to login after changing password.",
+                          "You will be logged out after changing password.",
                         ),
                         SizedBox(height: height * 0.05),
-                        // CustomTextField(
-                        //   textEditingController: _oldPassController,
-                        //   textInputAction: TextInputAction.next,
-                        //   textInputType: TextInputType.text,
-                        //   hintText: "Old Password",
-                        //   node: node,
-                        //   icon: Icons.lock_open,
-                        //   isPassword: true,
-                        //   onFieldSubmit: (value) => node.nextFocus(),
-                        // ),
-                        // SizedBox(height: 10),
                         CustomTextField(
                           textEditingController: _newPasswordController,
-                          textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.done,
                           textInputType: TextInputType.text,
                           hintText: "New Password",
                           node: node,
@@ -196,105 +188,14 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         SizedBox(height: height * 0.03),
                         CustomButton(
                           btnWidth: width * 0.9,
-                          btnHeight: 40.0,
-                          btnOnPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              setState(() {
-                                _updatingPass = true;
-                              });
-                              print("VALID PASSWORD");
-                              var value = await _auth
-                                  .changePassword(
-                                _confirmPasswordController.text.trim(),
-                              )
-                                  .whenComplete(() {
-                                setState(() {
-                                  _updatingPass = false;
-                                });
-                              });
-                              if (value is String) {
-                                print(value);
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text(
-                                      "Security Check!",
-                                      style: TextStyle(
-                                        fontSize: Theme.of(context)
-                                            .textTheme
-                                            .headline1
-                                            .fontSize,
-                                        color:
-                                            Provider.of<ThemeProvider>(context)
-                                                    .darkTheme
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                    content: Text(value),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          var snackBar = SnackBar(
-                                            backgroundColor: Colors.green,
-                                            content: Row(
-                                              children: [
-                                                Icon(Icons.check,
-                                                    color: Colors.white),
-                                                SizedBox(width: 8.0),
-                                                Text(
-                                                  "Sign Out Successful!",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-                                          _auth.signOut(context);
-                                        },
-                                        child: Text("Logout"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text("Back"),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                var snackBar = SnackBar(
-                                  backgroundColor: Colors.green,
-                                  content: Row(
-                                    children: [
-                                      Icon(Icons.check, color: Colors.white),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      Text(
-                                        "Password updated! Please login.",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                                clearController();
-                                _auth.signOut(context);
-                              }
-                            }
-                          },
+                          btnHeight: 45.0,
+                          btnOnPressed: _changePassword,
                           btnColor:
                               Provider.of<ThemeProvider>(context).darkTheme
                                   ? kMediumBlueColor
                                   : kPrimaryBlueColor,
                           btnText: _updatingPass
-                              ? kLoader
+                              ? kLoaderWhite
                               : Text(
                                   "Change Password",
                                   style: kBtnTextStyle,
@@ -310,5 +211,42 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
         ),
       ),
     );
+  }
+
+  void _changePassword() async {
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        _updatingPass = true;
+      });
+
+      int code = await _userAuth
+          .changePassword(
+        _newPasswordController.text.trim(),
+        _confirmPasswordController.text.trim(),
+      )
+          .whenComplete(() {
+        setState(() {
+          _updatingPass = false;
+        });
+      });
+
+      if (code == 200) {
+        if (mounted) {
+          customSnackBar(
+            context,
+            kSecondaryBlueColor,
+            Row(
+              children: [
+                const Icon(Icons.lock_rounded, color: Colors.white),
+                const SizedBox(width: 8),
+                const Text('Password updated successfully! Re-login please.')
+              ],
+            ),
+          );
+          Navigator.popUntil(context, (route) => route.settings?.name == "/");
+          await _userAuth.logout(context);
+        }
+      }
+    }
   }
 }

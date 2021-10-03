@@ -1,9 +1,8 @@
-import 'package:adam/auth/auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +24,8 @@ class ChangeEmailView extends StatefulWidget {
 
 class _ChangeEmailViewState extends State<ChangeEmailView> {
   final _passwordController = TextEditingController();
-  final _auth = Auth();
-  final _firebaseAuth = FirebaseAuth.instance;
+  // final _auth = Auth();
+  // final _firebaseAuth = FirebaseAuth.instance;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -119,73 +118,73 @@ class _ChangeEmailViewState extends State<ChangeEmailView> {
                           btnHeight: 40.0,
                           btnOnPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              setState(() {
-                                _isUpdating = true;
-                              });
+                              // setState(() {
+                              //   _isUpdating = true;
+                              // });
 
-                              // updating the email
-                              var value = await _auth
-                                  .updateEmail(
-                                _firebaseAuth.currentUser,
-                                widget.updatedEmail,
-                                _passwordController.text.trim(),
-                              )
-                                  .whenComplete(() {
-                                setState(() {
-                                  _isUpdating = false;
-                                });
-                              });
+                              // // updating the email
+                              // var value = await _auth
+                              //     .updateEmail(
+                              //   _firebaseAuth.currentUser,
+                              //   widget.updatedEmail,
+                              //   _passwordController.text.trim(),
+                              // )
+                              //     .whenComplete(() {
+                              //   setState(() {
+                              //     _isUpdating = false;
+                              //   });
+                              // });
 
-                              // updating the user data
-                              await _auth.updateData(
-                                _firebaseAuth.currentUser,
-                                widget.fullName,
-                                widget.updatedData,
-                              );
+                              // // updating the user data
+                              // await _auth.updateData(
+                              //   _firebaseAuth.currentUser,
+                              //   widget.fullName,
+                              //   widget.updatedData,
+                              // );
 
-                              if (value is String) {
-                                var snackBar = SnackBar(
-                                  backgroundColor: Colors.red,
-                                  content: Row(
-                                    children: [
-                                      Icon(Icons.info, color: Colors.white),
-                                      SizedBox(width: 8.0),
-                                      Text(
-                                        value,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                              } else {
-                                var snackBar = SnackBar(
-                                  backgroundColor: kSecondaryBlueColor,
-                                  content: Row(
-                                    children: [
-                                      Icon(Icons.check, color: Colors.white),
-                                      SizedBox(width: 10.0),
-                                      Expanded(
-                                        child: Text(
-                                          "Email updated! Verification link sent to ${widget.updatedEmail}",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
+                              // if (value is String) {
+                              //   var snackBar = SnackBar(
+                              //     backgroundColor: Colors.red,
+                              //     content: Row(
+                              //       children: [
+                              //         Icon(Icons.info, color: Colors.white),
+                              //         SizedBox(width: 8.0),
+                              //         Text(
+                              //           value,
+                              //           style: TextStyle(
+                              //             color: Colors.white,
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   );
+                              //   ScaffoldMessenger.of(context)
+                              //       .showSnackBar(snackBar);
+                              // } else {
+                              //   var snackBar = SnackBar(
+                              //     backgroundColor: kSecondaryBlueColor,
+                              //     content: Row(
+                              //       children: [
+                              //         Icon(Icons.check, color: Colors.white),
+                              //         SizedBox(width: 10.0),
+                              //         Expanded(
+                              //           child: Text(
+                              //             "Email updated! Verification link sent to ${widget.updatedEmail}",
+                              //             style: TextStyle(
+                              //               color: Colors.white,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   );
 
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
+                              //   ScaffoldMessenger.of(context)
+                              //       .showSnackBar(snackBar);
 
-                                Navigator.pushNamed(
-                                    context, '/emailNotVerified');
-                              }
+                              //   Navigator.pushNamed(
+                              //       context, '/emailNotVerified');
+                              // }
                             }
                           },
                           btnColor:
