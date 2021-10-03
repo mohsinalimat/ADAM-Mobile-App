@@ -267,7 +267,8 @@ class _HomeViewState extends State<HomeView> {
                         style: Theme.of(context).textTheme.headline1,
                       ),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/favorite'),
                           icon: Icon(Icons.favorite_outline_rounded)),
                     ],
                   ),
