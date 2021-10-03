@@ -2,6 +2,11 @@ import 'package:adam/model/scraping/instagram/scraped_user.dart';
 import 'package:dio/dio.dart';
 
 class InstagramMarketing {
+  Dio dio = Dio();
+  var headers = {
+    "Accept": "application/json",
+    "Access-Control-Allow-Origin": "*"
+  };
   Future scrapeUserData(
       String userInsta, String passInsta, String targetUsername) async {
     try {
@@ -14,12 +19,7 @@ class InstagramMarketing {
         // "password": passInsta,
         "targeted_username": targetUsername,
       };
-      var headers = {
-        "Accept": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      };
 
-      Dio dio = Dio();
       Response response = await dio.post(
         url,
         data: body,
@@ -29,7 +29,7 @@ class InstagramMarketing {
       );
       if (response.statusCode == 200) {
         print("GOT THE DATA!");
-        return ScrapedUserList.fromJSON(response.data);
+        return InstaScrapedUserList.fromJSON(response.data);
       } else {
         return "Some error!";
       }
@@ -48,12 +48,7 @@ class InstagramMarketing {
         "targeted_username": "bareera099",
         'marketing_msg': msg,
       };
-      var headers = {
-        "Accept": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      };
 
-      Dio dio = Dio();
       Response response = await dio.post(
         url,
         data: body,
@@ -64,10 +59,19 @@ class InstagramMarketing {
       if (response.statusCode == 200) {
         print("SENT ALL MSGS!");
         return response.statusCode;
-        // return ScrapedUserList.fromJSON(response.data);
       } else {
         return "Some error!";
       }
+    } on DioError catch (e) {
+      print(e.message);
+      return e.message;
+    }
+  }
+
+  // scheduler
+  Future postUpdate(String caption, String media) async {
+    try {
+      // String url = "http://10.0.2.2:5000/insta/marketing";
     } on DioError catch (e) {
       print(e.message);
       return e.message;
