@@ -7,6 +7,7 @@ import 'package:adam/model/service.dart';
 import 'package:adam/model/userData.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/utils/scroll_down_effect.dart';
 import 'package:adam/views/home/manage_services_view.dart';
 import 'package:adam/widgets/customHomeServiceCards.dart';
 import 'package:adam/widgets/serviceCard.dart';
@@ -26,8 +27,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   // scroll effect
   ScrollController _controller = ScrollController();
-  _animateToIndex(i) => _controller.animateTo(100 * i,
-      duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
 
   final ServiceController serviceController = ServiceController();
   int _currentIndex = 0;
@@ -338,7 +337,7 @@ class _HomeViewState extends State<HomeView> {
                     elevation: 2.5,
                     heroTag: 'noservice',
                     onPressed: () {
-                      _animateToIndex(4.0);
+                      animateToIndex(4.0, _controller);
                     },
                     child: const Icon(
                       Icons.arrow_downward,

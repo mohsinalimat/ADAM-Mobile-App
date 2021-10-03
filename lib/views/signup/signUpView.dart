@@ -161,7 +161,7 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: fullNameController,
-                            textInputAction: TextInputAction.next,
+                            textInputAction: TextInputAction.done,
                             textInputType: TextInputType.name,
                             node: node,
                             hintText: "Full Name",
@@ -178,7 +178,7 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: emailController,
-                            textInputAction: TextInputAction.next,
+                            textInputAction: TextInputAction.done,
                             textInputType: TextInputType.emailAddress,
                             node: node,
                             hintText: "Email Address",
@@ -189,7 +189,7 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: phoneNumberController,
-                            textInputAction: TextInputAction.next,
+                            textInputAction: TextInputAction.done,
                             textInputType: TextInputType.phone,
                             node: node,
                             hintText: "Phone Number",
@@ -200,7 +200,7 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: passwordController,
-                            textInputAction: TextInputAction.next,
+                            textInputAction: TextInputAction.done,
                             textInputType: TextInputType.text,
                             node: node,
                             isPassword: true,
@@ -212,7 +212,6 @@ class _SignUpViewState extends State<SignUpView> {
                                 _passCheck = value;
                               });
                             },
-                            onFieldSubmit: (value) => node.nextFocus(),
                           ),
                           SizedBox(height: height * 0.02),
                           Padding(
@@ -282,7 +281,7 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: confirmPasswordController,
-                            textInputAction: TextInputAction.next,
+                            textInputAction: TextInputAction.done,
                             textInputType: TextInputType.text,
                             node: node,
                             isPassword: true,

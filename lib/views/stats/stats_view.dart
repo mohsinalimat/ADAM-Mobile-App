@@ -13,7 +13,7 @@ class StatsView extends StatefulWidget {
 }
 
 class _StatsViewState extends State<StatsView> {
-  StatsFilter _filter = StatsFilter.Weekly;
+  // StatsFilter _filter = StatsFilter.Weekly;
   String _followersDummy = "2303";
 
   String _currentService = "Instagram Marketing";

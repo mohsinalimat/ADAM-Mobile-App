@@ -72,7 +72,7 @@ class _LoginViewState extends State<LoginView> {
                           onChangeFtn: (value) => print(value),
                           onEditComplete: () => node.nextFocus(),
                           textEditingController: emailTextController,
-                          textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.done,
                           textInputType: TextInputType.emailAddress,
                           validatorFtn: Validators.emailValidator,
                         ),
