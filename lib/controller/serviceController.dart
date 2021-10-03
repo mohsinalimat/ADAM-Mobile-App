@@ -141,4 +141,92 @@ class ServiceController {
       return response.statusCode;
     }
   }
+
+  Future viewFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // local data
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+    String url = "https://adam-web-api.herokuapp.com/user/view-favorites";
+
+    var body = {
+      'userId': _userId,
+    };
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      body: body,
+      headers: {
+        "Authorization": "Bearer $_token",
+      },
+    );
+    if (response.statusCode == 200) {
+      print("FAVORITES VIEW!");
+      print(jsonDecode(response.body)['serviceArray']);
+      // TODO: SHOW FAVORITES
+      var favServices = jsonDecode(response.body)['services'];
+      return ServicesList.fromJSON(favServices);
+    } else {
+      return response.statusCode;
+    }
+  }
+
+  Future addFavorite(String serviceId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // local data
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+    String url = "https://adam-web-api.herokuapp.com/user/add-favorite";
+
+    var body = {
+      'userId': _userId,
+      'serviceId': serviceId,
+    };
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      body: body,
+      headers: {
+        "Authorization": "Bearer $_token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("FAVORITE ADDED!");
+      return response.statusCode;
+    } else {
+      return response.statusCode;
+    }
+  }
+
+  Future deleteFavorite(String serviceId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // local data
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+    String url = "https://adam-web-api.herokuapp.com/user/delete-favorite";
+
+    var body = {
+      'userId': _userId,
+      'serviceId': serviceId,
+    };
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      body: body,
+      headers: {
+        "Authorization": "Bearer $_token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("FAVORITE DELETED!");
+      return response.statusCode;
+    } else {
+      return response.statusCode;
+    }
+  }
 }

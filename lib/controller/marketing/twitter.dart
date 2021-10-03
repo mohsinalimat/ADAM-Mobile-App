@@ -129,7 +129,7 @@ class TwitterMarketing {
   // greeting message to new followers
   Future checkNewFollowers() async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/check-followers";
+      String url = "http://40.76.15.56:8080/twitter/check-followers";      
 
       Response response = await dio.post(
         url,
