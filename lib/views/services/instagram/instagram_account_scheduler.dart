@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:adam/constants.dart';
+import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -29,6 +34,13 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
 
   bool _isUpdating = false;
   ScheduleType _scheduleType = ScheduleType.Post;
+
+  // file/media picking
+  FilePickerResult filePickerResult;
+  PlatformFile platformFile;
+  File someFile;
+  bool _fileUploaded = false;
+  String path = "";
 
   List scheduledPosts = [
     ScheduledPostCard(
@@ -116,11 +128,22 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                   ]),
                   const SizedBox(height: 20.0),
                   const Text('Add Image/Video: *'),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 5.0),
+                  _fileUploaded
+                      ? Container(
+                          height: 250.0,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: FileImage(someFile),
+                            ),
+                          ),
+                        )
+                      : Text(''),
+                  const SizedBox(height: 5.0),
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: () {},
+                    btnOnPressed: _addAttachment,
                     btnColor: Colors.white,
                     btnText: const Text(
                       'Upload',
@@ -130,47 +153,51 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20.0),
-                  Text(
-                    _scheduleType == ScheduleType.Post
-                        ? "Post Caption: *"
-                        : "Story Caption: *",
-                  ),
+                  _scheduleType == ScheduleType.Story
+                      ? Container()
+                      : const SizedBox(height: 20.0),
+                  _scheduleType == ScheduleType.Story
+                      ? Container()
+                      : Text("Post Caption: *"),
                   const SizedBox(height: 10.0),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.89,
-                    child: TextFormField(
-                      maxLines: 5,
-                      controller: _contentController,
-                      keyboardType: TextInputType.multiline,
-                      textInputAction: TextInputAction.newline,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "Caption cannot be empty!";
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        hintText: "Caption...",
-                        hintStyle: Theme.of(context).textTheme.caption,
-                        fillColor: _themeProvider.darkTheme
-                            ? Colors.black12
-                            : Colors.grey[200],
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent)),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
+                  _scheduleType == ScheduleType.Story
+                      ? Container()
+                      : SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.89,
+                          child: TextFormField(
+                            maxLines: 5,
+                            controller: _contentController,
+                            keyboardType: TextInputType.multiline,
+                            textInputAction: TextInputAction.done,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "Caption cannot be empty!";
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Caption...",
+                              hintStyle: Theme.of(context).textTheme.caption,
+                              fillColor: _themeProvider.darkTheme
+                                  ? Colors.black12
+                                  : Colors.grey[200],
+                              filled: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent)),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.transparent),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                              ),
+                            ),
+                          ),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 20.0),
                   const Text('Choose Date/Time: *'),
                   const SizedBox(height: 10.0),
@@ -298,16 +325,152 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
     );
   }
 
+  // pickingFile
+  void _addAttachment() async {
+    filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg'],
+    );
+
+    if (filePickerResult != null) {
+      someFile = File(filePickerResult.files.single.path);
+      platformFile = filePickerResult.files.first;
+
+      // sending the file in chat
+      setState(() {
+        _fileUploaded = true;
+        path = platformFile.path;
+      });
+    }
+  }
+
   // post method
   void _post() async {
-    if (_formKey.currentState.validate()) {
-      
+    if (someFile == null) {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.file_copy, color: Colors.white),
+            const SizedBox(width: 8.0),
+            const Text('Please upload some media file!'),
+          ],
+        ),
+      );
+    } else if (_formKey.currentState.validate()) {
+      setState(() {
+        _isUpdating = true;
+      });
+      var value = await InstagramMarketing()
+          .postUpdate(
+        'khaaadi456',
+        'Testing786',
+        _contentController.text.trim(),
+        someFile.path,
+      )
+          .whenComplete(() {
+        setState(() {
+          _isUpdating = false;
+        });
+      });
+
+      if (value == 200) {
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.update, color: Colors.white),
+              const SizedBox(width: 8),
+              const Text("Status has been scheduled successfully!")
+            ],
+          ),
+        );
+        setState(() {
+          someFile = null;
+          scheduledPosts.insert(
+              0,
+              ScheduledPostCard(
+                date: _dateController.text.trim(),
+                time: _timeController.text.trim(),
+                caption: _contentController.text.trim(),
+              ));
+        });
+        _contentController.clear();
+        _dateController.clear();
+        _timeController.clear();
+      } else {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(value),
+            ],
+          ),
+        );
+      }
     }
   }
 
   // story method
   void _story() async {
-    if (_formKey.currentState.validate()) {}
+    setState(() {
+      _isUpdating = true;
+    });
+    var value = await InstagramMarketing()
+        .postStory(
+      'khaaadi456',
+      'Testing786',
+      someFile.path,
+    )
+        .whenComplete(() {
+      setState(() {
+        _isUpdating = false;
+      });
+    });
+
+    if (value == 200) {
+      customSnackBar(
+        context,
+        kSecondaryBlueColor,
+        Row(
+          children: [
+            const Icon(Icons.update, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text("Story has been scheduled successfully!")
+          ],
+        ),
+      );
+      setState(() {
+        someFile = null;
+        scheduledPosts.insert(
+            0,
+            ScheduledPostCard(
+              date: _dateController.text.trim(),
+              time: _timeController.text.trim(),
+              caption: _contentController.text.trim(),
+            ));
+      });
+      _contentController.clear();
+      _dateController.clear();
+      _timeController.clear();
+    } else {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.info, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(value),
+          ],
+        ),
+      );
+    }
   }
 }
 

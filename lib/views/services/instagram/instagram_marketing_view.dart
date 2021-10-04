@@ -29,9 +29,9 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
 
   // placeholding data
   void _placeholdingData() {
-    _instaUsernameController.text = "nameishaiderali";
-    _instaPasswordController.text = "hamza1998";
-    _targetProfileController.text = 'bareera099';
+    _instaUsernameController.text = "khaaadi456";
+    _instaPasswordController.text = "Testing786";
+    _targetProfileController.text = 'bonanza.pk4';
     _marketingMsg.text =
         "Hi there! Hope you are doing well. Would love to connect with you for valuable content :)\n\nSo, hit me up with that Follow button\nCheers :D";
   }
@@ -375,7 +375,10 @@ class InstaScrapedUserDataCard extends StatelessWidget {
     return Card(
       child: ExpansionTile(
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(instaScrapedUser.photoUrl),
+          backgroundImage: instaScrapedUser.photoUrl ==
+                  "https://instagram.fisb5-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158199127_113530737459824_3660423665897837142_n.jpg?_nc_ht=instagram.fisb5-1.fna.fbcdn.net&_nc_ohc=8jHahs67r90AX8nQmcT&edm=ABfd0MgBAAAA&ccb=7-4&oh=c006cc66d8dddabcdada10f627ef33c6&oe=615FEEDE&_nc_sid=7bff83"
+              ? AssetImage('assets/dp.png')
+              : NetworkImage(instaScrapedUser.photoUrl),
         ),
         title: Text(
           instaScrapedUser.username,
