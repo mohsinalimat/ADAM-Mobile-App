@@ -35,6 +35,7 @@ class _HomeViewState extends State<HomeView> {
   Future _servicesSubscribedFuture;
 
   List subscribedServices = []; // dummy list to create the dots
+  List servicesAvailable = [];
 
   // get local user object
   UserData _userData;
@@ -47,6 +48,15 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  // fetching data
+  void _getServices() async {
+    ServicesList servicesList = await serviceController.getServices();
+    setState(() {
+      servicesAvailable = List.from(servicesList.services);
+    });
+  }
+
+  // call back refresh
   bool refreshProfile = false;
   callBack(boolVar) {
     if (boolVar) {
@@ -61,6 +71,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     _servicesSubscribedFuture = serviceController.getSubscribedServices();
+    _getServices();
     _getSubscribedServicesList();
     _getLocalUserData();
     super.initState();
@@ -273,40 +284,24 @@ class _HomeViewState extends State<HomeView> {
                     ],
                   ),
                   const SizedBox(height: 10.0),
-                  FutureBuilder(
-                      future: serviceController.getServices(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data.services.length != 0) {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data.services.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return ServiceCard(
-                                  service: snapshot.data.services[index],
-                                  refreshFtn: callBack,
-                                );
-                              },
-                            );
-                          } else {
-                            return Center(
-                              child: Text("No Services Found :)"),
-                            );
-                          }
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(snapshot.error.toString()),
-                          );
-                        } else {
-                          return Center(
-                            child: JumpingDotsProgressIndicator(
-                              fontSize: 40.0,
-                              color: kMediumBlueColor,
+                  servicesAvailable.length == 0
+                      ? Center(
+                          child: JumpingDotsProgressIndicator(
+                            fontSize: 40.0,
+                            color: kMediumBlueColor,
+                          ),
+                        )
+                      : ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          children: List.generate(
+                            servicesAvailable.length,
+                            (index) => ServiceCard(
+                              service: servicesAvailable[index],
                             ),
-                          );
-                        }
-                      }),
+                          ),
+                        )
+                
                 ],
               ),
             ),
