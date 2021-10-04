@@ -7,7 +7,10 @@ class SMSMarketing {
       String url = "https://adam-web-api.herokuapp.com/sms/marketing-csv";
       var body = {
         "sms_body": smsBody,
-        "number_list": phoneNumbersList,
+        "number_list": [
+          '+923111559877',
+          '+923325464892',
+        ],
       };
 
       Response response = await dio.post(

@@ -69,9 +69,57 @@ class InstagramMarketing {
   }
 
   // scheduler
-  Future postUpdate(String caption, String media) async {
+  Future postUpdate(
+      String username, String password, String caption, String media) async {
     try {
-      // String url = "http://10.0.2.2:5000/insta/marketing";
+      String url = "http://40.76.15.56:5000/insta/post/status";
+      var body = {
+        'username': username,
+        'password': password,
+        'file_path': media,
+        'caption': caption,
+      };
+
+      Response response = await dio.post(
+        url,
+        data: body,
+        options: Options(headers: headers),
+      );
+      print(response.data);
+      if (response.statusCode == 200) {
+        print('posted a status!');
+        return response.statusCode;
+      } else {
+        throw 'status failed!';
+      }
+    } on DioError catch (e) {
+      print(e.message);
+      return e.message;
+    }
+  }
+
+  // scheduler
+  Future postStory(String username, String password, String media) async {
+    try {
+      String url = "http://40.76.15.56:5000/insta/post/story";
+      var body = {
+        'username': username,
+        'password': password,
+        'file_path': media,
+      };
+
+      Response response = await dio.post(
+        url,
+        data: body,
+        options: Options(headers: headers),
+      );
+      print(response.data);
+      if (response.statusCode == 200) {
+        print('posted a story!');
+        return response.statusCode;
+      } else {
+        throw 'status failed!';
+      }
     } on DioError catch (e) {
       print(e.message);
       return e.message;
