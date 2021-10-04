@@ -57,10 +57,12 @@ class _ServiceCardState extends State<ServiceCard> {
               ),
             ),
           );
+          print('came back!!!! $value');
           if (value == null) {
+            print('value was NULL');
             value = false;
           }
-          if (value & widget.isFavorite == true) {
+          if (value) {
             widget.refreshFtn(value);
           }
         },
@@ -172,7 +174,7 @@ class _ServiceCardState extends State<ServiceCard> {
                                 Row(children: [
                                   const Icon(Icons.info, color: Colors.white),
                                   const SizedBox(width: 8.0),
-                                  const Text("Unexpected error!")
+                                  const Text("Service already in favorites :)")
                                 ]),
                               );
                             }
@@ -270,6 +272,7 @@ class _ServiceCardState extends State<ServiceCard> {
                             ),
                           ),
                         );
+                        print("value $value");
                         if (value == null) {
                           value = false;
                         }

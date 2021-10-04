@@ -16,6 +16,9 @@ class CustomTextField extends StatefulWidget {
   final Color iconColor;
   final Color passIconColor;
 
+  final IconData trailing;
+  final Function trailingCallBack;
+
   final Function(String) onChangeFtn;
   final Function onEditComplete;
   final Function(String) validatorFtn;
@@ -27,6 +30,8 @@ class CustomTextField extends StatefulWidget {
     @required this.textEditingController,
     @required this.textInputAction,
     @required this.textInputType,
+    this.trailing,
+    this.trailingCallBack,
     this.node,
     @required this.hintText,
     @required this.icon,
@@ -84,20 +89,26 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     ? Colors.white
                     : kPrimaryBlueColor,
           ),
-          suffixIcon: widget.isPassword
+          suffixIcon: widget.trailing != null
               ? IconButton(
-                  onPressed: _showPass,
-                  icon: Icon(
-                    showPass ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
-                    color: widget.passIconColor != null
-                        ? widget.passIconColor
-                        : _themeProvider.darkTheme
-                            ? Colors.white70
-                            : kPrimaryBlueColor,
-                    size: 20.0,
-                  ),
-                )
-              : null,
+                  icon: Icon(widget.trailing),
+                  onPressed: widget.trailingCallBack)
+              : widget.isPassword
+                  ? IconButton(
+                      onPressed: _showPass,
+                      icon: Icon(
+                        showPass
+                            ? FontAwesomeIcons.eyeSlash
+                            : FontAwesomeIcons.eye,
+                        color: widget.passIconColor != null
+                            ? widget.passIconColor
+                            : _themeProvider.darkTheme
+                                ? Colors.white70
+                                : kPrimaryBlueColor,
+                        size: 20.0,
+                      ),
+                    )
+                  : null,
           contentPadding: const EdgeInsets.all(5.0),
           hintText: widget.hintText,
           hintStyle: Theme.of(context).textTheme.caption,
