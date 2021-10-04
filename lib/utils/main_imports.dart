@@ -4,7 +4,7 @@ export 'package:adam/providers/bottomNavBarProvider.dart';
 export 'package:adam/splashScreen.dart';
 export 'package:adam/views/chat/chat_view.dart';
 export 'package:adam/views/emailNotVerfiedView.dart';
-export 'package:adam/views/home/favoriteView.dart';
+export 'package:adam/views/home/favorite_services_vew.dart';
 export 'package:adam/views/profile/changeEmailView.dart';
 export 'package:adam/views/profile/changePasswordView.dart';
 export 'package:adam/views/services/linkedin/linkedin_marketing_view.dart';
