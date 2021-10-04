@@ -1,38 +1,38 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
-class PushNotificationsManager {
-  PushNotificationsManager._();
+// class PushNotificationsManager {
+//   PushNotificationsManager._();
 
-  factory PushNotificationsManager() => _instance;
+//   factory PushNotificationsManager() => _instance;
 
-  static final PushNotificationsManager _instance =
-      PushNotificationsManager._();
+//   static final PushNotificationsManager _instance =
+//       PushNotificationsManager._();
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  bool _initialized = false;
+//   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+//   bool _initialized = false;
 
-  Future<void> init() async {
-    if (!_initialized) {
-      // For iOS request permission first.
-      _firebaseMessaging.requestPermission();
+//   Future<void> init() async {
+//     if (!_initialized) {
+//       // For iOS request permission first.
+//       _firebaseMessaging.requestPermission();
 
-      // RemoteMessage initialMsg =
-      //     await FirebaseMessaging.instance.getInitialMessage();
+//       // RemoteMessage initialMsg =
+//       //     await FirebaseMessaging.instance.getInitialMessage();
 
-      // FirebaseMessaging.onMessage.any(
-      //   (element) {
-      //     print(element);
-      //     return true;
-      //   },
-      // );
+//       // FirebaseMessaging.onMessage.any(
+//       //   (element) {
+//       //     print(element);
+//       //     return true;
+//       //   },
+//       // );
 
-      // print("INITIAL MSG " + initialMsg.toString());
+//       // print("INITIAL MSG " + initialMsg.toString());
 
-      FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
-        print(
-            "NOOOOOOOTIIIIIII FIIIIIIII : : : : " + message.notification.body);
-      });
-      _initialized = true;
-    }
-  }
-}
+//       FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
+//         print(
+//             "NOOOOOOOTIIIIIII FIIIIIIII : : : : " + message.notification.body);
+//       });
+//       _initialized = true;
+//     }
+//   }
+// }
