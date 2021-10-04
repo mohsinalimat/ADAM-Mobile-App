@@ -27,6 +27,13 @@ class ServiceCard extends StatefulWidget {
 
 class _ServiceCardState extends State<ServiceCard> {
   bool _isFav = false;
+
+  @override
+  void initState() {
+    _isFav = widget.isFavorite;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
@@ -53,7 +60,7 @@ class _ServiceCardState extends State<ServiceCard> {
           if (value == null) {
             value = false;
           }
-          if (value) {
+          if (value & widget.isFavorite == true) {
             widget.refreshFtn(value);
           }
         },
@@ -142,23 +149,23 @@ class _ServiceCardState extends State<ServiceCard> {
                             _isFav = !_isFav;
                           });
                           if (_isFav) {
+                            customSnackBar(
+                              context,
+                              Colors.red[700],
+                              Row(children: [
+                                Icon(
+                                    _isFav
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                    color: Colors.white),
+                                const SizedBox(width: 8.0),
+                                Text(
+                                    "${widget.service.serviceName} added to favorites!")
+                              ]),
+                            );
                             int code = await ServiceController()
                                 .addFavorite(widget.service.serviceId);
-                            if (code == 200) {
-                              customSnackBar(
-                                context,
-                                Colors.red[700],
-                                Row(children: [
-                                  Icon(
-                                      _isFav
-                                          ? Icons.favorite_rounded
-                                          : Icons.favorite_border_rounded,
-                                      color: Colors.white),
-                                  const SizedBox(width: 8.0),
-                                  const Text("Added to favorites!")
-                                ]),
-                              );
-                            } else {
+                            if (code != 200) {
                               customSnackBar(
                                 context,
                                 Colors.red,
@@ -170,23 +177,23 @@ class _ServiceCardState extends State<ServiceCard> {
                               );
                             }
                           } else {
+                            customSnackBar(
+                              context,
+                              Colors.red[700],
+                              Row(children: [
+                                Icon(
+                                    _isFav
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                    color: Colors.white),
+                                const SizedBox(width: 8.0),
+                                Text(
+                                    "${widget.service.serviceName} removed from favorites!"),
+                              ]),
+                            );
                             int code = await ServiceController()
                                 .deleteFavorite(widget.service.serviceId);
-                            if (code == 200) {
-                              customSnackBar(
-                                context,
-                                Colors.red[700],
-                                Row(children: [
-                                  Icon(
-                                      _isFav
-                                          ? Icons.favorite_rounded
-                                          : Icons.favorite_border_rounded,
-                                      color: Colors.white),
-                                  const SizedBox(width: 8.0),
-                                  const Text("Removed from favorites!"),
-                                ]),
-                              );
-                            } else {
+                            if (code != 200) {
                               customSnackBar(
                                 context,
                                 Colors.red,
