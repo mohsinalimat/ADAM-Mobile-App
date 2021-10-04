@@ -1,3 +1,5 @@
+import 'package:adam/views/settings/help/in_app_guide_view.dart';
+
 import 'utils/main_imports.dart';
 
 void main() async {
@@ -95,6 +97,7 @@ class _MyAppState extends State<MyApp> {
             "/theme": (context) => ThemeView(),
             "/faq": (context) => FAQView(),
             "/appInfo": (context) => AppInfo(),
+            '/inApp': (context) => InAppGuideView(),
             "/reportProblem": (context) => ReportProblemView(),
             "/disableAccount": (context) => DisableAccountRequestView(),
             "/privacyPolicy": (context) => PrivacyPolicy(),
