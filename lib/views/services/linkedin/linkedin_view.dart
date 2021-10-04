@@ -31,9 +31,10 @@ class _LinkedinViewState extends State<LinkedinView> {
   Widget build(BuildContext context) {
     final _themeProviders = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      body: _buildView(_currentIndex, widget.isPrem),
+      body: SafeArea(child: _buildView(_currentIndex, widget.isPrem)),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: _themeProviders.darkTheme ? Colors.white : kPrimaryBlueColor,
+        selectedItemColor:
+            _themeProviders.darkTheme ? Colors.white : kPrimaryBlueColor,
         currentIndex: _currentIndex,
         onTap: (value) {
           setState(() {

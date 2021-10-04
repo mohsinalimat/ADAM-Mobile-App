@@ -1,5 +1,8 @@
 import 'package:adam/constants.dart';
+import 'package:adam/controller/marketing/linkedin.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/views/services/instagram/instagram_marketing_view.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
@@ -19,6 +22,16 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
   final _linkedinPasswordController = TextEditingController();
 
   final _marketingMsg = TextEditingController();
+
+  // marketing data
+  List _scrapedUsersData = [];
+
+  // @override
+  // void initState() {
+  //   _linkedinUserNameController.text = "mhamzadev@yahoo.com";
+  //   _linkedinPasswordController.text = "Iamhamza..!@#6";
+  //   super.initState();
+  // }
 
   @override
   void dispose() {
@@ -41,20 +54,23 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
           child: SingleChildScrollView(
             child: Padding(
               padding:
-                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        BackButton(
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        const LogoDisplay()
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          BackButton(
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const LogoDisplay()
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20.0),
                     Text(
@@ -65,69 +81,73 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                     const Text(
                         "* Your data is kept private and never used for illegal purposes, read more at Settings > Help > Privacy Policy"),
                     const SizedBox(height: 15.0),
-                    CustomTextField(
-                      textEditingController: _linkedinUserNameController,
-                      textInputAction: TextInputAction.next,
-                      textInputType: TextInputType.text,
-                      hintText: "LinkedIn Username",
-                      icon: Icons.person,
-                      validatorFtn: (value) {
-                        if (value.isEmpty) {
-                          return "Username cannot be empty!";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 15.0),
-                    CustomTextField(
-                      isPassword: true,
-                      textEditingController: _linkedinPasswordController,
-                      textInputAction: TextInputAction.done,
-                      textInputType: TextInputType.text,
-                      hintText: "LinkedIn Password",
-                      icon: Icons.lock,
-                      validatorFtn: (value) {
-                        if (value.isEmpty) {
-                          return "Pasword cannot be empty!";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 30.0),
-                    const Text("* You must be following this account!"),
-                    const SizedBox(height: 10.0),
-                    CustomTextField(
-                      validatorFtn: (value) {
-                        if (value.isEmpty) {
-                          return "Target profile cannot be empty!";
-                        }
-                        return null;
-                      },
-                      textEditingController: _targetProfileController,
-                      textInputAction: TextInputAction.done,
-                      textInputType: TextInputType.text,
-                      hintText: "Target Username",
-                      icon: Icons.person,
-                    ),
-                    const SizedBox(height: 10.0),
-                    CustomButton(
-                      btnWidth: 100.0,
-                      btnHeight: 45.0,
-                      btnOnPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          setState(() {
-                            _isWorking = !_isWorking;
-                          });
-                        }
-                      },
-                      btnColor: kLightGreenColor,
-                      btnText: _isWorking
-                          ? kLoaderWhite
-                          : Text(
-                              "Scrape Data",
-                              style: kBtnTextStyle,
-                            ),
-                    ),
+                    _dataScraped
+                        ? Container()
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              CustomTextField(
+                                textEditingController:
+                                    _linkedinUserNameController,
+                                textInputAction: TextInputAction.next,
+                                textInputType: TextInputType.text,
+                                hintText: "LinkedIn Username",
+                                icon: Icons.person,
+                                validatorFtn: (value) {
+                                  if (value.isEmpty) {
+                                    return "Username cannot be empty!";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 15.0),
+                              CustomTextField(
+                                isPassword: true,
+                                textEditingController:
+                                    _linkedinPasswordController,
+                                textInputAction: TextInputAction.done,
+                                textInputType: TextInputType.text,
+                                hintText: "LinkedIn Password",
+                                icon: Icons.lock,
+                                validatorFtn: (value) {
+                                  if (value.isEmpty) {
+                                    return "Pasword cannot be empty!";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 30.0),
+                              const Text(
+                                  "* You must be a connection with this account!"),
+                              const SizedBox(height: 10.0),
+                              CustomTextField(
+                                validatorFtn: (value) {
+                                  if (value.isEmpty) {
+                                    return "Target profile cannot be empty!";
+                                  }
+                                  return null;
+                                },
+                                textEditingController: _targetProfileController,
+                                textInputAction: TextInputAction.done,
+                                textInputType: TextInputType.text,
+                                hintText: "Target Username",
+                                icon: Icons.person,
+                              ),
+                              const SizedBox(height: 10.0),
+                              CustomButton(
+                                btnWidth: 100.0,
+                                btnHeight: 45.0,
+                                btnOnPressed: _scrapeData,
+                                btnColor: kLightGreenColor,
+                                btnText: _isWorking
+                                    ? kLoaderWhite
+                                    : Text(
+                                        "Scrape Data",
+                                        style: kBtnTextStyle,
+                                      ),
+                              ),
+                            ],
+                          ),
                     const SizedBox(height: 15.0),
                     AnimatedContainer(
                       duration: Duration(milliseconds: 250),
@@ -182,6 +202,18 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                       style: Theme.of(context).textTheme.headline2,
                     ),
                     const SizedBox(height: 10.0),
+                    !_dataScraped
+                        ? Container()
+                        : ListView(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: List.generate(
+                              _scrapedUsersData.length,
+                              (index) => InstaScrapedUserDataCard(
+                                instaScrapedUser: _scrapedUsersData[index],
+                              ),
+                            ),
+                          )
                   ],
                 ),
               ),
@@ -190,5 +222,68 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
         ),
       ),
     );
+  }
+
+  // scrape the user data information
+  void _scrapeData() async {
+    if (_formKey.currentState.validate()) {
+      FocusScope.of(context).unfocus();
+
+      setState(() {
+        _isWorking = true;
+      });
+
+      var data = await LinkedInMarketing()
+          .scrapeUserData(
+        _linkedinUserNameController.text.trim(),
+        _linkedinPasswordController.text.trim(),
+        _targetProfileController.text.trim(),
+      )
+          .whenComplete(() {
+        if (mounted) {
+          setState(() {
+            _isWorking = false;
+          });
+        }
+      });
+
+      print("FTN CALLED AT FRONT END!!");
+
+      if (data is String) {
+        print(data);
+        customSnackBar(
+            context,
+            Colors.red,
+            Row(
+              children: [
+                const Icon(Icons.info, color: Colors.white),
+                const SizedBox(width: 8.0),
+                Text(
+                  'Please try again after 90 secs to avoid ban :)',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ));
+      } else {
+        print(data.scrapedUsers.length);
+        setState(() {
+          _dataScraped = true;
+          _scrapedUsersData = data.scrapedUsers;
+        });
+        customSnackBar(
+            context,
+            kLightGreenColor,
+            Row(
+              children: [
+                const Icon(Icons.check, color: Colors.white),
+                const SizedBox(width: 8.0),
+                const Text(
+                  "Data scraped successfully!",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ));
+      }
+    }
   }
 }
