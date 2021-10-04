@@ -89,14 +89,17 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      BackButton(
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const LogoDisplay()
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BackButton(
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        const LogoDisplay()
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 10.0),
                   Text(
