@@ -122,3 +122,17 @@ const List<String> dataUsername = [
   "@baigbaigbaig",
   "@gkhang",
 ];
+
+// in app images
+const List<String> kGuideImages = [
+  "https://user-images.githubusercontent.com/43790152/135808020-50578291-922e-43b4-9b14-c93a3111a4cb.png",
+  "https://user-images.githubusercontent.com/43790152/135808016-6aad383b-8222-4106-a293-3a2736fa81b4.png",
+  "https://user-images.githubusercontent.com/43790152/135808013-c7d4d626-8e4a-470c-af8f-1cede0695d77.png",
+  "https://user-images.githubusercontent.com/43790152/135808009-4f59d1bc-95df-4c03-85f6-2955ff5fe730.png",
+  "https://user-images.githubusercontent.com/43790152/135808005-3a8bafbc-a02e-4e31-a485-df667c60bb36.png",
+  "https://user-images.githubusercontent.com/43790152/135807998-14ec5b9f-5d47-43c7-8a1f-7a73fb34e3ae.png",
+  "https://user-images.githubusercontent.com/43790152/135807995-9db019d2-d91f-4b6d-bb2d-3701e374ad38.png",
+  "https://user-images.githubusercontent.com/43790152/135807991-02866c82-7926-4522-99d0-b27ec6352f10.png",
+  "https://user-images.githubusercontent.com/43790152/135807987-266c64e7-a9e0-4ab0-8d9f-b35016a1a9e4.png",
+  "https://user-images.githubusercontent.com/43790152/135807994-d3373936-3600-4776-bc56-210dd3ff0f94.png",
+];
