@@ -35,11 +35,13 @@ dependencies:
   datetime_picker_formfield: ^2.0.0
   date_time_picker: ^2.1.0
   
+  # local storage
   shared_preferences: ^2.0.0
 
   progress_indicators: ^1.0.0
   flutter_rating_bar: ^4.0.0
   shimmer: ^2.0.0
+  flutter_overboard: ^3.0.0
 
   charts_flutter: ^0.11.0
 
@@ -58,7 +60,7 @@ dependencies:
   js: ^0.6.3
 
   # firebase notifications
-  firebase_messaging: ^10.0.0
+  # firebase_messaging: ^10.0.0
   # flutter_local_notifications: ^6.0.0
   flutter_local_notifications: any
 
@@ -69,7 +71,7 @@ dependencies:
   # firebase_auth: ^1.2.0
   firebase_core: ^1.7.0
   # cloud_firestore: ^2.2.0
-  firebase_storage: ^8.1.0
+  firebase_storage: ^10.0.4
 
   pin_code_fields: ^7.2.0
   clippy_flutter: ^1.1.1
@@ -110,6 +112,7 @@ flutter:
     - .env
     - assets/
     - assets/logo/
+    - assets/inapp/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
