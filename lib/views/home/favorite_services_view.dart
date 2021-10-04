@@ -77,6 +77,7 @@ class _FavoriteViewState extends State<FavoriteView> {
                             ),
                           )
                         : ListView(
+                            physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             children: _favorites
                                 .map((fav) => WidgetAnimator(
@@ -151,7 +152,7 @@ class FavoriteServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeProviders = Provider.of<ThemeProvider>(context);
     return Container(
-        height: 150.0,
+        height: 160.0,
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
         decoration: BoxDecoration(
             color: _themeProviders.darkTheme ? Colors.grey[800] : Colors.white,
@@ -171,7 +172,7 @@ class FavoriteServiceCard extends StatelessWidget {
                 SvgPicture.network(
                   service.serviceIcon,
                   height: 30,
-                  color: Color(int.parse(service.serviceColor[0])),
+                  color: Color(int.parse(service.serviceColor[1])),
                 ),
                 const SizedBox(width: 8.0),
                 Text(
@@ -179,35 +180,35 @@ class FavoriteServiceCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.w500,
-                    color: Color(int.parse(service.serviceColor[0])),
+                    color: Color(int.parse(service.serviceColor[1])),
                   ),
                 ),
-                Spacer(),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.arrow_back,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(width: 5.0),
-                    const Text(
-                      "Swipe to Remove",
-                      style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                )
               ],
             ),
             const SizedBox(height: 8.0),
             Text(service.serviceType[0].typeDesc),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 12.0),
             Text(
               "Starting at: \$ ${service.serviceType[0].typePrice}/month",
               style: Theme.of(context).textTheme.headline2,
             ),
-            const SizedBox(height: 8.0),
-            Text("Ratings: ${service.serviceRatings}.0"),
+            const SizedBox(height: 12.0),
+            Row(
+              children: [
+                Text("Ratings: ${service.serviceRatings}.0"),
+                Spacer(),
+                const Icon(
+                  Icons.arrow_back,
+                  color: Colors.red,
+                ),
+                const SizedBox(width: 5.0),
+                const Text(
+                  "Swipe to Remove",
+                  style:
+                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           ],
         ));
   }

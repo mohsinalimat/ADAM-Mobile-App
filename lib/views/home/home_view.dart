@@ -298,10 +298,10 @@ class _HomeViewState extends State<HomeView> {
                             servicesAvailable.length,
                             (index) => ServiceCard(
                               service: servicesAvailable[index],
+                              refreshFtn: callBack,
                             ),
                           ),
                         )
-                
                 ],
               ),
             ),

@@ -14,10 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 
-enum EmailAction {
-  Upload,
-  DataBank,
-}
+enum EmailAction { Upload, DataBank, Custom }
 
 class EmailMarketingView extends StatefulWidget {
   @override
@@ -31,6 +28,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
   final TextEditingController _brandNameController = TextEditingController();
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _emailBodyController = TextEditingController();
+  final TextEditingController _customEmailController = TextEditingController();
 
   // picking .csv file
   FilePickerResult filePickerResult;
@@ -71,6 +69,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
         _data = List.from(fields[j]);
         _emailData.add(_data[0]);
       }
+      print(_emailData);
     }
   }
 
@@ -86,6 +85,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
     _brandNameController.dispose();
     _subjectController.dispose();
     _emailBodyController.dispose();
+    _customEmailController.dispose();
     super.dispose();
   }
 
@@ -172,12 +172,90 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
                             setState(() {
                               _currentAction = value;
                               csvFile = null;
+                              _emailData = [];
                             });
                           },
                         ),
                         const Text("Use our data bank"),
                       ],
                     ),
+                    Row(
+                      children: [
+                        Radio(
+                          value: EmailAction.Custom,
+                          groupValue: _currentAction,
+                          onChanged: (value) {
+                            setState(() {
+                              _currentAction = value;
+                              csvFile = null;
+                              _emailData = [];
+                            });
+                          },
+                        ),
+                        const Text("Enter Custom emails"),
+                      ],
+                    ),
+                    _currentAction == EmailAction.Custom
+                        ? WidgetAnimator(
+                            child: CustomTextField(
+                              textEditingController: _customEmailController,
+                              textInputAction: TextInputAction.done,
+                              textInputType: TextInputType.emailAddress,
+                              hintText: 'Enter email address',
+                              icon: Icons.email,
+                              trailing: Icons.add,
+                              trailingCallBack: () {
+                                if (_customEmailController.text.isNotEmpty) {
+                                  setState(() {
+                                    _emailData.insert(
+                                        0, _customEmailController.text.trim());
+                                  });
+                                  _customEmailController.clear();
+                                }
+                              },
+                            ),
+                          )
+                        : Container(),
+                    const SizedBox(height: 10.0),
+                    _currentAction == EmailAction.Custom
+                        ? WidgetAnimator(
+                            child: Text("Custom Emails:",
+                                style: Theme.of(context).textTheme.headline2),
+                          )
+                        : Container(),
+                    const SizedBox(height: 5.0),
+                    _currentAction == EmailAction.Custom
+                        ? ListView(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: _emailData
+                                .map(
+                                  (email) => ListTile(
+                                    contentPadding: const EdgeInsets.all(0.0),
+                                    minVerticalPadding: 0.0,
+                                    title: Text(
+                                      email,
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                    trailing: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _emailData.remove(email);
+                                        });
+                                      },
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 20,
+                                          )),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          )
+                        : Container(),
                     const SizedBox(height: 10.0),
                     CustomTextField(
                       textEditingController: _brandNameController,
@@ -257,7 +335,9 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
                         btnHeight: 45.0,
                         btnOnPressed: _currentAction == EmailAction.Upload
                             ? _sendEmailsFromCSV
-                            : _sendEmailsFromDataBank,
+                            : _currentAction == EmailAction.DataBank
+                                ? _sendEmailsFromDataBank
+                                : _sendEmailsCustomList,
                         btnColor: kLightBlueColor,
                         btnText: _sendingEmail
                             ? kLoaderWhite
@@ -267,6 +347,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
                               ),
                       ),
                     ),
+                    const SizedBox(height: 12.0),
                   ],
                 ),
               ),
@@ -340,6 +421,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
         _emailBodyController.clear();
         setState(() {
           csvFile = null;
+          _emailData = [];
         });
       }
     }
@@ -392,6 +474,62 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
         _brandNameController.clear();
         _subjectController.clear();
         _emailBodyController.clear();
+      }
+    }
+  }
+
+  // send custom emails
+  void _sendEmailsCustomList() async {
+    if (_formkey.currentState.validate()) {
+      print(_emailData);
+      FocusScope.of(context).unfocus();
+
+      setState(() {
+        _sendingEmail = true;
+      });
+
+      var value = await EmailMarketing()
+          .emailFromCSV(
+              _emailData,
+              _subjectController.text.trim(),
+              _emailBodyController.text.trim(),
+              _brandNameController.text.trim())
+          .whenComplete(() {
+        setState(() {
+          _sendingEmail = false;
+        });
+      });
+
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text(value.toString()),
+            ],
+          ),
+        );
+      } else {
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.mark_email_read, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text("Email has been sent successfully!"),
+            ],
+          ),
+        );
+        _brandNameController.clear();
+        _subjectController.clear();
+        _emailBodyController.clear();
+        setState(() {
+          _emailData = [];
+        });
       }
     }
   }

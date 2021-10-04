@@ -1,7 +1,6 @@
 import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/notifications/push_notifications.dart';
 import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/home/home_view.dart';
 import 'package:adam/views/mydrawer.dart';
@@ -29,8 +28,8 @@ class _DashboardState extends State<Dashboard>
 
   // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   // FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  PushNotificationsManager pushNotificationsManager =
-      PushNotificationsManager();
+  // PushNotificationsManager pushNotificationsManager =
+  //     PushNotificationsManager();
 
   final _views = [
     HomeView(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpView extends StatelessWidget {
   @override
@@ -19,11 +20,13 @@ class HelpView extends StatelessWidget {
             leading: Icon(Icons.help_outline_outlined),
             title: Text("In-app walkthrough guide"),
             subtitle: Text("In-app screens guide"),
+            onTap: () => Navigator.pushNamed(context, '/inApp'),
           ),
           ListTile(
             leading: Icon(Icons.videocam_outlined),
             title: Text("Video guide"),
             subtitle: Text("YouTube video help"),
+            onTap: () => launch('https://youtu.be/V_MCvYb9AX0'),
           ),
           ListTile(
             leading: Icon(Icons.report_problem_rounded),

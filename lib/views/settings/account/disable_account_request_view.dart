@@ -1,5 +1,6 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/customBtn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -112,7 +113,44 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
               CustomButton(
                   btnWidth: 150.0,
                   btnHeight: 40.0,
-                  btnOnPressed: () {},
+                  btnOnPressed: () {
+                    if (_reason.contains("Select reason")) {
+                      customSnackBar(
+                        context,
+                        Colors.red,
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.info,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(
+                              width: 8.0,
+                            ),
+                            const Text('Please select a reason!')
+                          ],
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      customSnackBar(
+                        context,
+                        kSecondaryBlueColor,
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.report,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(
+                              width: 8.0,
+                            ),
+                            const Text('Disable account request has sent!')
+                          ],
+                        ),
+                      );
+                    }
+                  },
                   btnColor: kPrimaryBlueColor,
                   btnText: Text("Submit", style: kBtnTextStyle))
             ],
