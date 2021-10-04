@@ -83,7 +83,7 @@ class ServiceController {
     }
   }
 
-  Future<void> getServices() async {
+  Future getServices() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
     String url = "https://adam-web-api.herokuapp.com/user/services";
@@ -163,10 +163,9 @@ class ServiceController {
     );
     if (response.statusCode == 200) {
       print("FAVORITES VIEW!");
-      print(jsonDecode(response.body)['serviceArray']);
-      // TODO: SHOW FAVORITES
-      var favServices = jsonDecode(response.body)['services'];
-      return ServicesList.fromJSON(favServices);
+      return ServicesList.fromJSON(jsonDecode(response.body));
+    } else if (response.statusCode == 204) {
+      return ServicesList.fromJSON({"services": []});
     } else {
       return response.statusCode;
     }
