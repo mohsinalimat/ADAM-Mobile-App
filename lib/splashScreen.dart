@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       userData = UserData.fromJSON(userDataObject);
     }
     if (userData != null) {
-      print("ALREADY LOGGED IN ${userData.token}");
+      print("ALREADY LOGGED IN ${userData.fullName}");
       Future.delayed(Duration(seconds: 3), () {
         Navigator.pushReplacementNamed(context, '/mainView');
       });
