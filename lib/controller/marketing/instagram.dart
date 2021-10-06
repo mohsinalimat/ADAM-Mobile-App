@@ -12,11 +12,12 @@ class InstagramMarketing {
     try {
       // String url = "http://40.76.15.56:5000/insta/scraper";
       // String url = "http://10.0.2.2:5000/insta/scraper";
+      // String url = "http://192.168.1.128:5000/insta/scraper";
       String url = "https://adam-web-api.herokuapp.com/instagram/check-target";
 
       var body = {
-        // "username": userInsta,
-        // "password": passInsta,
+        "username": userInsta,
+        "password": passInsta,
         "targeted_username": targetUsername,
       };
 
@@ -41,7 +42,8 @@ class InstagramMarketing {
 
   Future sendDM(String msg, String username, String password) async {
     try {
-      String url = "http://10.0.2.2:5000/insta/marketing";
+      String url = "http://40.76.15.56:5000/insta/marketing";
+      // String url = "http://10.0.2.2:5000/insta/marketing";
       var body = {
         "username": username,
         "password": password,
@@ -73,6 +75,7 @@ class InstagramMarketing {
       String username, String password, String caption, String media) async {
     try {
       String url = "http://40.76.15.56:5000/insta/post/status";
+      // String url = "http://192.168.1.128:5000/insta/post/status";
       var body = {
         'username': username,
         'password': password,
@@ -102,6 +105,7 @@ class InstagramMarketing {
   Future postStory(String username, String password, String media) async {
     try {
       String url = "http://40.76.15.56:5000/insta/post/story";
+      // String url = "http://10.0.2.2:5000/insta/post/story";
       var body = {
         'username': username,
         'password': password,

@@ -153,7 +153,7 @@ class _ServiceCardState extends State<ServiceCard> {
                           if (_isFav) {
                             customSnackBar(
                               context,
-                              Colors.red[700],
+                               Colors.pink,
                               Row(children: [
                                 Icon(
                                     _isFav
@@ -162,7 +162,9 @@ class _ServiceCardState extends State<ServiceCard> {
                                     color: Colors.white),
                                 const SizedBox(width: 8.0),
                                 Text(
-                                    "${widget.service.serviceName} added to favorites!")
+                                  "${widget.service.serviceName} added to favorites!",
+                                  style: TextStyle(color: Colors.white),
+                                )
                               ]),
                             );
                             int code = await ServiceController()
@@ -174,14 +176,17 @@ class _ServiceCardState extends State<ServiceCard> {
                                 Row(children: [
                                   const Icon(Icons.info, color: Colors.white),
                                   const SizedBox(width: 8.0),
-                                  const Text("Service already in favorites :)")
+                                  const Text(
+                                    "Service already in favorites :)",
+                                    style: TextStyle(color: Colors.white),
+                                  )
                                 ]),
                               );
                             }
                           } else {
                             customSnackBar(
                               context,
-                              Colors.red[700],
+                              Colors.pink,
                               Row(children: [
                                 Icon(
                                     _isFav
@@ -190,7 +195,9 @@ class _ServiceCardState extends State<ServiceCard> {
                                     color: Colors.white),
                                 const SizedBox(width: 8.0),
                                 Text(
-                                    "${widget.service.serviceName} removed from favorites!"),
+                                  "${widget.service.serviceName} removed from favorites!",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ]),
                             );
                             int code = await ServiceController()
@@ -202,7 +209,10 @@ class _ServiceCardState extends State<ServiceCard> {
                                 Row(children: [
                                   const Icon(Icons.info, color: Colors.white),
                                   const SizedBox(width: 8.0),
-                                  const Text("Unexpected error!")
+                                  const Text(
+                                    "Unexpected error!",
+                                    style: TextStyle(color: Colors.white),
+                                  )
                                 ]),
                               );
                             }

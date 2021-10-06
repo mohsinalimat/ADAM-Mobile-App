@@ -450,7 +450,10 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
 
   // pickingFile
   void _addAttachment() async {
-    filePickerResult = await FilePicker.platform.pickFiles();
+    filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg']
+    );
 
     if (filePickerResult != null) {
       someFile = File(filePickerResult.files.single.path);

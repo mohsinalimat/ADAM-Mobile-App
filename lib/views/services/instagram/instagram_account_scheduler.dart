@@ -389,6 +389,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
         );
         setState(() {
           someFile = null;
+          _fileUploaded = false;
           scheduledPosts.insert(
               0,
               ScheduledPostCard(
@@ -408,7 +409,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8),
-              Text(value),
+              Expanded(child: Text(value)),
             ],
           ),
         );
@@ -446,6 +447,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
         ),
       );
       setState(() {
+        _fileUploaded = false;
         someFile = null;
         scheduledPosts.insert(
             0,

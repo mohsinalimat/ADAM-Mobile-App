@@ -95,7 +95,7 @@ class _FavoriteViewState extends State<FavoriteView> {
                                             });
                                             customSnackBar(
                                               context,
-                                              Colors.red[700],
+                                              Colors.pink,
                                               Row(
                                                 children: [
                                                   const Icon(

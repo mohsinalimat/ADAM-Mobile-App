@@ -235,57 +235,59 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      var data = await InstagramMarketing()
-          .scrapeUserData(
-        _instaUsernameController.text.trim(),
-        _instaPasswordController.text.trim(),
-        _targetProfileController.text.trim(),
-      )
-          .whenComplete(() {
-        if (mounted) {
+      var data;
+      Future.delayed(Duration(seconds: 15), () async {
+        data = await InstagramMarketing()
+            .scrapeUserData(
+          _instaUsernameController.text.trim(),
+          _instaPasswordController.text.trim(),
+          _targetProfileController.text.trim(),
+        )
+            .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isWorking = false;
+            });
+          }
+        });
+
+        print("FTN CALLED AT FRONT END!!");
+
+        if (data is String) {
+          print(data);
+          customSnackBar(
+              context,
+              Colors.red,
+              Row(
+                children: [
+                  const Icon(Icons.info, color: Colors.white),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    'Please try again after 90 secs to avoid ban :)',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ));
+        } else {
           setState(() {
-            _isWorking = false;
+            _dataScraped = true;
+            _scrapedUsersData = data.scrapedUsers;
           });
+          customSnackBar(
+              context,
+              kLightGreenColor,
+              Row(
+                children: [
+                  const Icon(Icons.check, color: Colors.white),
+                  const SizedBox(width: 8.0),
+                  const Text(
+                    "Data scraped successfully!",
+                    style: TextStyle(color: Colors.white),
+                  )
+                ],
+              ));
         }
       });
-
-      print("FTN CALLED AT FRONT END!!");
-
-      if (data is String) {
-        print(data);
-        customSnackBar(
-            context,
-            Colors.red,
-            Row(
-              children: [
-                const Icon(Icons.info, color: Colors.white),
-                const SizedBox(width: 8.0),
-                Text(
-                  'Please try again after 90 secs to avoid ban :)',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ));
-      } else {
-        print(data.scrapedUsers.length);
-        setState(() {
-          _dataScraped = true;
-          _scrapedUsersData = data.scrapedUsers;
-        });
-        customSnackBar(
-            context,
-            kLightGreenColor,
-            Row(
-              children: [
-                const Icon(Icons.check, color: Colors.white),
-                const SizedBox(width: 8.0),
-                const Text(
-                  "Data scraped successfully!",
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            ));
-      }
     }
   }
 
@@ -375,10 +377,7 @@ class InstaScrapedUserDataCard extends StatelessWidget {
     return Card(
       child: ExpansionTile(
         leading: CircleAvatar(
-          backgroundImage: instaScrapedUser.photoUrl ==
-                  "https://instagram.fisb5-1.fna.fbcdn.net/v/t51.2885-19/s320x320/158199127_113530737459824_3660423665897837142_n.jpg?_nc_ht=instagram.fisb5-1.fna.fbcdn.net&_nc_ohc=8jHahs67r90AX8nQmcT&edm=ABfd0MgBAAAA&ccb=7-4&oh=c006cc66d8dddabcdada10f627ef33c6&oe=615FEEDE&_nc_sid=7bff83"
-              ? AssetImage('assets/dp.png')
-              : NetworkImage(instaScrapedUser.photoUrl),
+          backgroundImage: NetworkImage(instaScrapedUser.photoUrl),
         ),
         title: Text(
           instaScrapedUser.username,

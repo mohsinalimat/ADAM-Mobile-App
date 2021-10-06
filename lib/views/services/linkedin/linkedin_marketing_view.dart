@@ -26,12 +26,13 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
   // marketing data
   List _scrapedUsersData = [];
 
-  // @override
-  // void initState() {
-  //   _linkedinUserNameController.text = "mhamzadev@yahoo.com";
-  //   _linkedinPasswordController.text = "Iamhamza..!@#6";
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    _linkedinUserNameController.text = "mhamzadev@yahoo.com";
+    _linkedinPasswordController.text = "Iamhamza..!@#6";
+    _targetProfileController.text = "khaaadi456";
+    super.initState();
+  }
 
   @override
   void dispose() {
