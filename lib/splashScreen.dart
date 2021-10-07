@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
@@ -28,17 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
       Map userDataObject = jsonDecode(stringfyJson);
       userData = UserData.fromJSON(userDataObject);
     }
-    if (userData != null) {
-      print("ALREADY LOGGED IN ${userData.fullName}");
-      Future.delayed(Duration(seconds: 3), () {
-        Navigator.pushReplacementNamed(context, '/mainView');
-      });
-    } else {
-      print("NO USER FOUND LOGGED IN!");
-      Future.delayed(Duration(seconds: 3), () {
-        Navigator.pushNamed(context, '/');
-      });
-    }
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushNamed(
+        context,
+        userData == null ? AppRoutes.login : AppRoutes.dashboard,
+      );
+    });
   }
 
   @override

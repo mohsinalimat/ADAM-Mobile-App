@@ -1,5 +1,5 @@
 import 'package:adam/constants.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';

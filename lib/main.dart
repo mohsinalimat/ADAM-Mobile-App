@@ -1,30 +1,14 @@
+import 'package:adam/app_routes.dart';
+import 'package:adam/custom_scroll_effect.dart';
 import 'package:adam/views/settings/help/in_app_guide_view.dart';
 
 import 'utils/main_imports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   await dotenv.load(fileName: '.env');
+  // await Firebase.initializeApp();
   runApp(MyApp());
-}
-
-class ScrollBehaviorModified extends ScrollBehavior {
-  const ScrollBehaviorModified();
-  @override
-  ScrollPhysics getScrollPhysics(BuildContext context) {
-    switch (getPlatform(context)) {
-      case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
-      case TargetPlatform.android:
-        return const BouncingScrollPhysics();
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.windows:
-        return const ClampingScrollPhysics();
-    }
-    return null;
-  }
 }
 
 class MyApp extends StatefulWidget {
@@ -74,36 +58,31 @@ class _MyAppState extends State<MyApp> {
             return ScrollConfiguration(
                 behavior: ScrollBehaviorModified(), child: widget);
           },
-          initialRoute: "/splashScreen",
-          routes: {
-            "/": (context) => LoginView(),
-            "/mainView": (context) => Dashboard(),
-            "/splashScreen": (context) => SplashScreen(),
-            "/signUp": (context) => SignUpView(),
-            "/emailNotVerified": (context) => EmailNotVerfied(),
-            "/forgotPassword": (context) => ForgotPasswordView(),
-            "/profile": (context) => ProfileView(),
-            "/editProfile": (context) => EditProfileView(),
-            "/deleteAccount": (context) => DeleteAccountView(),
-            "/changePassword": (context) => ChangePasswordView(),
-            "/changeEmail": (context) => ChangeEmailView(),
-            "/phoneVerify": (context) => PhoneVerificationView(),
-            "/chat": (context) => ChatView(),
-            "/subscriptionHistory": (context) => SubscriptionHistoryView(),
-            "/account": (context) => AccountView(),
-            "/notifications": (context) => NotificationView(),
-            "/help": (context) => HelpView(),
-            "/settings": (context) => SettingsView(),
-            "/theme": (context) => ThemeView(),
-            "/faq": (context) => FAQView(),
-            "/appInfo": (context) => AppInfo(),
-            '/inApp': (context) => InAppGuideView(),
-            "/reportProblem": (context) => ReportProblemView(),
-            "/disableAccount": (context) => DisableAccountRequestView(),
-            "/privacyPolicy": (context) => PrivacyPolicy(),
-            "/favorite": (context) => FavoriteView(),
-            '/twitterView': (context) => TwitterMarketingView(),
-            '/linkedInView': (context) => LinkedinMarketingView(),
+          initialRoute: AppRoutes.splash,
+          routes: <String, WidgetBuilder>{
+            AppRoutes.splash: (context) => SplashScreen(),
+            AppRoutes.login: (context) => LoginView(),
+            AppRoutes.dashboard: (context) => Dashboard(),
+            AppRoutes.signUp: (context) => SignUpView(),
+            AppRoutes.emailNotVerified: (context) => EmailNotVerfied(),
+            AppRoutes.forgotPassword: (context) => ForgotPasswordView(),
+            AppRoutes.deleteAccount: (context) => DeleteAccountView(),
+            AppRoutes.changePassword: (context) => ChangePasswordView(),
+            AppRoutes.changeEmail: (context) => ChangeEmailView(),
+            AppRoutes.chat: (context) => ChatView(),
+            AppRoutes.subscriptionHistory: (context) =>
+                SubscriptionHistoryView(),
+            AppRoutes.account: (context) => AccountView(),
+            AppRoutes.notifications: (context) => NotificationView(),
+            AppRoutes.help: (context) => HelpView(),
+            AppRoutes.theme: (context) => ThemeView(),
+            AppRoutes.faq: (context) => FAQView(),
+            AppRoutes.appInfo: (context) => AppInfo(),
+            AppRoutes.inApp: (context) => InAppGuideView(),
+            AppRoutes.reportProblem: (context) => ReportProblemView(),
+            AppRoutes.disableAccount: (context) => DisableAccountRequestView(),
+            AppRoutes.privacyPolicy: (context) => PrivacyPolicy(),
+            AppRoutes.favorite: (context) => FavoriteView(),
           },
         ),
       ),

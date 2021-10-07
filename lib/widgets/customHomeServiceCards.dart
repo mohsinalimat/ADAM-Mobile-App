@@ -5,7 +5,7 @@ import 'package:adam/views/services/instagram/instagram_view.dart';
 import 'package:adam/views/services/linkedin/linkedin_view.dart';
 import 'package:adam/views/services/sms/sms_marketing_view.dart';
 import 'package:adam/views/services/twitter/twitter_view.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
