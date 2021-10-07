@@ -153,14 +153,14 @@ class _ManageServicesViewState extends State<ManageServicesView> {
       content: Row(
         children: [
           SizedBox(
-            height: 20.0,
-            width: 20.0,
+            height: 17.0,
+            width: 17.0,
             child: CircularProgressIndicator(
               strokeWidth: 2.0,
               valueColor: AlwaysStoppedAnimation(Colors.white),
             ),
           ),
-          const SizedBox(width: 8.0),
+          const SizedBox(width: 10.0),
           const Text("Unsubscribing..."),
         ],
       ),
@@ -176,7 +176,7 @@ class _ManageServicesViewState extends State<ManageServicesView> {
           ),
           const SizedBox(width: 8.0),
           Text(
-              "${widget.services[index]['serviceData']['service_name']} has been Unsubscribed!"),
+              "${widget.services[index]['serviceData']['service_name']} has been unsubscribed!"),
         ],
       ),
     );

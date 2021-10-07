@@ -5,7 +5,7 @@ import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/views/home/home_view.dart';
 import 'package:adam/views/mydrawer.dart';
 import 'package:adam/views/profile/profile_view.dart';
-import 'package:adam/views/settings/settingsView.dart';
+import 'package:adam/views/settings/settings_view.dart';
 import 'package:adam/views/stats/stats_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,11 +26,6 @@ class _DashboardState extends State<Dashboard>
   AnimationController _animationController;
   bool _canBeDragged = false;
 
-  // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  // FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  // PushNotificationsManager pushNotificationsManager =
-  //     PushNotificationsManager();
-
   final _views = [
     HomeView(),
     StatsView(),
@@ -40,7 +35,6 @@ class _DashboardState extends State<Dashboard>
 
   final _bottomIcons = [
     Icons.home,
-    // Icons.auto_graph,
     Icons.graphic_eq,
     Icons.settings,
     Icons.person,
@@ -52,11 +46,6 @@ class _DashboardState extends State<Dashboard>
       vsync: this,
       duration: _DashboardState.toggleDuration,
     );
-    // _getToken();
-    // Future.delayed(Duration(seconds: 3), () {
-    //   pushNotificationsManager.init();
-    // });
-
     super.initState();
   }
 
@@ -203,36 +192,6 @@ class _DashboardState extends State<Dashboard>
                               : Container()
                         ],
                       ),
-                    // Column(
-                    //   mainAxisSize: MainAxisSize.min,
-                    //   children: [
-                    //     IconButton(
-                    //       onPressed: () => _bottomBarProviders.currentIndex = 3,
-                    //       icon: CircleAvatar(
-                    //         backgroundImage: const AssetImage('assets/dp.png'),
-                    //         // backgroundImage:
-                    //         //     _firebaseAuth.currentUser.photoURL == " "
-                    //         //         ? const AssetImage('assets/dp.png')
-                    //         //         : NetworkImage(
-                    //         //             _firebaseAuth.currentUser.photoURL),
-                    //       ),
-                    //     ),
-                    //     _bottomBarProviders.currentIndex == 3
-                    //         ? WidgetAnimator(
-                    //             child: Container(
-                    //               height: 5.0,
-                    //               width: 5.0,
-                    //               decoration: BoxDecoration(
-                    //                 color: _themeProvider.darkTheme
-                    //                     ? Colors.white
-                    //                     : kPrimaryBlueColor,
-                    //                 shape: BoxShape.circle,
-                    //               ),
-                    //             ),
-                    //           )
-                    //         : Container()
-                    //   ],
-                    // ),
                   ],
                 ),
               ),

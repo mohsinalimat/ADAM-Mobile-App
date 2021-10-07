@@ -5,7 +5,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/email.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:csv/csv.dart';

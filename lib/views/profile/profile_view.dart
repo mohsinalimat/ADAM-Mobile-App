@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/verificationBadges.dart';
 import 'package:adam/widgets/customLoader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +20,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  final _userAuth = UserAuth();
-  // final _firebaseAuth = FirebaseAuth.instance;
-  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  // FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;a
-
   // Profile Photo Buttons properties
   final _dpBtnColors = [Colors.red, Colors.purple, Colors.green];
   final _dpBtnIcons = [
@@ -38,7 +32,7 @@ class _ProfileViewState extends State<ProfileView> {
   // Image Picker --> DP properties
   final imgPicker = ImagePicker();
   File image;
-  String photoUrl = "";
+  String photoUrl;
   bool _uploading = false;
 
   // getting user data from local storege
@@ -53,8 +47,21 @@ class _ProfileViewState extends State<ProfileView> {
     });
   }
 
+  // get image from local device
+  void _getPic() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _userId = prefs.getString('userId');
+    String _path = prefs.getString('${_userId}dp');
+    if (_path != null) {
+      setState(() {
+        photoUrl = _path;
+      });
+    }
+  }
+
   @override
   void initState() {
+    _getPic();
     _getUserDataLocally();
     super.initState();
   }
@@ -68,7 +75,7 @@ class _ProfileViewState extends State<ProfileView> {
       child: userData == null
           ? CustomLoader()
           : ScaffoldMessenger(
-            child: Scaffold(
+              child: Scaffold(
                 body: SingleChildScrollView(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -94,14 +101,12 @@ class _ProfileViewState extends State<ProfileView> {
                                       : Colors.white,
                                   child: CircleAvatar(
                                     radius: 85.0,
-                                    backgroundImage: userData.photo == " "
+                                    backgroundImage: photoUrl == null
                                         ? AssetImage('assets/dp.png')
-                                        : NetworkImage(userData.photo),
-                                    // backgroundImage:
-                                    //     _firebaseAuth.currentUser.photoURL == " "
-                                    //         ? AssetImage('assets/dp.png')
-                                    //         : NetworkImage(
-                                    //             _firebaseAuth.currentUser.photoURL),
+                                        : FileImage(File(photoUrl)),
+                                    // backgroundImage: userData.photo == " "
+                                    //     ? AssetImage('assets/dp.png')
+                                    //     : NetworkImage(userData.photo),
                                   ),
                                 ),
                               ),
@@ -238,7 +243,7 @@ class _ProfileViewState extends State<ProfileView> {
                   ),
                 ),
               ),
-          ),
+            ),
     );
   }
 
@@ -260,7 +265,7 @@ class _ProfileViewState extends State<ProfileView> {
               decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.circular(360.0)),
-              height: 7.0,
+              height: 5.5,
               width: 50.0,
             ),
             const SizedBox(height: 20.0),
@@ -284,8 +289,8 @@ class _ProfileViewState extends State<ProfileView> {
                     onPressed: index == 0
                         ? () => _removePic()
                         : index == 1
-                            ? () => _uploadPic()
-                            : () => _takePic(),
+                            ? () => _galleryPic()
+                            : () => _cameraPic(),
                     child: Icon(
                       _dpBtnIcons.map((e) => e).elementAt(index),
                       color: Colors.white,
@@ -308,87 +313,58 @@ class _ProfileViewState extends State<ProfileView> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String _userId = prefs.getString('userId');
-
       setState(() {
-        photoUrl = " ";
-        _uploading = true;
+        photoUrl = null;
+      });
+
+      prefs.remove('${_userId}dp').whenComplete(() {
+        setState(() {
+          _uploading = false;
+        });
       });
 
       Navigator.pop(context);
 
-      // await FirebaseAuth.instance.currentUser.updateProfile(photoURL: " ");
-      // await FirebaseAuth.instance.currentUser.reload();
-      await firebaseStorage.ref(_userId).child("dp").delete();
-      int result = await _userAuth.updateProfilePic(photoUrl).whenComplete(() {
-        setState(() {
-          _uploading = false;
-        });
-        _getUserDataLocally();
-      });
-
-      if (result == 200) {
-        var snackBar = SnackBar(
-          backgroundColor: Colors.red,
-          content: Row(
-            children: [
-              const Icon(Icons.person, color: Colors.white),
-              const SizedBox(width: 8.0),
-              const Text(
-                "Picture Removed Successful!",
-                style: TextStyle(color: Colors.white),
-              )
-            ],
-          ),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else {
-        var snackBar = SnackBar(
-          backgroundColor: Colors.blue,
-          content: Row(
-            children: [
-              const Icon(Icons.info, color: Colors.white),
-              const SizedBox(width: 8.0),
-              const Text(
-                "Error! Try again later.",
-                style: TextStyle(color: Colors.white),
-              )
-            ],
-          ),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    } on FirebaseException catch (e) {
-      print(e.code);
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.person, color: Colors.white),
+            const SizedBox(width: 8.0),
+            Text(
+              photoUrl == null
+                  ? "No profile pic was found!"
+                  : "Picture Removed Successful!",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        ),
+      );
+    } catch (e) {
+      throw e.toString();
     }
   }
 
-  void _takePic() async {
+  void _cameraPic() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String _userId = prefs.getString('userId');
-
       setState(() {
         _uploading = true;
       });
 
       // picking Image from Camera
-      final file = await imgPicker.getImage(
+      final file = await imgPicker.pickImage(
         source: ImageSource.camera,
       );
 
       if (file != null) {
         image = File(file.path);
-
-        // creating ref at Firebase Storage with userID
-        Reference ref = firebaseStorage.ref(_userId).child("dp");
-
-        ref.putFile(image).whenComplete(() {
-          print("Pic Uploaded Successfully!");
-          setState(() {
-            _uploading = false;
-          });
-          // refreshing the UI when photo updated
-          _getUploadedPic();
+        prefs.setString('${_userId}dp', file.path);
+        setState(() {
+          photoUrl = file.path;
+          _uploading = false;
         });
       } else {
         setState(() {
@@ -397,37 +373,29 @@ class _ProfileViewState extends State<ProfileView> {
       }
 
       Navigator.pop(context);
-    } on FirebaseException catch (e) {
+    } catch (e) {
       print(e);
     }
   }
 
-  void _uploadPic() async {
+  void _galleryPic() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String _userId = prefs.getString('userId');
-
       setState(() {
         _uploading = true;
       });
 
       // picking Image from local storage
-      final file = await imgPicker.getImage(
+      final file = await imgPicker.pickImage(
         source: ImageSource.gallery,
       );
 
       if (file != null) {
-        image = File(file.path);
-        // creating ref at Firebase Storage with userID
-        Reference ref = firebaseStorage.ref(_userId).child("dp");
-
-        ref.putFile(image).whenComplete(() {
-          print("Pic Uploaded Successfully!");
-          setState(() {
-            _uploading = false;
-          });
-          // refreshing the UI when photo updated
-          _getUploadedPic();
+        prefs.setString('${_userId}dp', file.path);
+        setState(() {
+          photoUrl = file.path;
+          _uploading = false;
         });
       } else {
         setState(() {
@@ -436,61 +404,8 @@ class _ProfileViewState extends State<ProfileView> {
       }
 
       Navigator.pop(context);
-    } on FirebaseException catch (e) {
+    } catch (e) {
       print(e);
-    }
-  }
-
-  void _getUploadedPic() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _userId = prefs.getString('userId');
-
-    // getting dp URL link
-    photoUrl = await firebaseStorage
-        .ref("$_userId/dp")
-        .getDownloadURL()
-        .whenComplete(() {
-      setState(() {
-        print("URL FIREBASE AT: $photoUrl");
-      });
-    });
-
-    int result = await _userAuth.updateProfilePic(photoUrl).whenComplete(() {
-      setState(() {
-        _getUserDataLocally();
-      });
-    });
-
-    if (result == 200) {
-      var snackBar = SnackBar(
-        backgroundColor: Colors.green,
-        content: Row(
-          children: [
-            const Icon(Icons.person, color: Colors.white),
-            const SizedBox(width: 8.0),
-            const Text(
-              "Picture Uploaded Successfully!",
-              style: TextStyle(color: Colors.white),
-            )
-          ],
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      var snackBar = SnackBar(
-        backgroundColor: Colors.red,
-        content: Row(
-          children: [
-            const Icon(Icons.info, color: Colors.white),
-            const SizedBox(width: 8.0),
-            const Text(
-              "Error! Try again later.",
-              style: TextStyle(color: Colors.white),
-            )
-          ],
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/widgets/logoDisplay.dart';
@@ -25,10 +26,10 @@ class SettingsView extends StatelessWidget {
   ];
 
   final _settingsOptionsRoutes = [
-    '/account',
-    '/notifications',
-    '/help',
-    '/theme',
+    AppRoutes.account,
+    AppRoutes.notifications,
+    AppRoutes.help,
+    AppRoutes.theme
   ];
 
   @override
@@ -102,9 +103,8 @@ class SettingsView extends StatelessWidget {
         ],
       ),
     );
-
-    // await _auth.signOut(context);
-    Navigator.popUntil(context, (route) => route.settings?.name == "/");
+    Navigator.popUntil(
+        context, (route) => route.settings?.name == AppRoutes.login);
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     await _userAuth.logout(context);
   }

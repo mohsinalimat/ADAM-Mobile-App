@@ -4,7 +4,7 @@ import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/editableCustomTextField.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -402,60 +402,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                 } else {
                                   _errorSaveProfile("Unknown Error!");
                                 }
-
-                                // data updated
-                                // Map<String, Object> newData = {
-                                //   "phoneNumber":
-                                //       phoneNumberController.text.trim(),
-                                //   "gender": _gender,
-                                //   "country": _country,
-                                //   "city": _city,
-                                //   "dob": dobController.text.trim(),
-                                //   "phoneVerify": _oldPhone !=
-                                //           phoneNumberController.text.trim()
-                                //       ? false
-                                //       : widget.userData.isPhoneVerified,
-                                // };
-
-                                // // in case email is updated then move to password verification
-                                // if (_oldEmail !=
-                                //     emailController.text.trim()) {
-                                //   Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (_) => ChangeEmailView(
-                                //         fullName:
-                                //             fullNameController.text.trim(),
-                                //         updatedData: newData,
-                                //         updatedEmail:
-                                //             emailController.text.trim(),
-                                //       ),
-                                //     ),
-                                //   );
-                                // } else {
-                                //   setState(() {
-                                //     _isLoading = true;
-                                //   });
-
-                                //   var value = await _auth
-                                //       .updateData(
-                                //     widget.user,
-                                //     fullNameController.text.trim(),
-                                //     newData,
-                                //   )
-                                //       .whenComplete(() {
-                                //     setState(() {
-                                //       _isLoading = false;
-                                //     });
-                                //   });
-                                //   print("VALUE: $value");
-
-                                //   if (value is String) {
-                                //     _errorSaveProfile(value);
-                                //   } else {
-                                //     _saveSuccess();
-                                //   }
-                                // }
                               }
                             } else {
                               Navigator.pop(context);

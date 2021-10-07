@@ -6,7 +6,7 @@ import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
 import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:file_picker/file_picker.dart';

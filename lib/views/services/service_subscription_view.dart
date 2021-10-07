@@ -6,7 +6,7 @@ import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/userAllReviews.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
 import 'package:adam/views/stripe/stripeServer.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/feedbackCard.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';

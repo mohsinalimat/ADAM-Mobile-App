@@ -1,8 +1,9 @@
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/passCheckRequirementWidget.dart';
 import 'package:flutter/material.dart';
@@ -124,19 +125,23 @@ class _SignUpViewState extends State<SignUpView> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: BackButton(
-                        // color: kPrimaryBlueColor,
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
-                    SvgPicture.asset("assets/logo/logoColor.svg",
-                        // height: height * 0.07,
-                        height: 40),
+                    Hero(
+                      tag: 'logo',
+                      child: SvgPicture.asset("assets/logo/logoColor.svg",
+                          height: 35),
+                    ),
                     SizedBox(height: height * 0.02),
-                    Text(
-                      "Automated Digital Assitant in Marketing",
-                      style: TextStyle(
-                          // color: kPrimaryBlueColor,
-                          letterSpacing: 1.5),
+                    Hero(
+                      tag: 'logoText',
+                      child: Material(
+                        child: const Text(
+                          "Automated Digital Assitant in Marketing",
+                          style: TextStyle(letterSpacing: 1.5),
+                        ),
+                      ),
                     ),
                     SizedBox(height: height * 0.04),
                     SizedBox(
@@ -644,23 +649,28 @@ class _SignUpViewState extends State<SignUpView> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     _clearController();
     Navigator.pop(context);
-    // Navigator.popAndPushNamed(context, "/emailNotVerified");
   }
 
   void _errorSignup(String value) {
-    var snackBar = SnackBar(
-      content: Row(
+    print("Error: " + value);
+    customSnackBar(
+      context,
+      Colors.red,
+      Row(
         children: [
-          const Icon(
-            Icons.report,
+          Icon(
+            Icons.info,
             color: Colors.white,
           ),
-          const SizedBox(width: 8.0),
-          Text(value, style: TextStyle(color: Colors.white)),
+          const SizedBox(
+            width: 8.0,
+          ),
+          Text(
+            value,
+            style: TextStyle(color: Colors.white),
+          ),
         ],
       ),
-      backgroundColor: Colors.red,
     );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

@@ -1,8 +1,11 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/utils/main_imports.dart';
 import 'package:adam/validators/validators.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,15 +56,23 @@ class _LoginViewState extends State<LoginView> {
                     child: Column(
                       children: [
                         SizedBox(height: 60.0),
-                        SvgPicture.asset(
-                          "assets/logo/logoColor.svg",
-                          height: 50,
+                        Hero(
+                          tag: 'logo',
+                          child: SvgPicture.asset(
+                            "assets/logo/logoColor.svg",
+                            height: 50,
+                          ),
                         ),
                         const SizedBox(height: 10),
-                        const Text(
-                          "Automated Digital Assitant in Marketing",
-                          style: const TextStyle(
-                            letterSpacing: 1.5,
+                        Hero(
+                          tag: 'logoText',
+                          child: Material(
+                            child: const Text(
+                              "Automated Digital Assitant in Marketing",
+                              style: const TextStyle(
+                                letterSpacing: 1.5,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 80.0),
@@ -104,15 +115,15 @@ class _LoginViewState extends State<LoginView> {
                               : kPrimaryBlueColor,
                           btnText: _isLoading
                               ? kLoaderWhite
-                              : Text(
+                              : const Text(
                                   "Login",
                                   style: kBtnTextStyle,
                                 ),
                           btnOnPressed: _login,
                         ),
                         TextButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, "/forgotPassword"),
+                            onPressed: () => Navigator.pushNamed(
+                                context, AppRoutes.forgotPassword),
                             child: Text("Forgot Password?")),
                         Text(
                           "_________________________________________\n",
@@ -121,9 +132,21 @@ class _LoginViewState extends State<LoginView> {
                         CustomButton(
                           btnWidth: 250.0,
                           btnHeight: 40,
-                          // btnHeight: height * 0.055,
-                          btnOnPressed: () =>
-                              Navigator.pushNamed(context, "/signUp"),
+                          btnOnPressed: () => Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 750),
+                              reverseTransitionDuration:
+                                  Duration(milliseconds: 750),
+                              transitionsBuilder: (context, ani1, ani2, child) {
+                                return FadeTransition(
+                                  child: child,
+                                  opacity: ani1,
+                                );
+                              },
+                              pageBuilder: (context, a1, a2) => SignUpView(),
+                            ),
+                          ),
                           btnColor: kLightGreenColor,
                           btnText: Text(
                             "Create New Account",
@@ -142,37 +165,6 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  // // `firebase login`
-  // void _login() async {
-  //   if (_formKey.currentState.validate()) {
-  //     FocusScope.of(context).unfocus();
-  //     setState(() {
-  //       _isLoading = true;
-  //     });
-
-  //     var value = await _auth
-  //         .login(emailTextController.text.trim(),
-  //             passwordTextController.text.trim())
-  //         .whenComplete(() {
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //     });
-
-  //     if (value is String) {
-  //       _errorLogin(value);
-  //     } else {
-  //       Navigator.pushNamed(context, "/mainView");
-  //       emailTextController.clear();
-  //       passwordTextController.clear();
-  //       FocusScope.of(context).unfocus();
-  //     }
-  //   } else {
-  //     print("Text Fields Emapty!");
-  //   }
-  // }
-
-  // `node login`
   void _login() async {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
@@ -194,7 +186,7 @@ class _LoginViewState extends State<LoginView> {
       if (result == 200) {
         emailTextController.clear();
         passwordTextController.clear();
-        Navigator.pushNamed(context, '/mainView');
+        Navigator.pushNamed(context, AppRoutes.dashboard);
       } else if (result == 204) {
         _errorLogin("Account does not exists!");
       } else if (result == 205) {
@@ -209,8 +201,10 @@ class _LoginViewState extends State<LoginView> {
 
   void _errorLogin(String value) {
     print("Error: " + value);
-    var snackBar = SnackBar(
-      content: Row(
+    customSnackBar(
+      context,
+      Colors.red,
+      Row(
         children: [
           Icon(
             Icons.info,
@@ -225,9 +219,7 @@ class _LoginViewState extends State<LoginView> {
           ),
         ],
       ),
-      backgroundColor: Colors.red,
     );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Future<bool> _onWillPop() async {

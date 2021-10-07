@@ -1,9 +1,10 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/passCheckRequirementWidget.dart';
 import 'package:flutter/material.dart';
@@ -243,7 +244,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
               ],
             ),
           );
-          Navigator.popUntil(context, (route) => route.settings?.name == "/");
+          Navigator.popUntil(context, (route) => route.settings?.name == AppRoutes.login);
           await _userAuth.logout(context);
         }
       }

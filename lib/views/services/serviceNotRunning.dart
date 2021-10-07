@@ -2,7 +2,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/views/services/instagram/instagram_view.dart';
 import 'package:adam/views/services/linkedin/linkedin_view.dart';
 import 'package:adam/views/services/twitter/twitter_view.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:flutter/material.dart';
 

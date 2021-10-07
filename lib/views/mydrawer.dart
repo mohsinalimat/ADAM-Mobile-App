@@ -1,7 +1,8 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/views/settings/settingsView.dart';
+import 'package:adam/views/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -166,7 +167,8 @@ class MyDrawer extends StatelessWidget {
       ),
     );
     // await _auth.signOut(context);
-    Navigator.popUntil(context, (route) => route.settings?.name == "/");
+    Navigator.popUntil(
+        context, (route) => route.settings?.name == AppRoutes.login);
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     await _userAuth.logout(context);
   }

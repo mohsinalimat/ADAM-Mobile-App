@@ -1,7 +1,8 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -128,7 +129,7 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                     ),
                   ),
                   TextButton(
-                      onPressed: () => Navigator.pushNamed(context, "/faq"),
+                      onPressed: () => Navigator.pushNamed(context, AppRoutes.faq),
                       child: Text("View FAQs"))
                 ],
               ),

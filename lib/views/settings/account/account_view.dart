@@ -1,3 +1,4 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,13 +17,13 @@ class AccountView extends StatelessWidget {
             // leading: Icon(Icons.password),
             leading: Icon(Icons.code),
             title: Text("Change password"),
-            onTap: () => Navigator.pushNamed(context, '/changePassword'),
+            onTap: () => Navigator.pushNamed(context, AppRoutes.changePassword),
           ),
           ListTile(
             leading: Icon(Icons.sync_disabled),
             // leading: Icon(Icons.disabled_by_default_rounded),
             title: Text("Disable account request"),
-            onTap: () => Navigator.pushNamed(context, '/disableAccount'),
+            onTap: () => Navigator.pushNamed(context, AppRoutes.disableAccount),
           ),
           ListTile(
             leading: Icon(Icons.delete),
@@ -59,7 +60,7 @@ class AccountView extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, "/deleteAccount");
+                        Navigator.pushNamed(context, AppRoutes.deleteAccount);
                       },
                       child: Text(
                         "Yes, I'm sure",

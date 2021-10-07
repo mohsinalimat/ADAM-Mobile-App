@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/serviceController.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
@@ -68,8 +70,21 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  // getting image locally
+
+  String _photo;
+  void _getLocalPhoto() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _userId = prefs.getString('userId');
+    String _path = prefs.get('${_userId}dp');
+    setState(() {
+      _photo = _path;
+    });
+  }
+
   @override
   void initState() {
+    _getLocalPhoto();
     _servicesSubscribedFuture = serviceController.getSubscribedServices();
     _getServices();
     _getSubscribedServicesList();
@@ -130,9 +145,9 @@ class _HomeViewState extends State<HomeView> {
                               },
                               child: CircleAvatar(
                                 radius: 29.0,
-                                backgroundImage: _userData.photo == " "
+                                backgroundImage: _photo == null
                                     ? AssetImage('assets/dp.png')
-                                    : NetworkImage(_userData.photo),
+                                    : FileImage(File(_photo)),
                               ),
                             ),
                           ),
@@ -183,7 +198,9 @@ class _HomeViewState extends State<HomeView> {
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data.subscribedServices.length == 0) {
-                          return _noServiceFound();
+                          return NoServiceFoundCard(
+                            controller: _controller,
+                          );
                         } else {
                           return CarouselSlider.builder(
                             itemCount: snapshot.data.subscribedServices.length,
@@ -279,7 +296,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       IconButton(
                           onPressed: () =>
-                              Navigator.pushNamed(context, '/favorite'),
+                              Navigator.pushNamed(context, AppRoutes.favorite),
                           icon: Icon(Icons.favorite_outline_rounded)),
                     ],
                   ),
@@ -308,8 +325,38 @@ class _HomeViewState extends State<HomeView> {
           );
   }
 
-  // scroll effect widget if no services are found
-  Widget _noServiceFound() {
+  // getting list of subscribed services of current user
+  Future<void> _getSubscribedServicesList() async {
+    SubscribedServices value = await _servicesSubscribedFuture;
+    if (mounted) {
+      setState(() {
+        subscribedServices = List.from(value.subscribedServices);
+      });
+    }
+  }
+
+  // to referch the services of user
+  void _refreshServices() async {
+    await _getSubscribedServicesList();
+    customSnackBar(
+      context,
+      kSecondaryBlueColor,
+      Row(
+        children: [
+          const Icon(Icons.refresh_rounded, color: Colors.white),
+          const SizedBox(width: 5.0),
+          const Text("Services has been refreshed!")
+        ],
+      ),
+    );
+  }
+}
+
+class NoServiceFoundCard extends StatelessWidget {
+  final ScrollController controller;
+  NoServiceFoundCard({@required this.controller});
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Container(
         height: 330.0,
@@ -333,7 +380,7 @@ class _HomeViewState extends State<HomeView> {
                     elevation: 2.5,
                     heroTag: 'noservice',
                     onPressed: () {
-                      animateToIndex(4.0, _controller);
+                      animateToIndex(4.0, controller);
                     },
                     child: const Icon(
                       Icons.arrow_downward,
@@ -345,32 +392,6 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  // getting list of subscribed services of current user
-  Future<void> _getSubscribedServicesList() async {
-    SubscribedServices value = await _servicesSubscribedFuture;
-    if (mounted) {
-      setState(() {
-        subscribedServices = List.from(value.subscribedServices);
-      });
-    }
-  }
-
-  // to referch the services of user
-  void _refreshServices() async {
-    await _getSubscribedServicesList();
-    customSnackBar(
-      context,
-      kSecondaryBlueColor,
-      Row(
-        children: [
-          const Icon(Icons.refresh_rounded, color: Colors.white),
-          const SizedBox(width: 5.0),
-          const Text("Services has been refreshed!")
-        ],
       ),
     );
   }

@@ -1,7 +1,8 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/widgets/customBtn.dart';
+import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -158,7 +159,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                   const Text('Account has been deleted successfully!')
                 ],
               ));
-          Navigator.popUntil(context, (route) => route.settings.name == "/");
+          Navigator.popUntil(context, (route) => route.settings.name == AppRoutes.login);
         }
       } else if (code == 204) {
         customSnackBar(
