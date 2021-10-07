@@ -4,14 +4,23 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application android:usesCleartextTraffic="true"/>
-
-
    <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="ADAM"
         android:icon="@mipmap/ic_launcher">
+  <!-- 
+          <provider
+              android:name="com.imagepicker.ImagePickerPlugin"
+              android:authorities="${applicationId}.flutter.image_provider"
+              android:exported="false"
+              android:grantUriPermissions="true">
+              <meta-data
+                  android:name="android.support.FILE_PROVIDER_PATHS"
+                  android:resource="@xml/file_paths" />
+          </provider> -->
+
         <uses-library
         android:name="org.apache.http.legacy"
         android:required="false" />
