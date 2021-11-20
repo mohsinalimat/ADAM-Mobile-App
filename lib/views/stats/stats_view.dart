@@ -1,9 +1,8 @@
 import 'dart:math';
 
-import 'package:adam/constants.dart';
-import 'package:adam/views/stats/chart_view.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:adam/constants.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 enum StatsFilter { Daily, Weekly, Monthly }
 
@@ -13,7 +12,7 @@ class StatsView extends StatefulWidget {
 }
 
 class _StatsViewState extends State<StatsView> {
-  // StatsFilter _filter = StatsFilter.Weekly;
+  StatsFilter _filter = StatsFilter.Daily;
   String _followersDummy = "2303";
 
   String _currentService = "Instagram Marketing";
@@ -23,6 +22,7 @@ class _StatsViewState extends State<StatsView> {
     "LinkedIn Marketing",
     "Twitter Marketing",
   ];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,11 +39,6 @@ class _StatsViewState extends State<StatsView> {
                   style: Theme.of(context).textTheme.headline1,
                 ),
                 PopupMenuButton(
-                  initialValue: _currentService,
-                  child: Icon(
-                    Icons.more_vert,
-                    size: 30,
-                  ),
                   onSelected: (value) {
                     setState(() {
                       _currentService = value;
@@ -58,7 +53,7 @@ class _StatsViewState extends State<StatsView> {
                         ),
                       )
                       .toList(),
-                ),
+                )
               ],
             ),
             const SizedBox(height: 40.0),
@@ -91,55 +86,42 @@ class _StatsViewState extends State<StatsView> {
               ],
             ),
             const SizedBox(height: 30.0),
-            SizedBox(
-              height: 300.0,
-              child: BadgeBarChart(
-                data: _currentService == _services[0]
-                    ? _dataInstagram
-                    : _currentService == _services[1]
-                        ? _dataLinkedIn
-                        : _dataTwitter,
-              ),
+            SfSparkBarChart(
+              data: dummyData(_filter, _currentService)
             ),
-            const SizedBox(height: 20.0),
-            // Center(
-            //   child: Row(
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: [
-            //       Radio(
-            //         value: StatsFilter.Daily,
-            //         groupValue: _filter,
-            //         onChanged: (value) {
-            //           setState(() {
-            //             _filter = value;
-            //           });
-            //         },
-            //       ),
-            //       const Text("Daily"),
-            //       Radio(
-            //         value: StatsFilter.Weekly,
-            //         groupValue: _filter,
-            //         onChanged: (value) {
-            //           setState(() {
-            //             _filter = value;
-            //           });
-            //         },
-            //       ),
-            //       const Text("Weekly"),
-            //       Radio(
-            //         value: StatsFilter.Monthly,
-            //         groupValue: _filter,
-            //         onChanged: (value) {
-            //           setState(() {
-            //             _filter = value;
-            //           });
-            //         },
-            //       ),
-            //       const Text("Monthly"),
-            //     ],
-            //   ),
-            // ),
-     
+            const SizedBox(height: 30.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Radio(
+                    value: StatsFilter.Daily,
+                    groupValue: _filter,
+                    onChanged: (value) {
+                      setState(() {
+                        _filter = value;
+                      });
+                    }),
+                const Text("Daily"),
+                Radio(
+                    value: StatsFilter.Weekly,
+                    groupValue: _filter,
+                    onChanged: (value) {
+                      setState(() {
+                        _filter = value;
+                      });
+                    }),
+                const Text("Weekly"),
+                Radio(
+                    value: StatsFilter.Monthly,
+                    groupValue: _filter,
+                    onChanged: (value) {
+                      setState(() {
+                        _filter = value;
+                      });
+                    }),
+                const Text("Monthly"),
+              ],
+            )
           ],
         ),
       ),
@@ -150,58 +132,137 @@ class _StatsViewState extends State<StatsView> {
         _followersDummy = (Random().nextInt(3500) + 200).toString();
       });
 
-  // daily
-  List<BarChartModel> _dataInstagram = [
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hmz",
-      followers: 22,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "aa",
-      followers: 12,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hsssmz",
-      followers: 36,
-    ),
-  ];
+  List<int> dummyData(StatsFilter filter, String marketing) {
+    if (filter == StatsFilter.Daily) {
+      if (marketing == _services[0]) {
+        return _instaListD;
+      } else if (marketing == _services[1]) {
+        return _twitterListD;
+      } else {
+        return _linkedInListD;
+      }
+    } else if (filter == StatsFilter.Weekly) {
+      if (marketing == _services[0]) {
+        return _instaListW;
+      } else if (marketing == _services[1]) {
+        return _twitterListW;
+      } else {
+        return _linkedInListW;
+      }
+    } else {
+      if (marketing == _services[0]) {
+        return _instaListM;
+      } else if (marketing == _services[1]) {
+        return _twitterListM;
+      } else {
+        return _linkedInListM;
+      }
+    }
+  }
 
-  List<BarChartModel> _dataTwitter = [
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hmz",
-      followers: 82,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "aa",
-      followers: 33,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hsssmz",
-      followers: 32,
-    ),
-  ];
+  // dummy data
+  List<int> _instaListD = [51, 11, 21, 73, 14, 25];
+  List<int> _twitterListD = [44, 34, 22, 22, 19, 37];
+  List<int> _linkedInListD = [35, 61, 73, 15, 54];
 
-  List<BarChartModel> _dataLinkedIn = [
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hmz",
-      followers: 11,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "aa",
-      followers: 19,
-    ),
-    BarChartModel(
-      barColor: charts.ColorUtil.fromDartColor(kSecondaryBlueColor),
-      followerName: "hsssmz",
-      followers: 32,
-    ),
+  List<int> _instaListW = [51, 11, 21, 12, 73, 14, 25];
+  List<int> _twitterListW = [44, 33, 34, 22, 22, 19, 37];
+  List<int> _linkedInListW = [35, 61, 22, 82, 73, 15, 54];
+
+  List<int> _instaListM = [
+    51,
+    11,
+    21,
+    12,
+    73,
+    14,
+    25,
+    51,
+    11,
+    21,
+    12,
+    73,
+    14,
+    25,
+    51,
+    11,
+    21,
+    12,
+    73,
+    14,
+    25,
+    51,
+    11,
+    21,
+    12,
+    73,
+    14,
+    25,
+    22,
+    12
+  ];
+  List<int> _twitterListM = [
+    44,
+    33,
+    34,
+    22,
+    22,
+    19,
+    37,
+    44,
+    33,
+    34,
+    22,
+    22,
+    19,
+    37,
+    44,
+    33,
+    34,
+    22,
+    22,
+    19,
+    37,
+    44,
+    33,
+    34,
+    22,
+    22,
+    19,
+    37,
+    44,
+    22,
+  ];
+  List<int> _linkedInListM = [
+    35,
+    61,
+    22,
+    82,
+    73,
+    15,
+    54,
+    35,
+    61,
+    22,
+    82,
+    73,
+    15,
+    54,
+    35,
+    61,
+    22,
+    82,
+    73,
+    15,
+    54,
+    35,
+    61,
+    22,
+    82,
+    73,
+    15,
+    54,
+    21,
+    22
   ];
 }
