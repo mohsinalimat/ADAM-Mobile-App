@@ -5,6 +5,7 @@ import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 
 class CustomLoader extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return GlowingProgressIndicator(

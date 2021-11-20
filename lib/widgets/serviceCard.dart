@@ -1,4 +1,4 @@
-import 'package:adam/controller/serviceController.dart';
+import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/utils/custom_snackbar.dart';

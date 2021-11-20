@@ -5,17 +5,21 @@ import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:adam/constants.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
 class SubscriptionHistoryCard extends StatefulWidget {
   final String serviceName;
   final String date;
+  final String sId;
   final bool isPrem;
   SubscriptionHistoryCard({
+    @required this.sId,
     @required this.date,
     @required this.isPrem,
     @required this.serviceName,
@@ -94,86 +98,150 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
       context: context,
       builder: (context) => Screenshot(
         controller: screenshotController,
-        child: AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(1),
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
             children: [
-              Text("SID # 394882039488"),
-              InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.cancel_outlined))
-            ],
-          ),
-          titleTextStyle: Theme.of(context).textTheme.headline2,
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Subscription Details",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: ClipPath(
+                  clipper: MovieTicketBothSidesClipper(),
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 20.0),
+                          color: Colors.grey[100],
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Icon(
+                                      Icons.cancel_outlined,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SvgPicture.asset(
+                                'assets/logo/logoColor.svg',
+                                height: 40,
+                              ),
+                              const SizedBox(height: 5.0),
+                              Center(
+                                child: const Text(
+                                  "Automated Digital Assitant in Marketing",
+                                  style: const TextStyle(
+                                    color: kPrimaryBlueColor,
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 15.0),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 10.0),
+                              Text(
+                                "ID#${widget.sId}",
+                                style: TextStyle(fontSize: 12.0),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                "Service Name:",
+                                style: TextStyle(fontSize: 12.0),
+                              ),
+                              Text(
+                                widget.serviceName,
+                                style: TextStyle(fontSize: 13.0),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                "Type:",
+                                style: TextStyle(fontSize: 12.0),
+                              ),
+                              Text(
+                                widget.isPrem ? "Premium" : "Standard",
+                                style: TextStyle(fontSize: 13.0),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                "Date:",
+                                style: TextStyle(fontSize: 12.0),
+                              ),
+                              Text(
+                                widget.date,
+                                style: TextStyle(fontSize: 13.0),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                "Time:",
+                                style: TextStyle(fontSize: 12.0),
+                              ),
+                              Text(
+                                "02:54:10 PM",
+                                style: TextStyle(fontSize: 13.0),
+                              ),
+                              const SizedBox(height: 5.0),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            TextButton(
+                                onPressed: _shareRecipt,
+                                child: Row(
+                                  children: [
+                                    Text("Share "),
+                                    Icon(Icons.share, size: 17.0)
+                                  ],
+                                )),
+                            TextButton(
+                                onPressed: _saveRecipt,
+                                child: Row(
+                                  children: [
+                                    Text("Save "),
+                                    Icon(Icons.save, size: 17.0)
+                                  ],
+                                )),
+                          ],
+                        ),
+                        const SizedBox(height: 5.0),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 25),
+                          color: Colors.grey[100],
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('Securely paid via'),
+                                Image.asset('assets/stripe.png', height: 28.0)
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10.0),
-              Text(
-                "Service Name:",
-                style: TextStyle(fontSize: 12.0),
-              ),
-              Text(
-                widget.serviceName,
-                style: TextStyle(fontSize: 13.0),
-              ),
-              const SizedBox(height: 10.0),
-              Text(
-                "Type:",
-                style: TextStyle(fontSize: 12.0),
-              ),
-              Text(
-                widget.isPrem ? "Premium" : "Standard",
-                style: TextStyle(fontSize: 13.0),
-              ),
-              const SizedBox(height: 10.0),
-              Text(
-                "Date:",
-                style: TextStyle(fontSize: 12.0),
-              ),
-              Text(
-                widget.date,
-                style: TextStyle(fontSize: 13.0),
-              ),
-              const SizedBox(height: 10.0),
-              Text(
-                "Time:",
-                style: TextStyle(fontSize: 12.0),
-              ),
-              Text(
-                "02:54:10 PM",
-                style: TextStyle(fontSize: 13.0),
-              ),
-              const SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextButton(
-                      onPressed: _shareRecipt,
-                      child: Row(
-                        children: [
-                          Text("Share "),
-                          Icon(Icons.share, size: 17.0)
-                        ],
-                      )),
-                  TextButton(
-                      onPressed: _saveRecipt,
-                      child: Row(
-                        children: [
-                          Text("Save "),
-                          // Icon(Icons.download, size: 17.0)
-                          Icon(Icons.save, size: 17.0)
-                        ],
-                      )),
-                ],
-              )
             ],
           ),
         ),
