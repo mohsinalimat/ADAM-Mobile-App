@@ -7,7 +7,7 @@ import 'package:adam/model/userData.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/verificationBadges.dart';
-import 'package:adam/widgets/customLoader.dart';
+import 'package:adam/widgets/custom_loader.dart';
 import 'package:adam/widgets/profileInfoWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

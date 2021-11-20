@@ -104,8 +104,14 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: ListTileTheme(
-                            dense: true,
+                          child: Theme(
+                            data: ThemeData().copyWith(
+                              dividerColor: Colors.transparent,
+                              unselectedWidgetColor:
+                                  Provider.of<ThemeProvider>(context).darkTheme
+                                      ? Colors.white
+                                      : kPrimaryBlueColor,
+                            ),
                             child: ExpansionTile(
                               tilePadding: const EdgeInsets.all(0.0),
                               title: Row(
@@ -244,7 +250,8 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
               ],
             ),
           );
-          Navigator.popUntil(context, (route) => route.settings?.name == AppRoutes.login);
+          Navigator.popUntil(
+              context, (route) => route.settings?.name == AppRoutes.login);
           await _userAuth.logout(context);
         }
       }
