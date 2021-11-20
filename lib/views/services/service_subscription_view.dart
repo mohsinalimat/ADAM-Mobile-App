@@ -1,9 +1,9 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/serviceController.dart';
+import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/views/services/userAllReviews.dart';
+import 'package:adam/views/services/user_all_reviews.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
 import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -307,7 +307,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   }
 
   showNotification() async {
-    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+    var android = AndroidNotificationDetails('id', 'channel ',
         priority: Priority.high,
         importance: Importance.max,
         playSound: true,
