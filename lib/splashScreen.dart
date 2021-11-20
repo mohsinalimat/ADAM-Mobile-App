@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/userData.dart';
+import 'package:adam/utils/main_imports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -29,10 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
       Map userDataObject = jsonDecode(stringfyJson);
       userData = UserData.fromJSON(userDataObject);
     }
+    print("USER FOUND $userData");
     Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushNamed(
-        context,
-        userData == null ? AppRoutes.login : AppRoutes.dashboard,
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => userData == null ? LoginView() : Dashboard(),
+        ),
       );
     });
   }

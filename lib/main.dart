@@ -1,13 +1,14 @@
 import 'package:adam/app_routes.dart';
 import 'package:adam/custom_scroll_effect.dart';
 import 'package:adam/views/settings/help/in_app_guide_view.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'utils/main_imports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
