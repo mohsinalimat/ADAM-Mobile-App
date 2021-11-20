@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/serviceController.dart';
+import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/model/userData.dart';
@@ -11,17 +11,20 @@ import 'package:adam/providers/bottomNavBarProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
 import 'package:adam/views/home/manage_services_view.dart';
-import 'package:adam/widgets/customHomeServiceCards.dart';
+import 'package:adam/widgets/custom_home_service_card.dart';
 import 'package:adam/widgets/serviceCard.dart';
 import 'package:adam/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
+  final AnimationController animationController;
+
+  const HomeView({Key key, this.animationController}) : super(key: key);
   @override
   _HomeViewState createState() => _HomeViewState();
 }
@@ -112,13 +115,27 @@ class _HomeViewState extends State<HomeView> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        InkWell(
+                          onTap: () {
+                            _bottomBarProviders
+                                .toggleDrawer(widget.animationController);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: SvgPicture.asset(
+                              'assets/menu.svg',
+                              color: _themeProvider.darkTheme
+                                  ? Colors.white
+                                  : kPrimaryBlueColor,
+                            ),
+                          ),
+                        ),
+                        Spacer(),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              // "Hi! ${_firebaseAuth.currentUser.displayName}",
                               "Hi! ${_userData.fullName}",
                               style: Theme.of(context).textTheme.headline2,
                             ),
@@ -202,32 +219,13 @@ class _HomeViewState extends State<HomeView> {
                             controller: _controller,
                           );
                         } else {
-                          return CarouselSlider.builder(
+                        return CarouselSlider.builder(
                             itemCount: snapshot.data.subscribedServices.length,
                             itemBuilder: (_, index, i) {
                               return YourServiceCard(
-                                serviceIcon: snapshot.data.subscribedServices[index]
-                                            ['serviceData']['service_name'] ==
-                                        "Instagram Marketing"
-                                    ? FontAwesomeIcons.instagram
-                                    : snapshot.data.subscribedServices[index]['serviceData']
-                                                ['service_name'] ==
-                                            "Twitter Marketing"
-                                        ? FontAwesomeIcons.twitter
-                                        : snapshot.data.subscribedServices[index]['serviceData']
-                                                    ['service_name'] ==
-                                                "Facebook Marketing"
-                                            ? FontAwesomeIcons.facebook
-                                            : snapshot.data.subscribedServices[index]
-                                                            ['serviceData']
-                                                        ['service_name'] ==
-                                                    "LinkedIn Marketing"
-                                                ? FontAwesomeIcons.linkedin
-                                                : snapshot.data.subscribedServices[index]
-                                                            ['serviceData']['service_name'] ==
-                                                        "Email Marketing"
-                                                    ? Icons.mail
-                                                    : Icons.sms,
+                                serviceIcon:
+                                    snapshot.data.subscribedServices[index]
+                                        ['serviceData']['service_icon'],
                                 serviceTitle:
                                     snapshot.data.subscribedServices[index]
                                         ['serviceData']['service_name'],
@@ -305,7 +303,9 @@ class _HomeViewState extends State<HomeView> {
                       ? Center(
                           child: JumpingDotsProgressIndicator(
                             fontSize: 40.0,
-                            color: kMediumBlueColor,
+                            color: _themeProvider.darkTheme
+                                ? Colors.white
+                                : kMediumBlueColor,
                           ),
                         )
                       : ListView(

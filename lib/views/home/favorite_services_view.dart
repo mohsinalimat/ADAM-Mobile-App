@@ -1,6 +1,6 @@
 import 'package:adam/animations/bottomAnimation.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/serviceController.dart';
+import 'package:adam/controller/service_controller.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
