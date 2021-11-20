@@ -4,6 +4,7 @@ class TwitterScrapedUserList {
   TwitterScrapedUserList({this.scrapedUsers});
 
   factory TwitterScrapedUserList.fromJSON(Map<String, dynamic> json) {
+    print("ALL USER DATA!!");
     Iterable usersData = json['followers_data'];
     List<TwitterScrapedUser> scrapedData =
         usersData.map((usr) => TwitterScrapedUser.fromJSON(usr)).toList();
@@ -33,6 +34,7 @@ class TwitterScrapedUser {
       this.photo});
 
   factory TwitterScrapedUser.fromJSON(Map<String, dynamic> json) {
+    print("PER USER DATA!!");
     return TwitterScrapedUser(
       username: json['username'],
       profileUrl: json['profile_url'],

@@ -48,8 +48,9 @@ class Service {
       serviceIcon: json['service_icon'],
       serviceColor: json['service_color'],
       serviceType: servicesTypes,
-      serviceRatings:
-          double.parse(json['service_feedback']['ratings'].toString()).toInt(),
+      serviceRatings: double.parse(
+              json['service_feedback']['ratings'].toString())
+          .toInt(),
       serviceComments: feedbacks,
     );
   }
