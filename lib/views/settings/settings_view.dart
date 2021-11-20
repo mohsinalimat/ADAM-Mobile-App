@@ -1,6 +1,7 @@
 import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -90,22 +91,25 @@ class SettingsView extends StatelessWidget {
   }
 
   void _signOut(BuildContext context) async {
-    var snackBar = SnackBar(
-      backgroundColor: Colors.green,
-      content: Row(
+    customSnackBar(
+      context,
+      Colors.green,
+      Row(
         children: [
-          const Icon(Icons.check, color: Colors.white),
-          const SizedBox(width: 8.0),
-          const Text(
+          Icon(Icons.check, color: Colors.white),
+          SizedBox(width: 8.0),
+          Text(
             "Sign Out Successful!",
             style: TextStyle(color: Colors.white),
           )
         ],
       ),
     );
-    Navigator.popUntil(
-        context, (route) => route.settings?.name == AppRoutes.login);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.login,
+      (route) => route.settings.name == AppRoutes.login ? true : false,
+    );
     await _userAuth.logout(context);
   }
 }
