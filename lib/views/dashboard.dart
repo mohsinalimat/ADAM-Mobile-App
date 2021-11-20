@@ -26,12 +26,17 @@ class _DashboardState extends State<Dashboard>
   AnimationController _animationController;
   bool _canBeDragged = false;
 
-  final _views = [
-    HomeView(),
-    StatsView(),
-    SettingsView(),
-    ProfileView(),
-  ];
+  Widget _views(int index) {
+    if (index == 0) {
+      return HomeView(animationController: _animationController);
+    } else if (index == 1) {
+      return StatsView();
+    } else if (index == 2) {
+      return SettingsView();
+    } else {
+      return ProfileView();
+    }
+  }
 
   final _bottomIcons = [
     Icons.home,
@@ -49,11 +54,11 @@ class _DashboardState extends State<Dashboard>
     super.initState();
   }
 
-  void close() => _animationController.reverse();
+  // void close() => _animationController.reverse();
 
-  void open() => _animationController.forward();
+  // void open() => _animationController.forward();
 
-  void toggleDrawer() => _animationController.isCompleted ? close() : open();
+  // void toggleDrawer() => _animationController.isCompleted ? close() : open();
 
   @override
   void dispose() {
@@ -87,7 +92,9 @@ class _DashboardState extends State<Dashboard>
                     ..scale(contentScale, contentScale),
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: _animationController.isCompleted ? close : null,
+                    onTap: _animationController.isCompleted
+                        ? _animationController.reverse
+                        : null,
                     child: child,
                   ),
                 ),
@@ -113,27 +120,7 @@ class _DashboardState extends State<Dashboard>
                           title: const Text("Settings"),
                         )
                       : null,
-              body: SafeArea(
-                  child: Stack(
-                children: [
-                  _views[_bottomBarProviders.currentIndex],
-                  _bottomBarProviders.currentIndex == 0
-                      ? Positioned(
-                          top: 20,
-                          left: 10,
-                          child: IconButton(
-                            onPressed: () => toggleDrawer(),
-                            icon: SvgPicture.asset(
-                              'assets/menu.svg',
-                              color: _themeProvider.darkTheme
-                                  ? Colors.white
-                                  : kPrimaryBlueColor,
-                            ),
-                          ),
-                        )
-                      : Container(),
-                ],
-              )),
+              body: SafeArea(child: _views(_bottomBarProviders.currentIndex)),
               bottomNavigationBar: Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
@@ -155,7 +142,7 @@ class _DashboardState extends State<Dashboard>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (int i = 0; i < _views.length; i++)
+                    for (int i = 0; i < 4; i++)
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -231,9 +218,9 @@ class _DashboardState extends State<Dashboard>
 
       _animationController.fling(velocity: visualVelocity);
     } else if (_animationController.value < 0.5) {
-      close();
+      _animationController.reverse();
     } else {
-      open();
+      _animationController.forward();
     }
   }
 
