@@ -28,6 +28,8 @@ class UserAuth {
       "cust_gender": gender,
       "cust_city": city,
       "cust_country": country,
+      "isEmailVerified": true,
+      "isPhoneVerified": true,
     });
 
     if (response.statusCode == 200) {
