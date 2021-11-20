@@ -6,12 +6,20 @@ import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
 import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
+import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+enum MediaType {
+  none,
+  image,
+  video,
+}
 
 class TwitterAccountScheduler extends StatefulWidget {
   @override
@@ -20,7 +28,11 @@ class TwitterAccountScheduler extends StatefulWidget {
 }
 
 class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+
   ScrollController _controller = ScrollController();
+
+  MediaType _mediaType = MediaType.none;
 
   // date & time to be scheduled
   final format = DateFormat("dd-MM-yyyy");
@@ -30,7 +42,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-
+  final TextEditingController _autoReplyMsgController = TextEditingController();
   // greeting msg
   final TextEditingController _msgController = TextEditingController();
 
@@ -40,7 +52,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   bool _newFollowersFound = false;
   List _newFollowersList = [];
 
-  bool _isMention = false;
+  bool _autoReplying = false;
 
   // file/media picking
   FilePickerResult filePickerResult;
@@ -49,6 +61,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   bool _uploadingFile = false;
   bool _fileUploaded = false;
   String path = "";
+  String _urlMedia = '';
 
   @override
   void dispose() {
@@ -108,7 +121,35 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   ),
                   const SizedBox(height: 20.0),
                   const Text('Add Image/Video:'),
-                  const SizedBox(height: 8.0),
+                  Row(children: [
+                    Radio(
+                      value: MediaType.image,
+                      groupValue: _mediaType,
+                      onChanged: (value) {
+                        setState(() {
+                          _fileUploaded = false;
+                          _urlMedia = "";
+                          someFile = null;
+                          _mediaType = value;
+                        });
+                      },
+                    ),
+                    const Text('Image'),
+                    const SizedBox(width: 30.0),
+                    Radio(
+                      value: MediaType.video,
+                      groupValue: _mediaType,
+                      onChanged: (value) {
+                        setState(() {
+                          _fileUploaded = false;
+                          _urlMedia = "";
+                          someFile = null;
+                          _mediaType = value;
+                        });
+                      },
+                    ),
+                    const Text('Video'),
+                  ]),
                   _fileUploaded
                       ? Container(
                           height: 250.0,
@@ -123,20 +164,25 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: _addAttachment,
+                    btnOnPressed: _mediaType == MediaType.none
+                        ? null
+                        : _mediaType == MediaType.image
+                            ? () => _addAttachment(true)
+                            : () => _addAttachment(false),
                     btnColor: Colors.white,
                     btnText: _uploadingFile
                         ? kLoader
-                        : const Text(
-                            'Upload',
+                        : Text(
+                            'Upload Media',
                             style: TextStyle(
-                              letterSpacing: 1.3,
-                              color: kPrimaryBlueColor,
+                              color: _mediaType == MediaType.none
+                                  ? Colors.grey
+                                  : kPrimaryBlueColor,
                             ),
                           ),
                   ),
                   const SizedBox(height: 20.0),
-                  const Text('Tweet caption:'),
+                  const Text('Tweet caption: *'),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.89,
@@ -164,6 +210,12 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                           borderSide: BorderSide(color: Colors.red),
                         ),
                       ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "Caption is empty!";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: 20.0),
@@ -260,7 +312,11 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: _fileUploaded ? _tweetMedia : _tweetTextOnly,
+                    btnOnPressed: _mediaType != MediaType.none
+                        ? _mediaType == MediaType.image
+                            ? _tweetImage
+                            : _tweetVideo
+                        : _tweetTextOnly,
                     btnColor: kPrimaryBlueColor,
                     btnText: _isUpdating
                         ? kLoaderWhite
@@ -289,12 +345,20 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   const Text(
                       "Check if someone has mentioned you in a tweet & reply them."),
                   const SizedBox(height: 8.0),
+                  CustomTextField(
+                    textEditingController: _autoReplyMsgController,
+                    textInputAction: TextInputAction.done,
+                    textInputType: TextInputType.text,
+                    hintText: 'Auto reply message...',
+                    icon: Icons.message,
+                  ),
+                  const SizedBox(height: 8.0),
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
                     btnOnPressed: _autoReply,
                     btnColor: kPrimaryBlueColor,
-                    btnText: _isMention
+                    btnText: _autoReplying
                         ? kLoaderWhite
                         : const Text('Check', style: kBtnTextStyle),
                   ),
@@ -449,34 +513,48 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // pickingFile
-  void _addAttachment() async {
+  void _addAttachment(bool isImage) async {
     filePickerResult = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['png', 'jpg', 'jpeg']
-    );
+        type: FileType.custom, allowedExtensions: ['png', 'jpg', 'jpeg']);
 
     if (filePickerResult != null) {
       someFile = File(filePickerResult.files.single.path);
       platformFile = filePickerResult.files.first;
 
-      // sending the file in chat
       setState(() {
-        _uploadingFile = false;
         _fileUploaded = true;
         path = platformFile.path;
       });
+
+      if (isImage) {
+        _imageToFirebase();
+      } else {
+        _videoToFirebase();
+      }
     }
   }
 
   // tweet with Media + caption (optional)
-  void _tweetMedia() async {
-    if (_formKey.currentState.validate()) {
+  void _tweetImage() async {
+    if (someFile == null && _mediaType == MediaType.image) {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.image, color: Colors.white),
+            const SizedBox(width: 8.0),
+            const Text('Please select image file!'),
+          ],
+        ),
+      );
+    } else if (_formKey.currentState.validate()) {
       print("VALID!");
       setState(() {
         _isUpdating = true;
       });
       var value = await TwitterMarketing()
-          .tweetMedia(_contentController.text.trim(), path)
+          .tweetImage(_contentController.text.trim(), _urlMedia)
           .whenComplete(() {
         setState(() {
           _isUpdating = false;
@@ -504,7 +582,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
             children: [
               const Icon(Icons.check, color: Colors.white),
               const SizedBox(width: 8.0),
-              const Text("Tweet has been scheduled!"),
+              const Text("Image Tweet has been scheduled!"),
             ],
           ),
         );
@@ -522,17 +600,175 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
     }
   }
 
+  void _tweetVideo() async {
+    if (someFile == null && _mediaType == MediaType.video) {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.video_camera_back, color: Colors.white),
+            const SizedBox(width: 8.0),
+            const Text('Please select video file!'),
+          ],
+        ),
+      );
+    } else if (_formKey.currentState.validate()) {
+      print("VALID!");
+      setState(() {
+        _isUpdating = true;
+      });
+      var value = await TwitterMarketing()
+          .tweetVideo(_contentController.text.trim(), _urlMedia)
+          .whenComplete(() {
+        setState(() {
+          _isUpdating = false;
+          _fileUploaded = false;
+        });
+      });
+
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text(value),
+            ],
+          ),
+        );
+      } else {
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.check, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text("Video Tweet has been scheduled!"),
+            ],
+          ),
+        );
+        scheduledPosts.insert(
+            0,
+            ScheduledPostCard(
+              date: _dateController.text.trim(),
+              time: _timeController.text.trim(),
+              caption: _contentController.text.trim(),
+            ));
+        _contentController.clear();
+        _dateController.clear();
+        _timeController.clear();
+      }
+    }
+  }
+
+  // upload and get URL from firestorage
+  // IMAGE
+  Future<void> _imageToFirebase() async {
+    print(path);
+    Reference ref = _firebaseStorage.ref('twitter').child('image');
+
+    ref
+        .putFile(someFile)
+        .whenComplete(() async => _getImageURL().whenComplete(() {
+              setState(() {
+                _uploadingFile = false;
+              });
+            }));
+  }
+
+  Future<void> _getImageURL() async {
+    // getting dp URL link
+    String _url = await _firebaseStorage
+        .ref("twitter/image")
+        .getDownloadURL()
+        .whenComplete(() {
+      print("URL UPLOADED AT: $_urlMedia");
+    });
+    setState(() {
+      _urlMedia = _url;
+    });
+
+    print("FILE UPLOADED $_urlMedia");
+  }
+
+  // VIDEO
+  Future<void> _videoToFirebase() async {
+    print(path);
+    Reference ref = _firebaseStorage.ref('twitter').child('video');
+
+    ref
+        .putFile(someFile)
+        .whenComplete(() async => _getVideoURL().whenComplete(() {
+              setState(() {
+                _uploadingFile = false;
+              });
+            }));
+  }
+
+  Future<void> _getVideoURL() async {
+    // getting dp URL link
+    String _url = await _firebaseStorage
+        .ref("twitter/video")
+        .getDownloadURL()
+        .whenComplete(() {
+      print("URL UPLOADED AT: $_urlMedia");
+    });
+    setState(() {
+      _urlMedia = _url;
+    });
+
+    print("FILE UPLOADED $_urlMedia");
+  }
+
   // auto reply to mentions
   void _autoReply() async {
-    setState(() {
-      _isMention = true;
-    });
-    var value = await TwitterMarketing().autoReply().whenComplete(() {
+    if (_autoReplyMsgController.text.isNotEmpty) {
       setState(() {
-        _isMention = false;
+        _autoReplying = true;
       });
-    });
-    if (value is String) {
+      var value = await TwitterMarketing()
+          .autoReply(_autoReplyMsgController.text.trim())
+          .whenComplete(() {
+        setState(() {
+          _autoReplying = false;
+        });
+      });
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text(
+                value,
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        );
+      } else {
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.reply, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text(
+                "Replied to all mentions (if any)",
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        );
+      }
+    } else {
       customSnackBar(
         context,
         Colors.red,
@@ -541,22 +777,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
             const Icon(Icons.info, color: Colors.white),
             const SizedBox(width: 8.0),
             Text(
-              value,
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-      );
-    } else {
-      customSnackBar(
-        context,
-        kSecondaryBlueColor,
-        Row(
-          children: [
-            const Icon(Icons.reply, color: Colors.white),
-            const SizedBox(width: 8.0),
-            Text(
-              "Replied to all mentions (if any)",
+              'Cannot send an empty auto reply message!',
               style: TextStyle(color: Colors.white),
             ),
           ],

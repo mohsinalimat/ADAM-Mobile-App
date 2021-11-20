@@ -82,8 +82,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text(
-                                "* You must be following this account!"),
+                            const Text("* You must be following this account!"),
                             const SizedBox(height: 10.0),
                             CustomTextField(
                               validatorFtn: (value) {
@@ -126,14 +125,12 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                       decoration: InputDecoration(
                         hintText: "Enter your marketing content here...",
                         hintStyle: Theme.of(context).textTheme.caption,
-                        fillColor:
-                            Provider.of<ThemeProvider>(context).darkTheme
-                                ? Colors.black12
-                                : Colors.grey[200],
+                        fillColor: Provider.of<ThemeProvider>(context).darkTheme
+                            ? Colors.black12
+                            : Colors.grey[200],
                         filled: true,
                         enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.transparent)),
+                            borderSide: BorderSide(color: Colors.transparent)),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.transparent),
                         ),
@@ -211,7 +208,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
         }
       });
 
-      print("FTN CALLED AT FRONT END!!");
+      print("RESPONSE GENERATED!!");
 
       if (data is String) {
         print(data);
@@ -271,8 +268,6 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
       setState(() {
         _isWorking = true;
       });
-
-      print("FTN CALLED AT FRONT END!!");
 
       var data = await TwitterMarketing()
           .sendDMs(
