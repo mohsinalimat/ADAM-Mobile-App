@@ -1,6 +1,7 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/linkedin.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/model/scraping/linkedin/scraped_data.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/instagram/instagram_marketing_view.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -17,7 +18,7 @@ class LinkedinMarketingView extends StatefulWidget {
 class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
   bool _dataScraped = false;
   bool _isWorking = false;
-  final _targetProfileController = TextEditingController();
+  final _keywordController = TextEditingController();
   final _linkedinUserNameController = TextEditingController();
   final _linkedinPasswordController = TextEditingController();
 
@@ -30,13 +31,12 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
   void initState() {
     _linkedinUserNameController.text = "mhamzadev@yahoo.com";
     _linkedinPasswordController.text = "Iamhamza..!@#6";
-    _targetProfileController.text = "khaaadi456";
     super.initState();
   }
 
   @override
   void dispose() {
-    _targetProfileController.dispose();
+    _keywordController.dispose();
     _linkedinUserNameController.dispose();
     _linkedinPasswordController.dispose();
     _marketingMsg.dispose();
@@ -90,7 +90,7 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                               CustomTextField(
                                 textEditingController:
                                     _linkedinUserNameController,
-                                textInputAction: TextInputAction.next,
+                                textInputAction: TextInputAction.done,
                                 textInputType: TextInputType.text,
                                 hintText: "LinkedIn Username",
                                 icon: Icons.person,
@@ -119,19 +119,19 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                               ),
                               const SizedBox(height: 30.0),
                               const Text(
-                                  "* You must be a connection with this account!"),
+                                  "* Connections will be scraped based on your LinkedIn profile annotations"),
                               const SizedBox(height: 10.0),
                               CustomTextField(
                                 validatorFtn: (value) {
                                   if (value.isEmpty) {
-                                    return "Target profile cannot be empty!";
+                                    return "Keyword cannot be empty!";
                                   }
                                   return null;
                                 },
-                                textEditingController: _targetProfileController,
+                                textEditingController: _keywordController,
                                 textInputAction: TextInputAction.done,
                                 textInputType: TextInputType.text,
-                                hintText: "Target Username",
+                                hintText: "Keyword e.g Software Enginner",
                                 icon: Icons.person,
                               ),
                               const SizedBox(height: 10.0),
@@ -198,10 +198,12 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                           )
                         : Container(),
                     const SizedBox(height: 25.0),
-                    Text(
-                      "Follower's Data",
-                      style: Theme.of(context).textTheme.headline2,
-                    ),
+                    !_dataScraped
+                        ? Container()
+                        : Text(
+                            "Follower's Data",
+                            style: Theme.of(context).textTheme.headline2,
+                          ),
                     const SizedBox(height: 10.0),
                     !_dataScraped
                         ? Container()
@@ -210,8 +212,8 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                             shrinkWrap: true,
                             children: List.generate(
                               _scrapedUsersData.length,
-                              (index) => InstaScrapedUserDataCard(
-                                instaScrapedUser: _scrapedUsersData[index],
+                              (index) => LinkedInScrapedUserDataCard(
+                                linkedinScrapedUser: _scrapedUsersData[index],
                               ),
                             ),
                           )
@@ -238,7 +240,7 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
           .scrapeUserData(
         _linkedinUserNameController.text.trim(),
         _linkedinPasswordController.text.trim(),
-        _targetProfileController.text.trim(),
+        _keywordController.text.trim(),
       )
           .whenComplete(() {
         if (mounted) {
@@ -286,5 +288,59 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
             ));
       }
     }
+  }
+}
+
+class LinkedInScrapedUserDataCard extends StatelessWidget {
+  final LinkedInScrapedUser linkedinScrapedUser;
+
+  const LinkedInScrapedUserDataCard(
+      {Key key, @required this.linkedinScrapedUser})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    return Card(
+      child: ExpansionTile(
+        leading: CircleAvatar(
+          child: Text(
+            linkedinScrapedUser.fullName.substring(0, 1),
+          ),
+        ),
+        title: Text(
+          linkedinScrapedUser.fullName,
+          style: TextStyle(
+            color: _themeProvider.darkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+        subtitle: Text(
+          linkedinScrapedUser.profileUrl,
+          style: TextStyle(
+            color: _themeProvider.darkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+        children: [
+          Text(
+            'Headline:',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+          ),
+          linkedinScrapedUser.headline == ""
+              ? Text('*No healine Found*')
+              : Text(linkedinScrapedUser.summary),
+          const SizedBox(
+            height: 5.0,
+          ),
+          Text(
+            "Bio:",
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+          ),
+          linkedinScrapedUser.summary == ""
+              ? Text('*No Summary Found*')
+              : Text(linkedinScrapedUser.summary),
+        ],
+        childrenPadding: const EdgeInsets.all(8.0),
+        expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+      ),
+    );
   }
 }
