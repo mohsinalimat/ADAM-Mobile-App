@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:adam/model/service.dart';
+import 'package:adam/model/subscription_history.dart';
 import 'package:adam/model/userData.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -64,21 +66,31 @@ class ServiceController {
   }
 
   Future getSubscribedServices() async {
+    Dio dio = Dio();
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
     String _userId = prefs.getString('userId');
     String url =
         "https://adam-web-api.herokuapp.com/user/view-subscribed-services";
 
-    http.Response response = await http.post(Uri.parse(url), headers: {
-      "Authorization": "Bearer $_token",
-    }, body: {
-      'userId': _userId,
-    });
+    Response response = await dio.post(
+      url,
+      data: {
+        "userId": _userId,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $_token",
+        },
+      ),
+    );
+
     if (response.statusCode == 200) {
       print('services found!');
-      return SubscribedServices.fromJson(jsonDecode(response.body));
+      return SubscribedServices.fromJson(response.data);
     } else {
+      print(response.statusCode);
       throw Exception('Failed to load services');
     }
   }
@@ -101,11 +113,7 @@ class ServiceController {
     }
   }
 
-  Future giveFeedBack(
-    String serviceId,
-    String ratings,
-    String comment,
-  ) async {
+  Future giveFeedBack(String serviceId, String ratings, String comment) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // local data
@@ -226,6 +234,64 @@ class ServiceController {
       return response.statusCode;
     } else {
       return response.statusCode;
+    }
+  }
+
+  Future viewSubscriptionHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // local data
+    String _token = prefs.getString('token');
+    String _userId = prefs.getString('userId');
+    String url = "https://adam-web-api.herokuapp.com/user/subscription-history";
+
+    var body = {
+      'userId': _userId,
+    };
+
+    http.Response response = await http.post(
+      Uri.parse(url),
+      body: body,
+      headers: {
+        'Authorization': "Bearer $_token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return SubscriptionList.fromJson(jsonDecode(response.body));
+    } else {
+      return SubscriptionList.fromJson({'services': []});
+    }
+  }
+
+  Future deleteSubscriptionHistoryService() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    try {
+      // local data
+      String _token = prefs.getString('token');
+      String _userId = prefs.getString('userId');
+      String url = "https://adam-web-api.herokuapp.com/user/delete-all-history";
+
+      var body = {
+        'userId': _userId,
+      };
+
+      http.Response response = await http.post(
+        Uri.parse(url),
+        body: body,
+        headers: {
+          'Authorization': "Bearer $_token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.statusCode;
+      } else {
+        return response.statusCode;
+      }
+    } catch (e) {
+      return e.toString();
     }
   }
 }

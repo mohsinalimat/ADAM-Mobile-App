@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:adam/constants.dart';
+import 'package:adam/utils/main_imports.dart';
 import 'package:flutter/material.dart';
 
 class ThemeStyles {
@@ -7,11 +8,10 @@ class ThemeStyles {
       bool isDarkTheme, BuildContext buildContext, double fontSize) {
     return isDarkTheme
         ? ThemeData(
-            primarySwatch: Colors.grey,
-            // primaryColor: Colors.white,
-            brightness: Brightness.dark,
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              foregroundColor: Colors.white,
+            ),
             backgroundColor: Colors.grey[900],
-            accentColor: Colors.grey[900],
             iconTheme: IconThemeData(
               color: Colors.white,
               size: fontSize == 35.0
@@ -22,6 +22,10 @@ class ThemeStyles {
             ),
             dividerColor: Colors.white,
             fontFamily: 'Roboto',
+            appBarTheme: AppBarTheme(
+                iconTheme: IconThemeData(color: Colors.white),
+                titleTextStyle:
+                    TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
             textTheme: TextTheme(
               headline1: TextStyle(
                 color: Colors.white,
@@ -78,12 +82,16 @@ class ThemeStyles {
               bodyColor: Colors.white,
               displayColor: Colors.white,
             ),
+            colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: Colors.grey,
+              brightness: Brightness.dark,
+            ).copyWith(secondary: Colors.grey[900]),
           )
         : ThemeData(
-            primarySwatch: Colors.lightBlue,
-            accentColor: kPrimaryBlueColor,
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              foregroundColor: Colors.white,
+            ),
             primaryColor: kPrimaryBlueColor,
-            brightness: Brightness.light,
             backgroundColor: kLightBlueColor,
             iconTheme: IconThemeData(
               color: kPrimaryBlueColor,
@@ -95,6 +103,12 @@ class ThemeStyles {
             ),
             dividerColor: Colors.transparent,
             fontFamily: 'Roboto',
+            appBarTheme: AppBarTheme(
+                iconTheme: IconThemeData(
+                  color: Colors.white,
+                ),
+                titleTextStyle:
+                    TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
             textTheme: TextTheme(
               headline1: TextStyle(
                 color: kPrimaryBlueColor,
@@ -147,6 +161,12 @@ class ThemeStyles {
                         ? 18.0
                         : 11.0,
               ),
+            ),
+            colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: Colors.lightBlue,
+              brightness: Brightness.light,
+            ).copyWith(
+              secondary: kPrimaryBlueColor,
             ),
           );
   }

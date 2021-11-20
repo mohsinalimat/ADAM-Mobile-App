@@ -3,16 +3,16 @@ import 'package:dio/dio.dart';
 
 class InstagramMarketing {
   Dio dio = Dio();
+
   var headers = {
     "Accept": "application/json",
     "Access-Control-Allow-Origin": "*"
   };
+
   Future scrapeUserData(
       String userInsta, String passInsta, String targetUsername) async {
     try {
-      // String url = "http://40.76.15.56:5000/insta/scraper";
       // String url = "http://10.0.2.2:5000/insta/scraper";
-      // String url = "http://192.168.1.128:5000/insta/scraper";
       String url = "https://adam-web-api.herokuapp.com/instagram/check-target";
 
       var body = {
@@ -42,8 +42,8 @@ class InstagramMarketing {
 
   Future sendDM(String msg, String username, String password) async {
     try {
-      String url = "http://40.76.15.56:5000/insta/marketing";
-      // String url = "http://10.0.2.2:5000/insta/marketing";
+      // String url = "http://40.76.15.56:5000/insta/marketing";
+      String url = "http://10.0.2.2:5000/insta/marketing";
       var body = {
         "username": username,
         "password": password,
@@ -70,16 +70,18 @@ class InstagramMarketing {
     }
   }
 
-  // scheduler
-  Future postUpdate(
-      String username, String password, String caption, String media) async {
+  // image post scheduler
+  Future postImageStatus(String username, String password, String caption,
+      String imagePath) async {
     try {
-      String url = "http://40.76.15.56:5000/insta/post/status";
-      // String url = "http://192.168.1.128:5000/insta/post/status";
+      print('IMAGE SEND API!');
+      // String url = "http://40.76.15.56:5000/insta/post/status/image";
+      String url = "http://10.0.2.2:5000/insta/post/status/image";
+  
       var body = {
         'username': username,
         'password': password,
-        'file_path': media,
+        'image_path': imagePath,
         'caption': caption,
       };
 
@@ -88,9 +90,9 @@ class InstagramMarketing {
         data: body,
         options: Options(headers: headers),
       );
-      print(response.data);
+
       if (response.statusCode == 200) {
-        print('posted a status!');
+        print('posted an image status!');
         return response.statusCode;
       } else {
         throw 'status failed!';
@@ -101,15 +103,16 @@ class InstagramMarketing {
     }
   }
 
-  // scheduler
-  Future postStory(String username, String password, String media) async {
+  Future postVideoStatus(String username, String password, String caption,
+      String videoPath) async {
     try {
-      String url = "http://40.76.15.56:5000/insta/post/story";
-      // String url = "http://10.0.2.2:5000/insta/post/story";
+      // String url = "http://40.76.15.56:5000/insta/post/status/video";
+      String url = "http://10.0.2.2:5000/insta/post/status/video";
       var body = {
         'username': username,
         'password': password,
-        'file_path': media,
+        'video_path': videoPath,
+        'caption': caption,
       };
 
       Response response = await dio.post(
@@ -119,7 +122,66 @@ class InstagramMarketing {
       );
       print(response.data);
       if (response.statusCode == 200) {
-        print('posted a story!');
+        print('posted a video status!');
+        return response.statusCode;
+      } else {
+        throw 'status failed!';
+      }
+    } on DioError catch (e) {
+      print(e.message);
+      return e.message;
+    }
+  }
+
+  // image story scheduler
+  Future postImageStory(
+      String username, String password, String imagePath) async {
+    try {
+      // String url = "http://40.76.15.56:5000/insta/post/story/image";
+      String url = "http://10.0.2.2:5000/insta/post/story/image";
+      var body = {
+        'username': username,
+        'password': password,
+        'image_path': imagePath,
+      };
+
+      Response response = await dio.post(
+        url,
+        data: body,
+        options: Options(headers: headers),
+      );
+      print(response.data);
+      if (response.statusCode == 200) {
+        print('posted an image story!');
+        return response.statusCode;
+      } else {
+        throw 'status failed!';
+      }
+    } on DioError catch (e) {
+      print(e.message);
+      return e.message;
+    }
+  }
+
+  Future postVideoStory(
+      String username, String password, String videoPath) async {
+    try {
+      // String url = "http://40.76.15.56:5000/insta/post/story/video";
+      String url = "http://10.0.2.2:5000/insta/post/story/video";
+      var body = {
+        'username': username,
+        'password': password,
+        'video_path': videoPath,
+      };
+
+      Response response = await dio.post(
+        url,
+        data: body,
+        options: Options(headers: headers),
+      );
+      print(response.data);
+      if (response.statusCode == 200) {
+        print('posted a video story!');
         return response.statusCode;
       } else {
         throw 'status failed!';

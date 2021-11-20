@@ -14,7 +14,8 @@ class TwitterMarketing {
   // scraping data
   Future scrapeUserData(String targetUsername) async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/scraper";
+      String url = "http://10.0.2.2:8080/twitter/scraper";
+      // String url = "http://40.76.15.56:8080/twitter/scraper";
 
       var body = {
         "target_username": targetUsername,
@@ -42,7 +43,8 @@ class TwitterMarketing {
   // sending DMs
   Future sendDMs(String msg) async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/marketing";
+      // String url = "http://40.76.15.56:8080/twitter/marketing";
+      String url = "http://10.0.2.2:8080/twitter/marketing";
 
       var body = {
         "msg": msg,
@@ -71,7 +73,8 @@ class TwitterMarketing {
   // Tweet without Media
   Future tweetText(String caption) async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/post/text";
+      // String url = "http://40.76.15.56:8080/twitter/post/text";
+      String url = "http://10.0.2.2:8080/twitter/post/text";
       var body = {
         'text': caption,
       };
@@ -95,16 +98,17 @@ class TwitterMarketing {
     }
   }
 
-  // TODO: Tweet with Media (FORMS-DATA LOGIC in Backend)
-  Future tweetMedia(String caption, String mediaPath) async {
+  // Tweet image
+  Future tweetImage(String caption, String imagePath) async {
     try {
       if (caption.isEmpty) {
-        caption = "*No caption Provided*";
+        caption = "";
       }
-      String url = "http://40.76.15.56:8080/twitter/post/media";
+      String url = "http://10.0.2.2:8080/twitter/post/image";
+      // String url = "http://40.76.15.56:8080/twitter/post/media";
       var body = {
         'text': caption,
-        'media': mediaPath,
+        'image_path': imagePath,
       };
 
       Response response = await dio.post(
@@ -115,7 +119,39 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("TWEETED MEDIA!");
+        print("TWEETED IMAGE!");
+        return response.statusCode;
+      } else {
+        return "Some error!";
+      }
+    } on DioError catch (e) {
+      print(e.message);
+      return e.message;
+    }
+  }
+
+  // Tweet video
+  Future tweetVideo(String caption, String videoPath) async {
+    try {
+      if (caption.isEmpty) {
+        caption = "";
+      }
+      String url = "http://10.0.2.2:8080/twitter/post/video";
+      // String url = "http://40.76.15.56:8080/twitter/post/media";
+      var body = {
+        'text': caption,
+        'video_path': videoPath,
+      };
+
+      Response response = await dio.post(
+        url,
+        data: body,
+        options: Options(
+          headers: headers,
+        ),
+      );
+      if (response.statusCode == 200) {
+        print("TWEETED VIDEO!");
         return response.statusCode;
       } else {
         return "Some error!";
@@ -129,7 +165,8 @@ class TwitterMarketing {
   // greeting message to new followers
   Future checkNewFollowers() async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/check-followers";      
+      // String url = "http://40.76.15.56:8080/twitter/check-followers";
+      String url = "http://10.0.2.2:8080/twitter/check-followers";
 
       Response response = await dio.post(
         url,
@@ -151,7 +188,8 @@ class TwitterMarketing {
 
   Future sendGreetingMsg(String msg) async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/greeting-dm";
+      // String url = "http://40.76.15.56:8080/twitter/greeting-dm";
+      String url = "http://10.0.2.2:8080/twitter/greeting-dm";
 
       var body = {
         "greeting_msg": msg,
@@ -177,12 +215,18 @@ class TwitterMarketing {
   }
 
   // auto reply to mentions
-  Future autoReply() async {
+  Future autoReply(String msg) async {
     try {
-      String url = "http://40.76.15.56:8080/twitter/auto-reply";
+      // String url = "http://40.76.15.56:8080/twitter/auto-reply";
+      String url = "http://10.0.2.2:8080/twitter/auto-reply";
+
+      var body = {
+        "reply_msg": msg,
+      };
 
       Response response = await dio.post(
         url,
+        data: body,
         options: Options(
           headers: headers,
         ),
