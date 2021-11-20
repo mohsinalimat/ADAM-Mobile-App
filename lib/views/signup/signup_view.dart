@@ -10,10 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/services.dart';
+
+import 'package:http/http.dart' as https;
 
 class SignUpView extends StatefulWidget {
   @override
@@ -28,6 +31,8 @@ class _SignUpViewState extends State<SignUpView> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final dobController = TextEditingController();
+  final emailCodeController = TextEditingController();
+  final phoneCodeController = TextEditingController();
 
   final format = DateFormat("dd-MM-yyyy");
 
@@ -36,12 +41,22 @@ class _SignUpViewState extends State<SignUpView> {
   String _gender = "Male";
   String _country = "Pakistan";
   String _city = "Islamabad";
-  // List<String> _countryNames = [];
   List<dynamic> _citiesName = [];
 
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
+
+  // verification
+  bool _isEmailVerified = false;
+  bool _isEmailTyping = false;
+  bool _isGeneratingEmailCode = false;
+  bool _isSubmittingEmailCode = false;
+
+  bool _isPhoneVerified = false;
+  bool _isPhoneTyping = false;
+  bool _isGeneratingPhoneCode = false;
+  bool _isSubmittingPhoneCode = false;
 
   _clearController() {
     fullNameController.clear();
@@ -50,29 +65,9 @@ class _SignUpViewState extends State<SignUpView> {
     passwordController.clear();
     confirmPasswordController.clear();
     dobController.clear();
+    emailCodeController.clear();
+    phoneCodeController.clear();
   }
-
-  // void _initalizingCountryNames() {
-  //   CountryAPI().getCountryNames().then((value) {
-  //     for (int i = 0; i < value.names.length; i++) {
-  //       _countryNames.add(value.names[i].name);
-  //     }
-  //   }).whenComplete(() {
-  //     setState(() {
-  //       _countryLoaded = false;
-  //     });
-  //   });
-  // }
-
-  // void _initalizingCitiesNames() {
-  //   CityAPI().getCityNames().then((value) {
-  //     for (int i = 0; i < value.names.length; i++) {
-  //       _citiesName.add(value.names[i].name);
-  //     }
-  //   }).whenComplete(() {
-  //     _cityLoaded = false;
-  //   });
-  // }
 
   Future<String> loadCityData() async {
     var jsonTxt = await rootBundle.loadString('pk.json');
@@ -87,9 +82,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   void initState() {
-    // _initalizingCountryNames();
     loadCityData();
-    // _initalizingCitiesNames();
     super.initState();
   }
 
@@ -101,6 +94,7 @@ class _SignUpViewState extends State<SignUpView> {
     passwordController.dispose();
     confirmPasswordController.dispose();
     dobController.dispose();
+
     super.dispose();
   }
 
@@ -189,8 +183,38 @@ class _SignUpViewState extends State<SignUpView> {
                             hintText: "Email Address",
                             icon: Icons.email,
                             validatorFtn: Validators.emailValidator,
-                            onChangeFtn: (value) => print(value),
+                            onChangeFtn: (value) {
+                              print(value);
+
+                              if (value.length == 0) {
+                                setState(() {
+                                  _isEmailTyping = false;
+                                });
+                              } else {
+                                setState(() {
+                                  _isEmailTyping = true;
+                                });
+                              }
+                            },
                           ),
+                          _isEmailTyping
+                              ? SizedBox(height: height * 0.02)
+                              : SizedBox(),
+                          _isEmailTyping
+                              ? CustomButton(
+                                  btnWidth: MediaQuery.of(context).size.width,
+                                  btnHeight: 42.0,
+                                  btnOnPressed: _generateEmailCode,
+                                  // btnOnPressed: _showEmailCodeBox,
+                                  btnColor: kPrimaryBlueColor,
+                                  btnText: _isGeneratingEmailCode
+                                      ? kLoaderWhite
+                                      : const Text(
+                                          'Verify Email',
+                                          style: kBtnTextStyle,
+                                        ),
+                                )
+                              : SizedBox(),
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: phoneNumberController,
@@ -199,9 +223,38 @@ class _SignUpViewState extends State<SignUpView> {
                             node: node,
                             hintText: "Phone Number",
                             icon: Icons.phone,
-                            onChangeFtn: (value) => print(value),
+                            onChangeFtn: (value) {
+                              print(value);
+
+                              if (value.length == 0) {
+                                setState(() {
+                                  _isPhoneTyping = false;
+                                });
+                              } else {
+                                setState(() {
+                                  _isPhoneTyping = true;
+                                });
+                              }
+                            },
                             validatorFtn: Validators.phoneNumberValidator,
                           ),
+                          _isPhoneTyping
+                              ? SizedBox(height: height * 0.02)
+                              : SizedBox(),
+                          _isPhoneTyping
+                              ? CustomButton(
+                                  btnWidth: MediaQuery.of(context).size.width,
+                                  btnHeight: 42.0,
+                                  btnOnPressed: _generatePhoneCode,
+                                  btnColor: kPrimaryBlueColor,
+                                  btnText: _isGeneratingPhoneCode
+                                      ? kLoaderWhite
+                                      : const Text(
+                                          'Verify Phone',
+                                          style: kBtnTextStyle,
+                                        ),
+                                )
+                              : SizedBox(),
                           SizedBox(height: height * 0.02),
                           CustomTextField(
                             textEditingController: passwordController,
@@ -218,7 +271,6 @@ class _SignUpViewState extends State<SignUpView> {
                               });
                             },
                           ),
-                          SizedBox(height: height * 0.02),
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
                             child: Theme(
@@ -290,7 +342,7 @@ class _SignUpViewState extends State<SignUpView> {
                               ),
                             ),
                           ),
-                          SizedBox(height: height * 0.02),
+                          SizedBox(height: height * 0.01),
                           CustomTextField(
                             textEditingController: confirmPasswordController,
                             textInputAction: TextInputAction.done,
@@ -462,28 +514,6 @@ class _SignUpViewState extends State<SignUpView> {
                                             _country = value;
                                           },
                                         ),
-                                        // child: _countryLoaded
-                                        //     ? Center(child: kLoader)
-                                        //     : DropdownButton(
-                                        //         isExpanded: true,
-                                        //         value: _country,
-                                        //         items: [
-                                        //           for (int i = 0;
-                                        //               i < _countryNames.length;
-                                        //               i++)
-                                        //             DropdownMenuItem(
-                                        //               value: _countryNames[i],
-                                        //               child: Text(
-                                        //                 _countryNames[i],
-                                        //               ),
-                                        //             ),
-                                        //         ],
-                                        //         onChanged: (value) {
-                                        //           setState(() {
-                                        //             _country = value;
-                                        //           });
-                                        //         },
-                                        //       ),
                                       ),
                                     ),
                                   ),
@@ -535,9 +565,7 @@ class _SignUpViewState extends State<SignUpView> {
                             btnWidth: width * 0.9,
                             // btnHeight: height * 0.055,
                             btnHeight: 40.0,
-                            btnOnPressed: () {
-                              if (_formKey.currentState.validate()) _signUp();
-                            },
+                            btnOnPressed: _signUp,
                             btnColor: kLightGreenColor,
                             btnText: _isLoading
                                 ? kLoaderWhite
@@ -569,69 +597,42 @@ class _SignUpViewState extends State<SignUpView> {
     );
   }
 
-  /// `Firebase signup`
-  // void _signUp() async {
-  //   {
-  //     if (_formKey.currentState.validate()) {
-  //       setState(() {
-  //         _isLoading = true;
-  //       });
-  //       var result = await _auth
-  //           .signUp(
-  //         fullNameController.text.trim(),
-  //         emailController.text.trim(),
-  //         passwordController.text.trim(),
-  //         phoneNumberController.text.trim(),
-  //         dobController.text,
-  //         _gender,
-  //         _country,
-  //         _city,
-  //       )
-  //           .whenComplete(() {
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       });
-  //       if (result is String) {
-  //         print(result);
-  //         _errorSignup(result);
-  //       } else {
-  //         _signUpSuccessful();
-  //       }
-  //     }
-  //   }
-  // }
-
   /// `Node signup`
   void _signUp() async {
+    print(_isEmailVerified);
+
     if (_formKey.currentState.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      int result = await _userAuth
-          .signUp(
-        fullName: fullNameController.text.trim(),
-        email: emailController.text.trim(),
-        phone: phoneNumberController.text.trim(),
-        password: passwordController.text.trim(),
-        dob: dobController.text.trim(),
-        gender: _gender,
-        city: _city,
-        country: _country,
-      )
-          .whenComplete(() {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-
-      if (result == 200) {
-        _signUpSuccessful();
-      } else if (result == 204) {
-        _errorSignup("Account already exists!");
+      if (!_isEmailVerified || !_isPhoneVerified) {
+        _errorSignup('Email/Phone Number NOT verified!');
       } else {
-        _errorSignup("Undefined error!");
+        setState(() {
+          _isLoading = true;
+        });
+
+        int result = await _userAuth
+            .signUp(
+          fullName: fullNameController.text.trim(),
+          email: emailController.text.trim(),
+          phone: phoneNumberController.text.trim(),
+          password: passwordController.text.trim(),
+          dob: dobController.text.trim(),
+          gender: _gender,
+          city: _city,
+          country: _country,
+        )
+            .whenComplete(() {
+          setState(() {
+            _isLoading = false;
+          });
+        });
+
+        if (result == 200) {
+          _signUpSuccessful();
+        } else if (result == 204) {
+          _errorSignup("Account already exists!");
+        } else {
+          _errorSignup("Undefined error!");
+        }
       }
     }
   }
@@ -677,6 +678,237 @@ class _SignUpViewState extends State<SignUpView> {
             style: TextStyle(color: Colors.white),
           ),
         ],
+      ),
+    );
+  }
+
+  // email verification
+  void _generateEmailCode() async {
+    setState(() {
+      _isGeneratingEmailCode = true;
+    });
+
+    String _url = "https://adam-web-api.herokuapp.com/user/generate-email-code";
+
+    https.Response response = await https.post(
+      Uri.parse(_url),
+      body: {
+        "cust_email": emailController.text.trim(),
+      },
+    ).whenComplete(() {
+      setState(() {
+        _isGeneratingEmailCode = false;
+      });
+    });
+
+    if (response.statusCode == 200) {
+      _showEmailCodeBox(true);
+    } else if (response.statusCode == 204) {
+      print('already taken email!');
+      _errorSignup("Email has been taken already, please login!");
+    } else {
+      print('some other error!');
+      _errorSignup("Unknown error occured!");
+    }
+  }
+
+  // phone verification
+  void _generatePhoneCode() async {
+    setState(() {
+      _isGeneratingPhoneCode = true;
+    });
+
+    String _url = "https://adam-web-api.herokuapp.com/user/generate-sms-code";
+
+    https.Response response = await https.post(
+      Uri.parse(_url),
+      body: {
+        "cust_phone": phoneNumberController.text.trim(),
+      },
+    ).whenComplete(() {
+      setState(() {
+        _isGeneratingPhoneCode = false;
+      });
+    });
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      _showEmailCodeBox(false);
+    } else {
+      print('some other error!');
+      _errorSignup("Unknown error occured!");
+    }
+  }
+
+  // code box
+  void _showEmailCodeBox(bool isEmail) async {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(
+            isEmail ? "Email Verification" : "Phone Number Verification",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                child: Text(
+                  isEmail
+                      ? "Enter 4-Digit code sent at your email. \n\n*Check Spam/Promotion mails!"
+                      : "Enter 4-Digit code sent at your phone number.",
+                ),
+              ),
+              const SizedBox(
+                height: 12.0,
+              ),
+              PinCodeTextField(
+                controller: emailCodeController,
+                keyboardType: TextInputType.number,
+                textStyle: Provider.of<ThemeProvider>(context).darkTheme
+                    ? TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.black,
+                      )
+                    : TextStyle(fontSize: 14.0),
+                appContext: context,
+                length: 4,
+                onChanged: (value) {},
+                pinTheme: PinTheme(
+                  shape: PinCodeFieldShape.box,
+                  borderRadius: BorderRadius.circular(5),
+                  inactiveColor: kPrimaryBlueColor,
+                  activeColor: kMediumGreenColor,
+                ),
+              ),
+              const SizedBox(
+                height: 12.0,
+              ),
+              CustomButton(
+                btnWidth: MediaQuery.of(context).size.width,
+                btnHeight: 42.0,
+                btnOnPressed: isEmail
+                    ? () async {
+                        setState(() {
+                          _isSubmittingEmailCode = true;
+                        });
+
+                        String _url =
+                            "https://adam-web-api.herokuapp.com/user/verify-email-code";
+
+                        https.Response response = await https.post(
+                          Uri.parse(_url),
+                          body: {
+                            "cust_email": emailController.text.trim(),
+                            "code": emailCodeController.text.trim(),
+                          },
+                        ).whenComplete(() {
+                          setState(() {
+                            _isSubmittingEmailCode = false;
+                          });
+                        });
+
+                        if (response.statusCode == 200) {
+                          setState(() {
+                            _isEmailVerified = true;
+                            _isEmailTyping = false;
+                          });
+                          customSnackBar(
+                            context,
+                            kSecondaryBlueColor,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.mark_chat_read,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 8.0,
+                                ),
+                                Text(
+                                  "Email verified successfully!",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                          Navigator.pop(context);
+                        } else if (response.statusCode == 204) {
+                          print('already taken email!');
+                          _errorSignup("Invalid code entered!");
+                        } else {
+                          print('some other error!');
+                          _errorSignup("Unknown error occured!");
+                        }
+                      }
+                    : () async {
+                        setState(() {
+                          _isSubmittingPhoneCode = true;
+                        });
+
+                        String _url =
+                            "https://adam-web-api.herokuapp.com/user/verify-sms-code";
+
+                        https.Response response = await https.post(
+                          Uri.parse(_url),
+                          body: {
+                            "cust_phone": phoneNumberController.text.trim(),
+                            "code": emailCodeController.text.trim(),
+                          },
+                        ).whenComplete(() {
+                          setState(() {
+                            _isSubmittingPhoneCode = false;
+                          });
+                        });
+
+                        if (response.statusCode == 200) {
+                          setState(() {
+                            _isPhoneVerified = false;
+                            _isPhoneTyping = false;
+                          });
+                          customSnackBar(
+                            context,
+                            kSecondaryBlueColor,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 8.0,
+                                ),
+                                Text(
+                                  "Phone number verified successfully!",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                          Navigator.pop(context);
+                        } else if (response.statusCode == 204) {
+                          _errorSignup("Invalid code entered!");
+                        } else {
+                          print('some other error!');
+                          _errorSignup("Unknown error occured!");
+                        }
+                      },
+                btnColor: kMediumGreenColor,
+                btnText: _isSubmittingEmailCode || _isSubmittingPhoneCode
+                    ? kLoaderWhite
+                    : const Text(
+                        "Submit",
+                        style: kBtnTextStyle,
+                      ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
