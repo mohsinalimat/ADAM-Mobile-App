@@ -251,8 +251,6 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
           }
         });
 
-        print("FTN CALLED AT FRONT END!!");
-
         if (data is String) {
           print(data);
           customSnackBar(

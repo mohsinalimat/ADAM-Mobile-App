@@ -8,13 +8,16 @@ import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 enum ScheduleType {
-  Post,
-  Story,
+  postImage,
+  postVideo,
+  storyImage,
+  storyVideo,
 }
 
 class InstagramAccountScheduler extends StatefulWidget {
@@ -24,6 +27,8 @@ class InstagramAccountScheduler extends StatefulWidget {
 }
 
 class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+
   final format = DateFormat("dd-MM-yyyy");
   final formatTime = DateFormat("HH:mm");
 
@@ -33,14 +38,16 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   final TextEditingController _timeController = TextEditingController();
 
   bool _isUpdating = false;
-  ScheduleType _scheduleType = ScheduleType.Post;
+  ScheduleType _scheduleType = ScheduleType.postImage;
 
   // file/media picking
   FilePickerResult filePickerResult;
   PlatformFile platformFile;
   File someFile;
   bool _fileUploaded = false;
+  bool _uploadingFile = false;
   String path = "";
+  String _urlMedia = "";
 
   List scheduledPosts = [
     ScheduledPostCard(
@@ -72,7 +79,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
-      absorbing: _isUpdating,
+      absorbing: _isUpdating || _uploadingFile,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -103,66 +110,123 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                   ),
                   const SizedBox(height: 20.0),
                   const Text("Schedule:"),
-                  Row(children: [
-                    Radio(
-                      value: ScheduleType.Post,
-                      groupValue: _scheduleType,
-                      onChanged: (value) {
-                        setState(() {
-                          _scheduleType = value;
-                        });
-                      },
-                    ),
-                    const Text('Post'),
-                    const SizedBox(width: 30.0),
-                    Radio(
-                      value: ScheduleType.Story,
-                      groupValue: _scheduleType,
-                      onChanged: (value) {
-                        setState(() {
-                          _scheduleType = value;
-                        });
-                      },
-                    ),
-                    const Text('Story'),
-                  ]),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(children: [
+                      Radio(
+                        value: ScheduleType.postImage,
+                        groupValue: _scheduleType,
+                        onChanged: (value) {
+                          setState(() {
+                            _fileUploaded = false;
+                            someFile = null;
+                            _urlMedia = "";
+                            path = "";
+                            _scheduleType = value;
+                          });
+                        },
+                      ),
+                      const Text('Post Image'),
+                      Radio(
+                        value: ScheduleType.postVideo,
+                        groupValue: _scheduleType,
+                        onChanged: (value) {
+                          setState(() {
+                            _fileUploaded = false;
+                            someFile = null;
+                            _urlMedia = "";
+                            path = "";
+                            _scheduleType = value;
+                          });
+                        },
+                      ),
+                      const Text('Post Video'),
+                      Radio(
+                        value: ScheduleType.storyImage,
+                        groupValue: _scheduleType,
+                        onChanged: (value) {
+                          setState(() {
+                            _fileUploaded = false;
+                            someFile = null;
+                            _urlMedia = "";
+                            path = "";
+                            _scheduleType = value;
+                          });
+                        },
+                      ),
+                      const Text('Story Image'),
+                      const SizedBox(width: 15.0),
+                      Radio(
+                        value: ScheduleType.storyVideo,
+                        groupValue: _scheduleType,
+                        onChanged: (value) {
+                          setState(() {
+                            _fileUploaded = false;
+                            someFile = null;
+                            _urlMedia = "";
+                            path = "";
+                            _scheduleType = value;
+                          });
+                        },
+                      ),
+                      const Text('Story Video'),
+                    ]),
+                  ),
                   const SizedBox(height: 20.0),
                   const Text('Add Image/Video: *'),
                   const SizedBox(height: 5.0),
                   _fileUploaded
                       ? Container(
                           height: 250.0,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: FileImage(someFile),
-                            ),
-                          ),
+                          decoration: _scheduleType == ScheduleType.postVideo ||
+                                  _scheduleType == ScheduleType.storyVideo
+                              ? BoxDecoration()
+                              : BoxDecoration(
+                                  image: DecorationImage(
+                                    image: FileImage(someFile),
+                                  ),
+                                ),
+                          child: _scheduleType == ScheduleType.postVideo ||
+                                  _scheduleType == ScheduleType.storyVideo
+                              ? Center(
+                                  child: Icon(
+                                    Icons.videocam,
+                                    size: 100,
+                                  ),
+                                )
+                              : Container(),
                         )
                       : Text(''),
                   const SizedBox(height: 5.0),
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: _addAttachment,
+                    btnOnPressed: _scheduleType == ScheduleType.postImage ||
+                            _scheduleType == ScheduleType.storyImage
+                        ? () => _addAttachment(true)
+                        : () => _addAttachment(false),
                     btnColor: Colors.white,
-                    btnText: const Text(
-                      'Upload',
-                      style: TextStyle(
-                        letterSpacing: 1.3,
-                        color: kPrimaryBlueColor,
-                      ),
-                    ),
+                    btnText: _uploadingFile
+                        ? kLoader
+                        : const Text(
+                            'Upload Media',
+                            style: TextStyle(
+                              color: kPrimaryBlueColor,
+                            ),
+                          ),
                   ),
-                  _scheduleType == ScheduleType.Story
-                      ? Container()
-                      : const SizedBox(height: 20.0),
-                  _scheduleType == ScheduleType.Story
-                      ? Container()
-                      : Text("Post Caption: *"),
+                  _scheduleType == ScheduleType.postImage ||
+                          _scheduleType == ScheduleType.postVideo
+                      ? const SizedBox(height: 20.0)
+                      : Container(),
+                  _scheduleType == ScheduleType.postImage ||
+                          _scheduleType == ScheduleType.postVideo
+                      ? Text("Post Caption: *")
+                      : Container(),
                   const SizedBox(height: 10.0),
-                  _scheduleType == ScheduleType.Story
-                      ? Container()
-                      : SizedBox(
+                  _scheduleType == ScheduleType.postImage ||
+                          _scheduleType == ScheduleType.postVideo
+                      ? SizedBox(
                           width: MediaQuery.of(context).size.width * 0.89,
                           child: TextFormField(
                             maxLines: 5,
@@ -197,7 +261,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                               ),
                             ),
                           ),
-                        ),
+                        )
+                      : Container(),
                   const SizedBox(height: 20.0),
                   const Text('Choose Date/Time: *'),
                   const SizedBox(height: 10.0),
@@ -292,13 +357,19 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed:
-                        _scheduleType == ScheduleType.Post ? _post : _story,
+                    btnOnPressed: _scheduleType == ScheduleType.postImage
+                        ? _postImage
+                        : _scheduleType == ScheduleType.postVideo
+                            ? _postVideo
+                            : _scheduleType == ScheduleType.storyImage
+                                ? _storyImage
+                                : _storyVideo,
                     btnColor: kPrimaryBlueColor,
                     btnText: _isUpdating
                         ? kLoaderWhite
                         : Text(
-                            _scheduleType == ScheduleType.Post
+                            _scheduleType == ScheduleType.postImage ||
+                                    _scheduleType == ScheduleType.postVideo
                                 ? "Scheduled Post"
                                 : "Scheduled Story",
                             style: kBtnTextStyle),
@@ -308,8 +379,9 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                       onPressed: () {}, child: const Text("Save as Draft")),
                   const SizedBox(height: 10.0),
                   Text(
-                    _scheduleType == ScheduleType.Post
-                        ? "Scheduled Posts"
+                    _scheduleType == ScheduleType.postImage ||
+                            _scheduleType == ScheduleType.postVideo
+                        ? "Scheduled Post"
                         : "Scheduled Story",
                     style: Theme.of(context).textTheme.headline1,
                   ),
@@ -326,10 +398,10 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   }
 
   // pickingFile
-  void _addAttachment() async {
+  void _addAttachment(bool isImage) async {
     filePickerResult = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['png', 'jpg', 'jpeg'],
+      allowedExtensions: isImage ? ['png', 'jpg', 'jpeg'] : ['mp4'],
     );
 
     if (filePickerResult != null) {
@@ -338,14 +410,22 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
 
       // sending the file in chat
       setState(() {
+        _uploadingFile = true;
         _fileUploaded = true;
         path = platformFile.path;
       });
+
+      if (isImage) {
+        await _imageToFirebase();
+      } else {
+        await _videoToFirebase();
+      }
     }
   }
 
-  // post method
-  void _post() async {
+  // post image method
+  void _postImage() async {
+    print('Posting Image!');
     if (someFile == null) {
       customSnackBar(
         context,
@@ -363,11 +443,11 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
         _isUpdating = true;
       });
       var value = await InstagramMarketing()
-          .postUpdate(
+          .postImageStatus(
         'khaaadi456',
         'Testing786',
         _contentController.text.trim(),
-        someFile.path,
+        _urlMedia,
       )
           .whenComplete(() {
         setState(() {
@@ -417,16 +497,91 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
     }
   }
 
-  // story method
-  void _story() async {
+  // post video method
+  void _postVideo() async {
+    print('Posting Video!');
+    if (someFile == null) {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.file_copy, color: Colors.white),
+            const SizedBox(width: 8.0),
+            const Text('Please upload some media file!'),
+          ],
+        ),
+      );
+    } else if (_formKey.currentState.validate()) {
+      setState(() {
+        _isUpdating = true;
+      });
+      var value = await InstagramMarketing()
+          .postVideoStatus(
+        'khaaadi456',
+        'Testing786',
+        _contentController.text.trim(),
+        _urlMedia,
+      )
+          .whenComplete(() {
+        setState(() {
+          _isUpdating = false;
+        });
+      });
+
+      if (value == 200) {
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.update, color: Colors.white),
+              const SizedBox(width: 8),
+              const Text("Status has been scheduled successfully!")
+            ],
+          ),
+        );
+        setState(() {
+          someFile = null;
+          _fileUploaded = false;
+          scheduledPosts.insert(
+              0,
+              ScheduledPostCard(
+                date: _dateController.text.trim(),
+                time: _timeController.text.trim(),
+                caption: _contentController.text.trim(),
+              ));
+        });
+        _contentController.clear();
+        _dateController.clear();
+        _timeController.clear();
+      } else {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(child: Text(value)),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  // story image method
+  void _storyImage() async {
+    print('Posting Story Image!');
     setState(() {
       _isUpdating = true;
     });
     var value = await InstagramMarketing()
-        .postStory(
+        .postImageStory(
       'khaaadi456',
       'Testing786',
-      someFile.path,
+      _urlMedia,
     )
         .whenComplete(() {
       setState(() {
@@ -473,6 +628,124 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
         ),
       );
     }
+  }
+
+  // story video method
+  void _storyVideo() async {
+    print('Posting Story Video!');
+    setState(() {
+      _isUpdating = true;
+    });
+    var value = await InstagramMarketing()
+        .postVideoStory(
+      'khaaadi456',
+      'Testing786',
+      _urlMedia,
+    )
+        .whenComplete(() {
+      setState(() {
+        _isUpdating = false;
+      });
+    });
+
+    if (value == 200) {
+      customSnackBar(
+        context,
+        kSecondaryBlueColor,
+        Row(
+          children: [
+            const Icon(Icons.update, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text("Story has been scheduled successfully!")
+          ],
+        ),
+      );
+      setState(() {
+        _fileUploaded = false;
+        someFile = null;
+        scheduledPosts.insert(
+            0,
+            ScheduledPostCard(
+              date: _dateController.text.trim(),
+              time: _timeController.text.trim(),
+              caption: _contentController.text.trim(),
+            ));
+      });
+      _contentController.clear();
+      _dateController.clear();
+      _timeController.clear();
+    } else {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(Icons.info, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(value),
+          ],
+        ),
+      );
+    }
+  }
+
+  // upload and get URL from firestorage
+  // IMAGE
+  Future<void> _imageToFirebase() async {
+    print(path);
+    Reference ref = _firebaseStorage.ref('instagram').child('image');
+
+    ref
+        .putFile(someFile)
+        .whenComplete(() async => _getImageURL().whenComplete(() {
+              setState(() {
+                _uploadingFile = false;
+              });
+            }));
+  }
+
+  Future<void> _getImageURL() async {
+    // getting dp URL link
+    String _url = await _firebaseStorage
+        .ref("instagram/image")
+        .getDownloadURL()
+        .whenComplete(() {
+      print("URL UPLOADED AT: $_urlMedia");
+    });
+    setState(() {
+      _urlMedia = _url;
+    });
+
+    print("FILE UPLOADED $_urlMedia");
+  }
+
+  // VIDEO
+  Future<void> _videoToFirebase() async {
+    print(path);
+    Reference ref = _firebaseStorage.ref('instagram').child('video');
+
+    ref
+        .putFile(someFile)
+        .whenComplete(() async => _getVideoURL().whenComplete(() {
+              setState(() {
+                _uploadingFile = false;
+              });
+            }));
+  }
+
+  Future<void> _getVideoURL() async {
+    // getting dp URL link
+    String _url = await _firebaseStorage
+        .ref("instagram/video")
+        .getDownloadURL()
+        .whenComplete(() {
+      print("URL UPLOADED AT: $_urlMedia");
+    });
+    setState(() {
+      _urlMedia = _url;
+    });
+
+    print("FILE UPLOADED $_urlMedia");
   }
 }
 
