@@ -221,8 +221,15 @@ class _SignUpViewState extends State<SignUpView> {
                           SizedBox(height: height * 0.02),
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
-                            child: ListTileTheme(
-                              dense: true,
+                            child: Theme(
+                              data: ThemeData().copyWith(
+                                dividerColor: Colors.transparent,
+                                unselectedWidgetColor:
+                                    Provider.of<ThemeProvider>(context)
+                                            .darkTheme
+                                        ? Colors.white
+                                        : kPrimaryBlueColor,
+                              ),
                               child: ExpansionTile(
                                 tilePadding: const EdgeInsets.all(0.0),
                                 title: Row(
