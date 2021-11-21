@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:adam/constants.dart';
+import 'package:adam/controller/marketing/linkedin.dart';
+import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
 import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -244,7 +246,7 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: () {},
+                    btnOnPressed: _post,
                     btnColor: kPrimaryBlueColor,
                     btnText: _isUpdating
                         ? kLoaderWhite
@@ -288,6 +290,78 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
         _fileUploaded = true;
         path = platformFile.path;
       });
+    }
+  }
+
+  // post
+  void _post() async {
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        _isUpdating = true;
+      });
+
+      var value = await LinkedInMarketing()
+          .postTextOnly(
+        'mhamzadev@yahoo.com',
+        'Iamhamza..!@#6',
+        _contentController.text.trim(),
+      )
+          .whenComplete(() {
+        setState(() {
+          _isUpdating = false;
+        });
+      });
+
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              Icon(
+                Icons.info,
+                color: Colors.white,
+              ),
+              SizedBox(width: 8.0),
+              Text(
+                "Post schedule failed!",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        );
+      } else {
+        setState(() {
+          _fileUploaded = false;
+          someFile = null;
+          scheduledPosts.insert(
+              0,
+              ScheduledPostCard(
+                date: _dateController.text.trim(),
+                time: _timeController.text.trim(),
+                caption: _contentController.text.trim(),
+              ));
+        });
+
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              Icon(Icons.check, color: Colors.white),
+              SizedBox(width: 8.0),
+              Text(
+                "Post scheduled succesfully!",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        );
+
+        _contentController.clear();
+        _dateController.clear();
+        _timeController.clear();
+      }
     }
   }
 }
