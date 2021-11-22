@@ -66,6 +66,7 @@ class _SubscriptionHistoryViewState extends State<SubscriptionHistoryView> {
                         );
                       }
                       return ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: snapshot.data.subscriptions.length,
                         itemBuilder: (context, index) {

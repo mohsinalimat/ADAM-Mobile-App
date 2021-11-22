@@ -3,7 +3,6 @@ import 'package:adam/controller/marketing/linkedin.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/model/scraping/linkedin/scraped_data.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/views/services/instagram/instagram_marketing_view.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/logoDisplay.dart';
