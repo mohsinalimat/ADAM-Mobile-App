@@ -21,6 +21,7 @@ class Service {
   final List<ServiceType> serviceType;
   final int serviceRatings;
   final List<ServiceComment> serviceComments;
+  // final bool isFavorite;
 
   Service({
     this.serviceName,
@@ -30,6 +31,7 @@ class Service {
     this.serviceColor,
     this.serviceRatings,
     this.serviceComments,
+    // this.isFavorite,
   });
 
   factory Service.fromJSON(Map<String, dynamic> json) {
@@ -48,10 +50,10 @@ class Service {
       serviceIcon: json['service_icon'],
       serviceColor: json['service_color'],
       serviceType: servicesTypes,
-      serviceRatings: double.parse(
-              json['service_feedback']['ratings'].toString())
-          .toInt(),
+      serviceRatings:
+          double.parse(json['service_feedback']['ratings'].toString()).toInt(),
       serviceComments: feedbacks,
+      // isFavorite: json['isFavorite'],
     );
   }
 }
