@@ -42,7 +42,7 @@ class LinkedInMarketing {
   Future postTextOnly(
       String emailLinkedIn, String passwordLinkedIn, String postText) async {
     try {
-      // String url = "http://10.0.2.2:5050/linkedin/post/text";
+      // String url = "http://10.0.2.2:5050/linkedin/scraper";
       String url = "http://192.168.2.22:2020/linkedin/post/text";
 
       var body = {
