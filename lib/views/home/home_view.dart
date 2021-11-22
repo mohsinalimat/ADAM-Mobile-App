@@ -12,7 +12,7 @@ import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
 import 'package:adam/views/home/manage_services_view.dart';
 import 'package:adam/widgets/custom_home_service_card.dart';
-import 'package:adam/widgets/serviceCard.dart';
+import 'package:adam/widgets/service_card.dart';
 import 'package:adam/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -219,7 +219,7 @@ class _HomeViewState extends State<HomeView> {
                             controller: _controller,
                           );
                         } else {
-                        return CarouselSlider.builder(
+                          return CarouselSlider.builder(
                             itemCount: snapshot.data.subscribedServices.length,
                             itemBuilder: (_, index, i) {
                               return YourServiceCard(
@@ -336,7 +336,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   // to referch the services of user
-  void _refreshServices() async {
+  Future<void> _refreshServices() async {
     await _getSubscribedServicesList();
     customSnackBar(
       context,
