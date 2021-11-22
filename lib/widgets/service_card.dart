@@ -153,7 +153,7 @@ class _ServiceCardState extends State<ServiceCard> {
                           if (_isFav) {
                             customSnackBar(
                               context,
-                               Colors.pink,
+                              Colors.pink,
                               Row(children: [
                                 Icon(
                                     _isFav

@@ -27,6 +27,7 @@ class YourServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _theme = Provider.of<ThemeProvider>(context);
     final _textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: 260,
@@ -65,7 +66,8 @@ class YourServiceCard extends StatelessWidget {
                     Expanded(
                       child: SvgPicture.network(
                         serviceIcon,
-                        color: kPrimaryBlueColor,
+                        color:
+                            _theme.darkTheme ? Colors.white : kPrimaryBlueColor,
                         height: 60,
                       ),
                     ),
