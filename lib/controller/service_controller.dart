@@ -294,4 +294,35 @@ class ServiceController {
       return e.toString();
     }
   }
+
+  Future reportAProblem(String subject, String description) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    try {
+      // local data
+      String _token = prefs.getString('token');
+      String url = "https://adam-web-api.herokuapp.com/user/report-problem";
+
+      var body = {
+        'subject': subject,
+        'description': description,
+      };
+
+      http.Response response = await http.post(
+        Uri.parse(url),
+        body: body,
+        headers: {
+          'Authorization': "Bearer $_token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.statusCode;
+      } else {
+        return response.statusCode;
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }
