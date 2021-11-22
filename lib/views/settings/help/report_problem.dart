@@ -1,5 +1,6 @@
 import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -17,6 +18,8 @@ class _ReportProblemViewState extends State<ReportProblemView> {
   final _subjectFieldController = TextEditingController();
   final _detailsFieldController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  bool _reporting = false;
 
   @override
   void dispose() {
@@ -102,34 +105,18 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                   CustomButton(
                     btnWidth: 100.0,
                     btnHeight: 45.0,
-                    btnOnPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        print('valid');
-                        Navigator.pop(context);
-                        customSnackBar(
-                          context,
-                          kSecondaryBlueColor,
-                          Row(
-                            children: [
-                              const Icon(Icons.check, color: Colors.white),
-                              const SizedBox(width: 8.0),
-                              const Text(
-                                  'Submitted! We will get back to you soon.'),
-                            ],
-                          ),
-                        );
-                        _subjectFieldController.clear();
-                        _detailsFieldController.clear();
-                      }
-                    },
+                    btnOnPressed: _reportProblem,
                     btnColor: kPrimaryBlueColor,
-                    btnText: Text(
-                      "Submit",
-                      style: kBtnTextStyle,
-                    ),
+                    btnText: _reporting
+                        ? kLoaderWhite
+                        : const Text(
+                            "Submit",
+                            style: kBtnTextStyle,
+                          ),
                   ),
                   TextButton(
-                      onPressed: () => Navigator.pushNamed(context, AppRoutes.faq),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, AppRoutes.faq),
                       child: Text("View FAQs"))
                 ],
               ),
@@ -138,5 +125,56 @@ class _ReportProblemViewState extends State<ReportProblemView> {
         ),
       ),
     );
+  }
+
+  void _reportProblem() async {
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        _reporting = true;
+      });
+
+      var value = await ServiceController()
+          .reportAProblem(
+        _subjectFieldController.text.trim(),
+        _detailsFieldController.text.trim(),
+      )
+          .whenComplete(() {
+        setState(() {
+          _reporting = false;
+        });
+      });
+
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(
+                Icons.info,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8.0),
+              const Text('Error submitting report. Try again!'),
+            ],
+          ),
+        );
+      } else {
+        Navigator.pop(context);
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.check, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text('Submitted! We will get back to you soon.'),
+            ],
+          ),
+        );
+        _subjectFieldController.clear();
+        _detailsFieldController.clear();
+      }
+    }
   }
 }
