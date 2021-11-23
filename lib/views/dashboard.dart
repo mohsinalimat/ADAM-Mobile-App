@@ -54,12 +54,6 @@ class _DashboardState extends State<Dashboard>
     super.initState();
   }
 
-  // void close() => _animationController.reverse();
-
-  // void open() => _animationController.forward();
-
-  // void toggleDrawer() => _animationController.isCompleted ? close() : open();
-
   @override
   void dispose() {
     _animationController.dispose();

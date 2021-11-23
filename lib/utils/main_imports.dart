@@ -22,7 +22,7 @@ export 'package:adam/views/settings/help/appInfo.dart';
 export 'package:adam/views/settings/help/faqView.dart';
 export 'package:adam/views/settings/help/help_view.dart';
 export 'package:adam/views/settings/help/report_problem.dart';
-export 'package:adam/views/settings/notificationView.dart';
+export 'package:adam/views/settings/notification_view.dart';
 export 'package:adam/views/settings/help/privacyPolicy.dart';
 export 'package:adam/views/settings/settings_view.dart';
 export 'package:adam/views/settings/themeView.dart';

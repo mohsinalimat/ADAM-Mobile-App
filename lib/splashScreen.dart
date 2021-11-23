@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Map userDataObject = jsonDecode(stringfyJson);
       userData = UserData.fromJSON(userDataObject);
     }
-    print("USER FOUND $userData");
+
     Future.delayed(Duration(seconds: 3), () {
       Navigator.of(context).push(
         MaterialPageRoute(

@@ -24,4 +24,14 @@ class ThemeProvider with ChangeNotifier {
     _size = sizeValue;
     notifyListeners();
   }
+
+  // Enable/Disable Notification
+  bool _notify = true;
+  bool get notify => _notify;
+
+  set notify(bool value) {
+    _notify = value;
+
+    notifyListeners();
+  }
 }

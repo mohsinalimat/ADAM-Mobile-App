@@ -358,7 +358,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: paymentSuccessful,
         ));
-        showNotification();
+        if (Provider.of<ThemeProvider>(context).notify) showNotification();
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -397,7 +397,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: paymentSuccessful,
         ));
-        showNotification();
+        if (Provider.of<ThemeProvider>(context).notify) showNotification();
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

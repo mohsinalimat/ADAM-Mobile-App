@@ -104,9 +104,6 @@ class _ProfileViewState extends State<ProfileView> {
                                     backgroundImage: photoUrl == null
                                         ? AssetImage('assets/dp.png')
                                         : FileImage(File(photoUrl)),
-                                    // backgroundImage: userData.photo == " "
-                                    //     ? AssetImage('assets/dp.png')
-                                    //     : NetworkImage(userData.photo),
                                   ),
                                 ),
                               ),
@@ -207,11 +204,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 infoTitle: "Phone",
                               ),
                             ),
-                            userData.isPhoneVerified
-                                ? VerificationBadge(isEmailType: false)
-                                : PhoneNotVerified(
-                                    phoneNumber: userData.phoneNumber,
-                                  )
+                            VerificationBadge(isEmailType: false)
                           ],
                         ),
                         const SizedBox(
