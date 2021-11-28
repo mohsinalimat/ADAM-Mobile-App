@@ -253,4 +253,39 @@ class UserAuth {
       return response.statusCode;
     }
   }
+
+  Future disableAccount(String reason, String explanation) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _token = prefs.getString('token');
+
+    String url = "https://adam-web-api.herokuapp.com/user/toggle-user";
+
+    try {
+      var body = {
+        "reason": reason,
+        "explanation": explanation,
+      };
+
+      var headers = {
+        'Authorization': "Bearer $_token",
+      };
+
+      http.Response response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      );
+
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('account disabled!');
+        return response.statusCode;
+      } else {
+        print('some error!');
+        return response.statusCode;
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }
