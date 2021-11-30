@@ -15,7 +15,7 @@ class RedditMarketing {
   // scraper & marketing
   Future getUserData(String keyword) async {
     try {
-      String url = "http://13.72.68.224:5050/reddit/scraper";
+      String url = "$kAzureIP:5050/reddit/scraper";
       var body = {
         "topic": keyword,
       };
@@ -43,7 +43,7 @@ class RedditMarketing {
   Future startMarketing(
       List<dynamic> redditDataList, String marketingContent) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/marketing";
+      String url = "$kAzureIP:5050/reddit/marketing";
 
       // getting usernames from redditScrapedData list
       List<String> _usernames = [];
@@ -104,7 +104,7 @@ class RedditMarketing {
 
   Future postImage(String title, String imagePathUrl, String dateTime) async {
     try {
-      String url = "$kHerokuURL/reddit/schedule-image";
+      String url = "$kLocalHostIP:3030/reddit/schedule-image";
       var body = {
         "username": "m_hamzashakeel",
         "title": title,
@@ -131,7 +131,7 @@ class RedditMarketing {
 
   Future postVideo(String title, String videoPathUrl, String dateTime) async {
     try {
-      String url = "$kHerokuURL/reddit/schedule-video";
+      String url = "$kLocalHostIP:3030/reddit/schedule-video";
       var body = {
         "username": "m_hamzashakeel",
         "title": title,

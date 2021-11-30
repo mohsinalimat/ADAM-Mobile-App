@@ -15,8 +15,7 @@ class TwitterMarketing {
   // scraping data
   Future scrapeUserData(String targetUsername) async {
     try {
-      String url = "http://13.72.68.224:3030/twitter/scraper";
-      // String url = "http://40.76.15.56:8080/twitter/scraper";
+      String url = "$kAzureIP:3030/twitter/scraper";
 
       var body = {
         "target_username": targetUsername,
@@ -44,8 +43,7 @@ class TwitterMarketing {
   // sending DMs
   Future sendDMs(String msg) async {
     try {
-      // String url = "http://40.76.15.56:8080/twitter/marketing";
-      String url = "http://10.0.2.2:8080/twitter/marketing";
+      String url = "$kAzureIP:8080/twitter/marketing";
 
       var body = {
         "msg": msg,
@@ -168,8 +166,7 @@ class TwitterMarketing {
   // greeting message to new followers
   Future checkNewFollowers() async {
     try {
-      // String url = "http://40.76.15.56:8080/twitter/check-followers";
-      String url = "http://10.0.2.2:8080/twitter/check-followers";
+      String url = "$kAzureIP:3030/twitter/check-followers";
 
       Response response = await dio.post(
         url,
@@ -191,8 +188,7 @@ class TwitterMarketing {
 
   Future sendGreetingMsg(String msg) async {
     try {
-      // String url = "http://40.76.15.56:8080/twitter/greeting-dm";
-      String url = "http://10.0.2.2:8080/twitter/greeting-dm";
+      String url = "$kAzureIP:3030/twitter/greeting-dm";
 
       var body = {
         "greeting_msg": msg,
@@ -220,8 +216,7 @@ class TwitterMarketing {
   // auto reply to mentions
   Future autoReply(String msg) async {
     try {
-      // String url = "http://40.76.15.56:8080/twitter/auto-reply";
-      String url = "http://10.0.2.2:8080/twitter/auto-reply";
+      String url = "$kAzureIP:3030/twitter/auto-reply";
 
       var body = {
         "reply_msg": msg,

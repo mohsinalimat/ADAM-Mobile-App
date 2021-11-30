@@ -1,3 +1,4 @@
+import 'package:adam/constants.dart';
 import 'package:adam/model/scraping/linkedin/scraped_data.dart';
 import 'package:dio/dio.dart';
 
@@ -12,8 +13,7 @@ class LinkedInMarketing {
   Future scrapeUserData(
       String emailLinkedIn, String passwordLinkedIn, String keyword) async {
     try {
-      // String url = "http://10.0.2.2:5050/linkedin/scraper";
-      String url = "http://13.72.68.224:5000/linkedin/scraper";
+      String url = "$kAzureIP:5000/linkedin/scraper";
 
       var body = {
         "email": emailLinkedIn,
@@ -41,7 +41,7 @@ class LinkedInMarketing {
 
   Future marketing(String email, String password, String message) async {
     try {
-      String url = "http://13.72.68.224:5000/linkedin/marketing";
+      String url = "$kAzureIP:5000/linkedin/marketing";
       var body = {
         "email": email,
         "password": password,
@@ -68,8 +68,7 @@ class LinkedInMarketing {
   Future postTextOnly(
       String emailLinkedIn, String passwordLinkedIn, String postText) async {
     try {
-      // String url = "http://10.0.2.2:5050/linkedin/scraper";
-      String url = "http://13.72.68.224:5000/linkedin/post/text";
+      String url = "$kAzureIP:5000/linkedin/post/text";
 
       var body = {
         "email": emailLinkedIn,
@@ -97,7 +96,7 @@ class LinkedInMarketing {
 
   Future addConnection(String email, String password) async {
     try {
-      String _url = "http://13.72.68.224:5000/linkedin/add-connection";
+      String _url = "$kAzureIP:5000/linkedin/add-connection";
 
       var body = {
         "email": email,
