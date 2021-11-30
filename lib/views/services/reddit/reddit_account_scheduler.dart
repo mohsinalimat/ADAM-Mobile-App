@@ -312,7 +312,6 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    // btnOnPressed: _uploadToFirestorage,
                     btnOnPressed: _scheduleType == ScheduleType.text
                         ? _postText
                         : _scheduleType == ScheduleType.image
@@ -476,7 +475,11 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
         _isUpdating = true;
       });
       var value = await RedditMarketing()
-          .postText(_titleController.text.trim(), _bodyController.text.trim())
+          .postText(
+        _titleController.text.trim(),
+        _bodyController.text.trim(),
+        "${_dateController.text.trim()} ${_timeController.text.trim()}",
+      )
           .whenComplete(() {
         setState(() {
           _isUpdating = false;
@@ -547,6 +550,7 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
             .postImage(
           _titleController.text.trim(),
           _urlMedia,
+          "${_dateController.text.trim()} ${_timeController.text.trim()}",
         )
             .whenComplete(() {
           setState(() {
@@ -620,6 +624,7 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
             .postVideo(
           _titleController.text.trim(),
           _urlMedia,
+          "${_dateController.text.trim()} ${_timeController.text.trim()}",
         )
             .whenComplete(() {
           setState(() {

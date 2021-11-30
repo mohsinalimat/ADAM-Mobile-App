@@ -162,7 +162,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                   !_dataScraped
                       ? Container()
                       : Text(
-                          "Follower's Data",
+                          "Target audience: ${_scrapedUsersData.length}",
                           style: Theme.of(context).textTheme.headline2,
                         ),
                   const SizedBox(height: 10.0),

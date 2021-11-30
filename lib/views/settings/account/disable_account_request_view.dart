@@ -1,3 +1,4 @@
+import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
@@ -15,6 +16,8 @@ class DisableAccountRequestView extends StatefulWidget {
 class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
   final _commentController = TextEditingController();
   String _reason = "Select reason";
+
+  bool _isDisabling = false;
 
   @override
   void dispose() {
@@ -45,7 +48,7 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
               ),
               const SizedBox(height: 10.0),
               const Text(
-                "This will disable your account and you cannot activate your account before 15-days.\n\nYour data will be SAVED!",
+                "You may active your account by login again.\n\nYour data will be SAVED!",
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12.0),
@@ -113,50 +116,85 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
               CustomButton(
                   btnWidth: 150.0,
                   btnHeight: 40.0,
-                  btnOnPressed: () {
-                    if (_reason.contains("Select reason")) {
-                      customSnackBar(
-                        context,
-                        Colors.red,
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.info,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 8.0,
-                            ),
-                            const Text('Please select a reason!')
-                          ],
-                        ),
-                      );
-                    } else {
-                      Navigator.of(context).pop();
-                      customSnackBar(
-                        context,
-                        kSecondaryBlueColor,
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.report,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 8.0,
-                            ),
-                            const Text('Disable account request has sent!')
-                          ],
-                        ),
-                      );
-                    }
-                  },
+                  btnOnPressed: _disableAccount,
                   btnColor: kPrimaryBlueColor,
-                  btnText: Text("Submit", style: kBtnTextStyle))
+                  btnText: _isDisabling
+                      ? kLoaderWhite
+                      : const Text("Submit", style: kBtnTextStyle))
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _disableAccount() async {
+    if (_reason.contains("Select reason")) {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            const Icon(
+              Icons.info,
+              color: Colors.white,
+            ),
+            const SizedBox(
+              width: 8.0,
+            ),
+            const Text('Please select a reason!')
+          ],
+        ),
+      );
+    } else {
+      setState(() {
+        _isDisabling = true;
+      });
+
+      var value = await UserAuth()
+          .disableAccount(_reason, _commentController.text.trim())
+          .whenComplete(() {
+        setState(() {
+          _isDisabling = false;
+        });
+      });
+
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(
+                Icons.info,
+                color: Colors.white,
+              ),
+              const SizedBox(
+                width: 8.0,
+              ),
+              Text(value)
+            ],
+          ),
+        );
+      } else {
+        Navigator.of(context).pop();
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(
+                Icons.report,
+                color: Colors.white,
+              ),
+              const SizedBox(
+                width: 8.0,
+              ),
+              const Text('Disable account request has sent!')
+            ],
+          ),
+        );
+      }
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:adam/constants.dart';
 import 'package:adam/model/scraping/twitter/scraped_user.dart';
 import 'package:dio/dio.dart';
 
@@ -14,7 +15,7 @@ class TwitterMarketing {
   // scraping data
   Future scrapeUserData(String targetUsername) async {
     try {
-      String url = "http://10.0.2.2:8080/twitter/scraper";
+      String url = "http://13.72.68.224:3030/twitter/scraper";
       // String url = "http://40.76.15.56:8080/twitter/scraper";
 
       var body = {
@@ -71,12 +72,12 @@ class TwitterMarketing {
 
   /// Account Scheduling
   // Tweet without Media
-  Future tweetText(String caption) async {
+  Future tweetText(String caption, String dateTime) async {
     try {
-      // String url = "http://40.76.15.56:8080/twitter/post/text";
-      String url = "http://10.0.2.2:8080/twitter/post/text";
+      String url = "$kLocalHostIP:3030/twitter/schedule-tweet";
       var body = {
         'text': caption,
+        'date': dateTime,
       };
 
       Response response = await dio.post(
@@ -99,16 +100,17 @@ class TwitterMarketing {
   }
 
   // Tweet image
-  Future tweetImage(String caption, String imagePath) async {
+  Future tweetImage(String caption, String imagePath, String dateTime) async {
     try {
       if (caption.isEmpty) {
         caption = "";
       }
-      String url = "http://10.0.2.2:8080/twitter/post/image";
-      // String url = "http://40.76.15.56:8080/twitter/post/media";
+      String url = "$kLocalHostIP:3030/twitter/schedule-image";
+
       var body = {
         'text': caption,
         'image_path': imagePath,
+        'date': dateTime,
       };
 
       Response response = await dio.post(
@@ -131,16 +133,17 @@ class TwitterMarketing {
   }
 
   // Tweet video
-  Future tweetVideo(String caption, String videoPath) async {
+  Future tweetVideo(String caption, String videoPath, String dateTime) async {
     try {
       if (caption.isEmpty) {
         caption = "";
       }
-      String url = "http://10.0.2.2:8080/twitter/post/video";
-      // String url = "http://40.76.15.56:8080/twitter/post/media";
+      String url = "$kLocalHostIP:3030/twitter/schedule-video";
+
       var body = {
         'text': caption,
         'video_path': videoPath,
+        'date': dateTime,
       };
 
       Response response = await dio.post(

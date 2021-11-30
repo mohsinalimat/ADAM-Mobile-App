@@ -5,6 +5,7 @@ import 'package:adam/controller/marketing/linkedin.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
 import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
+import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -27,6 +28,9 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+
+  final _linkedinEmailController = TextEditingController();
+  final _linkedinPassController = TextEditingController();
 
   bool _isUpdating = false; // updating posts
 
@@ -52,10 +56,19 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
   ];
 
   @override
+  void initState() {
+    _linkedinEmailController.text = "mhamzadev@yahoo.com";
+    _linkedinPassController.text = "Iamhamza..!@#6";
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _contentController.dispose();
     _dateController.dispose();
     _timeController.dispose();
+    _linkedinEmailController.dispose();
+    _linkedinPassController.dispose();
     super.dispose();
   }
 
@@ -63,7 +76,7 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
-      absorbing: _isUpdating,
+      absorbing: _isUpdating || _uploadingFile,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -92,37 +105,37 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
                     "LinkedIn Account Scheduler",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  const SizedBox(height: 20.0),
-                  const Text('Add Image/Video:'),
-                  const SizedBox(height: 8.0),
-                  _fileUploaded
-                      ? Container(
-                          height: 250.0,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: FileImage(someFile),
-                            ),
-                          ),
-                        )
-                      : Text(''),
                   const SizedBox(height: 10.0),
-                  CustomButton(
-                    btnWidth: MediaQuery.of(context).size.width,
-                    btnHeight: 45.0,
-                    btnOnPressed: _addAttachment,
-                    btnColor: Colors.white,
-                    btnText: _uploadingFile
-                        ? kLoader
-                        : const Text(
-                            'Upload',
-                            style: TextStyle(
-                              letterSpacing: 1.3,
-                              color: kPrimaryBlueColor,
-                            ),
-                          ),
+                  CustomTextField(
+                    textEditingController: _linkedinEmailController,
+                    textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.text,
+                    hintText: "Instagram Username",
+                    icon: Icons.person,
+                    validatorFtn: (value) {
+                      if (value.isEmpty) {
+                        return "Username cannot be empty!";
+                      }
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 20.0),
-                  const Text('Post caption:'),
+                  const SizedBox(height: 15.0),
+                  CustomTextField(
+                    isPassword: true,
+                    textEditingController: _linkedinPassController,
+                    textInputAction: TextInputAction.done,
+                    textInputType: TextInputType.text,
+                    hintText: "Instagram Password",
+                    icon: Icons.lock,
+                    validatorFtn: (value) {
+                      if (value.isEmpty) {
+                        return "Pasword cannot be empty!";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10.0),
+                  const Text('Post body:'),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.89,
@@ -132,7 +145,7 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
                       keyboardType: TextInputType.multiline,
                       textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
-                        hintText: "Caption...",
+                        hintText: "Type something...",
                         hintStyle: Theme.of(context).textTheme.caption,
                         fillColor: _themeProvider.darkTheme
                             ? Colors.black12
@@ -150,6 +163,12 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
                           borderSide: BorderSide(color: Colors.red),
                         ),
                       ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "Cannot send empty post body";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: 20.0),
@@ -263,10 +282,32 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
                   for (int i = 0; i < scheduledPosts.length - 1; i++)
                     scheduledPosts[i],
                   const Divider(
-                    height: 50.0,
+                    height: 40.0,
                     thickness: 0.2,
                     color: Colors.grey,
                   ),
+                  Text(
+                    "Get more connection",
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  const Text(
+                      '* Requests will be sent to 2nd degree connections'),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  CustomButton(
+                    btnWidth: MediaQuery.of(context).size.width,
+                    btnHeight: 45.0,
+                    btnOnPressed: _sendConnectionRequest,
+                    btnColor: kPrimaryBlueColor,
+                    btnText: const Text(
+                      "Send connection requests",
+                      style: kBtnTextStyle,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -302,8 +343,8 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
 
       var value = await LinkedInMarketing()
           .postTextOnly(
-        'mhamzadev@yahoo.com',
-        'Iamhamza..!@#6',
+        _linkedinEmailController.text.trim(),
+        _linkedinPassController.text.trim(),
         _contentController.text.trim(),
       )
           .whenComplete(() {
@@ -362,6 +403,49 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
         _dateController.clear();
         _timeController.clear();
       }
+    }
+  }
+
+  // add connection
+  void _sendConnectionRequest() async {
+    var value = await LinkedInMarketing().addConnection(
+      _linkedinEmailController.text.trim(),
+      _linkedinPassController.text.trim(),
+    );
+
+    if (value is String) {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: [
+            Icon(
+              Icons.info,
+              color: Colors.white,
+            ),
+            SizedBox(width: 8.0),
+            Text(
+              "Adding connection failed!",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        ),
+      );
+    } else {
+      customSnackBar(
+        context,
+        kSecondaryBlueColor,
+        Row(
+          children: [
+            Icon(Icons.check, color: Colors.white),
+            SizedBox(width: 8.0),
+            Text(
+              "Connection requests being sent!",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        ),
+      );
     }
   }
 }

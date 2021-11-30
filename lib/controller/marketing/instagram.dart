@@ -12,8 +12,7 @@ class InstagramMarketing {
   Future scrapeUserData(
       String userInsta, String passInsta, String targetUsername) async {
     try {
-      // String url = "http://10.0.2.2:5000/insta/scraper";
-      String url = "https://adam-web-api.herokuapp.com/instagram/check-target";
+      String url = "http://13.72.68.224:8080/insta/scraper";
 
       var body = {
         "username": userInsta,
@@ -29,7 +28,6 @@ class InstagramMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("GOT THE DATA!");
         return InstaScrapedUserList.fromJSON(response.data);
       } else {
         return "Some error!";
@@ -43,12 +41,11 @@ class InstagramMarketing {
   Future sendDM(String msg, String username, String password) async {
     try {
       // String url = "http://40.76.15.56:5000/insta/marketing";
-      String url = "http://10.0.2.2:5000/insta/marketing";
+      String url = "http://13.72.68.224:8080/insta/marketing";
       var body = {
-        "username": username,
-        "password": password,
-        "targeted_username": "bareera099",
-        'marketing_msg': msg,
+        "username": 'khaadi.pk.7',
+        "password": 'Test123@',
+        'marketing_content': msg,
       };
 
       Response response = await dio.post(
@@ -76,8 +73,8 @@ class InstagramMarketing {
     try {
       print('IMAGE SEND API!');
       // String url = "http://40.76.15.56:5000/insta/post/status/image";
-      String url = "http://10.0.2.2:5000/insta/post/status/image";
-  
+      String url = "http://13.72.68.224:8080/insta/post/status/image";
+
       var body = {
         'username': username,
         'password': password,
@@ -107,7 +104,7 @@ class InstagramMarketing {
       String videoPath) async {
     try {
       // String url = "http://40.76.15.56:5000/insta/post/status/video";
-      String url = "http://10.0.2.2:5000/insta/post/status/video";
+      String url = "http://13.72.68.224:8080/insta/post/status/video";
       var body = {
         'username': username,
         'password': password,
@@ -138,7 +135,7 @@ class InstagramMarketing {
       String username, String password, String imagePath) async {
     try {
       // String url = "http://40.76.15.56:5000/insta/post/story/image";
-      String url = "http://10.0.2.2:5000/insta/post/story/image";
+      String url = "http://13.72.68.224:8080/insta/post/story/image";
       var body = {
         'username': username,
         'password': password,
@@ -167,7 +164,7 @@ class InstagramMarketing {
       String username, String password, String videoPath) async {
     try {
       // String url = "http://40.76.15.56:5000/insta/post/story/video";
-      String url = "http://10.0.2.2:5000/insta/post/story/video";
+      String url = "http://13.72.68.224:8080/insta/post/story/video";
       var body = {
         'username': username,
         'password': password,

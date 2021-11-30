@@ -15,6 +15,10 @@ class LinkedinMarketingView extends StatefulWidget {
 }
 
 class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
+  // linkedin creds
+  String _email = "";
+  String _password = "";
+
   bool _dataScraped = false;
   bool _isWorking = false;
   final _keywordController = TextEditingController();
@@ -186,21 +190,21 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                         ? CustomButton(
                             btnWidth: 100.0,
                             btnHeight: 45.0,
-                            btnOnPressed: () async {
-                              if (_formKey.currentState.validate()) {}
-                            },
+                            btnOnPressed: _marketing,
                             btnColor: kLightBlueColor,
-                            btnText: Text(
-                              "Start Marketing",
-                              style: kBtnTextStyle,
-                            ),
+                            btnText: _isWorking
+                                ? kLoaderWhite
+                                : const Text(
+                                    "Start Marketing",
+                                    style: kBtnTextStyle,
+                                  ),
                           )
                         : Container(),
                     const SizedBox(height: 25.0),
                     !_dataScraped
                         ? Container()
                         : Text(
-                            "Follower's Data",
+                            "Target audience: ${_scrapedUsersData.length}",
                             style: Theme.of(context).textTheme.headline2,
                           ),
                     const SizedBox(height: 10.0),
@@ -215,7 +219,7 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                                 linkedinScrapedUser: _scrapedUsersData[index],
                               ),
                             ),
-                          )
+                          ),
                   ],
                 ),
               ),
@@ -244,28 +248,29 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
           .whenComplete(() {
         if (mounted) {
           setState(() {
+            _email = _linkedinUserNameController.text.trim();
+            _password = _linkedinPasswordController.text.trim();
             _isWorking = false;
           });
         }
       });
 
-      print("FTN CALLED AT FRONT END!!");
-
       if (data is String) {
         print(data);
         customSnackBar(
-            context,
-            Colors.red,
-            Row(
-              children: [
-                const Icon(Icons.info, color: Colors.white),
-                const SizedBox(width: 8.0),
-                Text(
-                  'Please try again after 90 secs to avoid ban :)',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ));
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text(
+                'Please try again after 90 secs to avoid ban :)',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        );
       } else {
         print(data.scrapedUsers.length);
         setState(() {
@@ -286,6 +291,71 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
               ],
             ));
       }
+    }
+  }
+
+  // marketing
+  void _marketing() async {
+    if (_marketingMsg.text.trim().isNotEmpty) {
+      var value = LinkedInMarketing().marketing(
+        _email,
+        _password,
+        _marketingMsg.text.trim(),
+      );
+
+      if (value is String) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text(
+                'Some error occured!',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        );
+      } else {
+        setState(() {
+          _dataScraped = false;
+          _email = "";
+          _password = "";
+        });
+        customSnackBar(
+          context,
+          kSecondaryBlueColor,
+          Row(
+            children: [
+              const Icon(Icons.check, color: Colors.white),
+              const SizedBox(width: 8.0),
+              const Text(
+                "Messages are being sent!",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        );
+      }
+    } else {
+      customSnackBar(
+        context,
+        Colors.red,
+        Row(
+          children: const [
+            Icon(
+              Icons.info,
+              color: Colors.white,
+            ),
+            SizedBox(
+              width: 8.0,
+            ),
+            Text('Cannot send empty message content!')
+          ],
+        ),
+      );
     }
   }
 }
