@@ -16,6 +16,9 @@ const Color kPrimaryBlueColor = Color(0xff114b8c);
 const TextStyle kBtnTextStyle =
     TextStyle(color: Colors.white, letterSpacing: 1.2, fontSize: 14.0);
 
+const TextStyle kBtnSubscribedTextStyle =
+    TextStyle(color: Colors.grey, letterSpacing: 1.2, fontSize: 14.0);
+
 const Widget kLoader = SizedBox(
   height: 25,
   width: 25,

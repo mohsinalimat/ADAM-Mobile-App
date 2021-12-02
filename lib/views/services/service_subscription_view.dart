@@ -15,6 +15,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceSubscriptionView extends StatefulWidget {
   final Service service;
@@ -32,6 +33,9 @@ class ServiceSubscriptionView extends StatefulWidget {
 class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   final _reviewController = TextEditingController();
   final ServiceController serviceController = ServiceController();
+
+  // local IDs of subscribed services
+  List<String> _localServicesIDs = [];
 
   // for reviews
   String firstName = "";
@@ -63,6 +67,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
         return Navigator.pushNamed(context, "/mainView");
       },
     );
+    _getLocalSubServicesID();
     super.initState();
   }
 
@@ -136,6 +141,33 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     ),
   ];
 
+  final _emailSMSFeatures = [
+    ServiceFeatureWidget(
+      featureText: "Best Marketing Bot",
+      isChecked: true,
+    ),
+    ServiceFeatureWidget(
+      featureText: "Bulk Marketing",
+      isChecked: true,
+    ),
+    ServiceFeatureWidget(
+      featureText: "Upload Your Own List",
+      isChecked: true,
+    ),
+    ServiceFeatureWidget(
+      featureText: "Use Our Data Bank",
+      isChecked: true,
+    ),
+    ServiceFeatureWidget(
+      featureText: "Enter Custom Target",
+      isChecked: true,
+    ),
+    ServiceFeatureWidget(
+      featureText: "Create Your Own List",
+      isChecked: true,
+    ),
+  ];
+
   @override
   void dispose() {
     _reviewController.dispose();
@@ -147,7 +179,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _textTheme = Theme.of(context).textTheme;
     return AbsorbPointer(
-      absorbing: _isSubscribingStand ? _isSubscribingStand : _isSubscribingPrem,
+      absorbing: _isSubscribingStand || _isSubscribingPrem,
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
@@ -187,13 +219,22 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                     height: 30.0,
                   ),
                   StandardServiceSubscriptionCard(
+                    isSubscribed:
+                        _localServicesIDs.contains(widget.service.serviceId),
                     subscribing: _isSubscribingStand,
                     serviceType: widget.service.serviceType[0],
                     colorTheme:
                         Color(int.parse(widget.service.serviceColor[0])),
                     iconData: widget.service.serviceIcon,
-                    standardFeatures: _standardFeatures,
-                    subcribe: _standardSubscription,
+                    standardFeatures:
+                        widget.service.serviceName == "Email Marketing" ||
+                                widget.service.serviceName == "SMS Marketing"
+                            ? _emailSMSFeatures
+                            : _standardFeatures,
+                    subcribe:
+                        _localServicesIDs.contains(widget.service.serviceId)
+                            ? () {}
+                            : _standardSubscription,
                   ),
                   widget.service.serviceName == "SMS Marketing" ||
                           widget.service.serviceName == "Email Marketing"
@@ -203,13 +244,18 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
                           widget.service.serviceName == "Email Marketing"
                       ? Container()
                       : PremiumServiceSubscriptionCard(
+                          isSubscribed: _localServicesIDs
+                              .contains(widget.service.serviceId),
                           subscribing: _isSubscribingPrem,
                           serviceType: widget.service.serviceType[1],
                           colorTheme:
                               Color(int.parse(widget.service.serviceColor[0])),
                           iconData: widget.service.serviceIcon,
                           standardFeatures: _premiumFeatures,
-                          subcribe: _premiumSubscription,
+                          subcribe: _localServicesIDs
+                                  .contains(widget.service.serviceId)
+                              ? () {}
+                              : _premiumSubscription,
                           // subcribe: _subscribe,
                         ),
                   const SizedBox(height: 20.0),
@@ -306,7 +352,35 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     );
   }
 
-  showNotification() async {
+  // get local IDs
+  void _getLocalSubServicesID() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+    _localServicesIDs = _prefs.getStringList('services');
+    if (_localServicesIDs == null) {
+      setState(() {
+        _localServicesIDs = [];
+      });
+    }
+    setState(() {});
+  }
+
+  // store ID in local
+  void _storeServiceID() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      _localServicesIDs.add(widget.service.serviceId);
+    });
+
+    // store IDs locally
+    _prefs.setStringList(
+      'services',
+      _localServicesIDs,
+    );
+  }
+
+  void _showNotification() async {
     var android = AndroidNotificationDetails('id', 'channel ',
         priority: Priority.high,
         importance: Importance.max,
@@ -358,7 +432,8 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: paymentSuccessful,
         ));
-        if (Provider.of<ThemeProvider>(context).notify) showNotification();
+        _showNotification();
+        _storeServiceID();
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -397,7 +472,8 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: paymentSuccessful,
         ));
-        if (Provider.of<ThemeProvider>(context).notify) showNotification();
+        _showNotification();
+        _storeServiceID();
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -412,7 +488,6 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
       _ratings.toString(),
       _reviewController.text.trim(),
     );
-    print(result);
     if (result == 200) {
       _reviewController.clear();
       Navigator.of(context).pop();
@@ -543,9 +618,11 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
     @required List<ServiceFeatureWidget> standardFeatures,
     this.subcribe,
     this.subscribing,
+    @required this.isSubscribed,
   })  : _standardFeatures = standardFeatures,
         super(key: key);
 
+  final bool isSubscribed;
   final ServiceType serviceType;
   final Color colorTheme;
   final String iconData;
@@ -598,12 +675,13 @@ class StandardServiceSubscriptionCard extends StatelessWidget {
             btnWidth: MediaQuery.of(context).size.width,
             btnHeight: 40.0,
             btnOnPressed: subcribe,
-            btnColor: kLightBlueColor,
+            btnColor: isSubscribed ? Colors.white : kLightBlueColor,
             btnText: subscribing
                 ? kLoaderWhite
                 : Text(
-                    "Subscribe",
-                    style: kBtnTextStyle,
+                    isSubscribed ? "Already subscribed" : "Subscribe",
+                    style:
+                        isSubscribed ? kBtnSubscribedTextStyle : kBtnTextStyle,
                   ),
           ),
         ],
@@ -620,10 +698,11 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
     @required this.iconData,
     this.subcribe,
     this.subscribing,
+    @required this.isSubscribed,
     @required List<ServiceFeatureWidget> standardFeatures,
   })  : _standardFeatures = standardFeatures,
         super(key: key);
-
+  final bool isSubscribed;
   final ServiceType serviceType;
   final Color colorTheme;
   final String iconData;
@@ -669,12 +748,13 @@ class PremiumServiceSubscriptionCard extends StatelessWidget {
             btnWidth: MediaQuery.of(context).size.width,
             btnHeight: 40.0,
             btnOnPressed: subcribe,
-            btnColor: kLightBlueColor,
+            btnColor: isSubscribed ? Colors.white : kLightBlueColor,
             btnText: subscribing
                 ? kLoaderWhite
                 : Text(
-                    "Subscribe",
-                    style: kBtnTextStyle,
+                    isSubscribed ? "Already subscribed" : "Subscribe",
+                    style:
+                        isSubscribed ? kBtnSubscribedTextStyle : kBtnTextStyle,
                   ),
           ),
         ],
