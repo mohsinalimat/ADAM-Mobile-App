@@ -1,5 +1,7 @@
+import 'package:adam/constants.dart';
 import 'package:adam/model/scraping/reddit/scraped_data.dart';
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 class RedditMarketing {
   Dio dio = Dio(); // dio instance to avoid recreating it with every call
@@ -13,7 +15,7 @@ class RedditMarketing {
   // scraper & marketing
   Future getUserData(String keyword) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/scraper";
+      String url = "$kAzureIP:5050/reddit/scraper";
       var body = {
         "topic": keyword,
       };
@@ -41,7 +43,7 @@ class RedditMarketing {
   Future startMarketing(
       List<dynamic> redditDataList, String marketingContent) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/marketing";
+      String url = "$kAzureIP:5050/reddit/marketing";
 
       // getting usernames from redditScrapedData list
       List<String> _usernames = [];
@@ -75,39 +77,39 @@ class RedditMarketing {
   }
 
   // account schedule
-  Future postText(String title, String bodyText) async {
+  Future postText(String title, String bodyText, String dateTime) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/post/text";
+      String url = "$kLocalHostIP:3030/reddit/schedule-text";
+
       var body = {
         "username": "m_hamzashakeel",
         "title": title,
         "text": bodyText,
+        "date": dateTime,
       };
 
-      Response response = await dio.post(
-        url,
-        data: body,
-        options: Options(
-          headers: headers,
-        ),
+      http.Response response = await http.post(
+        Uri.parse(url),
+        body: body,
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
         return response.statusCode;
       }
-    } on DioError catch (e) {
-      print(e.message);
+    } catch (e) {
       return e.message;
     }
   }
 
-  Future postImage(String title, String imagePathUrl) async {
+  Future postImage(String title, String imagePathUrl, String dateTime) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/post/image";
+      String url = "$kLocalHostIP:3030/reddit/schedule-image";
       var body = {
         "username": "m_hamzashakeel",
         "title": title,
         "image_path": imagePathUrl,
+        "date": dateTime,
       };
 
       Response response = await dio.post(
@@ -127,13 +129,14 @@ class RedditMarketing {
     }
   }
 
-  Future postVideo(String title, String videoPathUrl) async {
+  Future postVideo(String title, String videoPathUrl, String dateTime) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/post/video";
+      String url = "$kLocalHostIP:3030/reddit/schedule-video";
       var body = {
         "username": "m_hamzashakeel",
         "title": title,
         "video_path": videoPathUrl,
+        "date": dateTime,
       };
 
       Response response = await dio.post(
@@ -156,7 +159,7 @@ class RedditMarketing {
   // auto reply
   Future autoReply(String msg) async {
     try {
-      String url = "http://10.0.2.2:5050/reddit/auto-reply";
+      String url = "$kAzureIP:5050/reddit/auto-reply";
       var body = {
         "text_msg": msg,
       };

@@ -6,8 +6,12 @@ import 'package:adam/model/userData.dart';
 import 'package:adam/widgets/messageBubble.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_socket_io/flutter_socket_io.dart';
+// import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ChatView extends StatefulWidget {
   @override
@@ -19,11 +23,15 @@ class _ChatViewState extends State<ChatView> {
   final _messageFieldController = TextEditingController();
   FocusNode _focus;
   bool _fieldEnabled = false;
-  List<Widget> _chatMessages = [];
   FilePickerResult filePickerResult;
   PlatformFile platformFile;
   File someFile;
   bool _uploadingFile = false;
+
+  // socket io
+  // SocketIO _socketIO;
+  // IO.Socket _socket;
+  List<Widget> _chatMessages = [];
 
   void _addAttachment() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -59,8 +67,55 @@ class _ChatViewState extends State<ChatView> {
       _fieldEnabled = _focus.hasFocus;
       print("MESSAGE ENABLED! $_fieldEnabled");
     });
+
+    // initSocket();
+
     super.initState();
   }
+
+  // void initSocket() {
+  //   _socketIO = SocketIOManager().createSocketIO(
+  //     'https://adam-web-api.herokuapp.com',
+  //     '/',
+  //   );
+
+  //   _socketIO.init();
+
+  //   print(_socketIO.getId());
+
+  //   _socketIO.subscribe(
+  //     'response',
+  //     () {
+  //       print("CONECTED HO GYAAA!!!!!!!!!!");
+  //     },
+  //   );
+
+  //   _socketIO.connect();
+  // }
+
+  // void initSocket() {
+  //   try {
+  //     _socket = IO.io(
+  //       'https://adam-web-api.herokuapp.com/',
+  //       <String, dynamic>{
+  //         'transports': ['websocket'],
+  //         'autoConnect': false,
+  //       },
+  //     );
+
+  //     print(_socket.connected);
+
+  //     _socket.connect();
+
+  //     _socket.onConnect((data) => print('connnect to socket'));
+
+  //     _socket.on('connected', (data) => print("DATA ON CONN: $data"));
+
+  //     _socket.on('response', (data) => print("DATA ON RESPONSE: $data"));
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -86,7 +141,10 @@ class _ChatViewState extends State<ChatView> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: BackButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // _socketIO.disconnect();
+                    },
                   ),
                 ),
                 SizedBox(height: 10.0),
@@ -100,20 +158,21 @@ class _ChatViewState extends State<ChatView> {
                   height: 20.0,
                 ),
                 Expanded(
-                    child: Container(
-                  child: _chatMessages.length == 0
-                      ? Center(
-                          child: Text("Send a message to get started!"),
-                        )
-                      : SingleChildScrollView(
-                          controller: _scrollController,
-                          // reverse: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: _chatMessages,
+                  child: Container(
+                    child: _chatMessages.length == 0
+                        ? Center(
+                            child: Text("Send a message to get started!"),
+                          )
+                        : SingleChildScrollView(
+                            controller: _scrollController,
+                            // reverse: true,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: _chatMessages,
+                            ),
                           ),
-                        ),
-                )),
+                  ),
+                ),
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -159,16 +218,35 @@ class _ChatViewState extends State<ChatView> {
                             UserData userData;
                             Map userDataObject = jsonDecode(stringfyJson);
                             userData = UserData.fromJSON(userDataObject);
-                            setState(() {
-                              _chatMessages.add(MessageBubble(
-                                isUser: true,
-                                sender: userData.fullName,
-                                text: _messageFieldController.text.trim(),
-                              ));
-                            });
+
+                            // _socketIO.sendMessage(
+                            //   'chat',
+                            //   {
+                            //     "sender": userData.fullName,
+                            //     "message": _messageFieldController.text.trim(),
+                            //     "time": DateTime.now().toUtc().toString(),
+                            //   },
+                            // );
+
+                            // _socketIO.emit(
+                            //   'chat',
+                            // {
+                            //   "sender": userData.fullName,
+                            //   "message": _messageFieldController.text.trim(),
+                            //   "time": DateTime.now().toUtc().toString(),
+                            // },
+                            // );
+
+                            this.setState(
+                              () => _chatMessages.add(
+                                MessageBubble(
+                                  isUser: true,
+                                  sender: userData.fullName,
+                                  text: _messageFieldController.text.trim(),
+                                ),
+                              ),
+                            );
                             _messageFieldController.clear();
-                            _focus.unfocus();
-                            // _scrollDown();
                           }
                         },
                         child: Icon(

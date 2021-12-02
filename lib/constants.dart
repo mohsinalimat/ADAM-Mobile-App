@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+// URLs
+const String kHerokuURL = "https://adam-web-api.herokuapp.com";
+const String kLocalHostIP = "http://10.113.62.78";
+const String kAzureIP = "http://13.72.68.224";
+
 // Colors
 const Color kLightGreenColor = Color(0xff5bdb5b);
 const Color kMediumGreenColor = Color(0xff49d695);
@@ -8,18 +13,11 @@ const Color kMediumBlueColor = Color(0xff0179d4);
 const Color kSecondaryBlueColor = Color(0xff0d569e);
 const Color kPrimaryBlueColor = Color(0xff114b8c);
 
-// text styles
-// TextStyle kHintTextStyle =
-//     TextStyle(fontSize: 12.0, letterSpacing: 1.1, color: Colors.grey[700]);
-
 const TextStyle kBtnTextStyle =
     TextStyle(color: Colors.white, letterSpacing: 1.2, fontSize: 14.0);
 
-// const TextStyle kHeadingStyle = TextStyle(
-//     color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 28.0);
-
-// const TextStyle kSubHeadingStyle = TextStyle(
-//     color: kPrimaryBlueColor, fontWeight: FontWeight.bold, fontSize: 18.0);
+const TextStyle kBtnSubscribedTextStyle =
+    TextStyle(color: Colors.grey, letterSpacing: 1.2, fontSize: 14.0);
 
 const Widget kLoader = SizedBox(
   height: 25,

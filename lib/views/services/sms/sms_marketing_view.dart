@@ -296,7 +296,19 @@ class _SMSMarketingViewState extends State<SMSMarketingView> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8.0),
-              Text(value.toString()),
+              Text('Some error occured!'),
+            ],
+          ),
+        );
+      } else if (value == 204) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text("Cannot send empty text!"),
             ],
           ),
         );
@@ -345,7 +357,19 @@ class _SMSMarketingViewState extends State<SMSMarketingView> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8.0),
-              Text(value.toString()),
+              Text('Some error occured!'),
+            ],
+          ),
+        );
+      } else if (value == 204) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text("Cannot send empty text!"),
             ],
           ),
         );

@@ -4,6 +4,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/widgets/customTextField.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/logoDisplay.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -37,6 +38,9 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
 
+  final _instaUsernameController = TextEditingController();
+  final _instaPasswordController = TextEditingController();
+
   bool _isUpdating = false;
   ScheduleType _scheduleType = ScheduleType.postImage;
 
@@ -68,10 +72,19 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   ];
 
   @override
+  void initState() {
+    _instaUsernameController.text = "khaadi.pk.7";
+    _instaPasswordController.text = "Test123@";
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _contentController.dispose();
     _dateController.dispose();
     _timeController.dispose();
+    _instaUsernameController.dispose();
+    _instaPasswordController.dispose();
     super.dispose();
   }
 
@@ -108,7 +121,36 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                     "Instagram Account Scheduler",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 10.0),
+                  CustomTextField(
+                    textEditingController: _instaUsernameController,
+                    textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.text,
+                    hintText: "Instagram Username",
+                    icon: Icons.person,
+                    validatorFtn: (value) {
+                      if (value.isEmpty) {
+                        return "Username cannot be empty!";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 15.0),
+                  CustomTextField(
+                    isPassword: true,
+                    textEditingController: _instaPasswordController,
+                    textInputAction: TextInputAction.done,
+                    textInputType: TextInputType.text,
+                    hintText: "Instagram Password",
+                    icon: Icons.lock,
+                    validatorFtn: (value) {
+                      if (value.isEmpty) {
+                        return "Pasword cannot be empty!";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10.0),
                   const Text("Schedule:"),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -444,8 +486,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
       });
       var value = await InstagramMarketing()
           .postImageStatus(
-        'khaaadi456',
-        'Testing786',
+        _instaUsernameController.text.trim(),
+        _instaPasswordController.text.trim(),
         _contentController.text.trim(),
         _urlMedia,
       )
@@ -518,8 +560,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
       });
       var value = await InstagramMarketing()
           .postVideoStatus(
-        'khaaadi456',
-        'Testing786',
+        _instaUsernameController.text.trim(),
+        _instaPasswordController.text.trim(),
         _contentController.text.trim(),
         _urlMedia,
       )
@@ -579,8 +621,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
     });
     var value = await InstagramMarketing()
         .postImageStory(
-      'khaaadi456',
-      'Testing786',
+      _instaUsernameController.text.trim(),
+      _instaPasswordController.text.trim(),
       _urlMedia,
     )
         .whenComplete(() {
@@ -638,8 +680,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
     });
     var value = await InstagramMarketing()
         .postVideoStory(
-      'khaaadi456',
-      'Testing786',
+      _instaUsernameController.text.trim(),
+      _instaPasswordController.text.trim(),
       _urlMedia,
     )
         .whenComplete(() {

@@ -29,8 +29,8 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
 
   // placeholding data
   void _placeholdingData() {
-    _instaUsernameController.text = "khaaadi456";
-    _instaPasswordController.text = "Testing786";
+    _instaUsernameController.text = "khaadi.pk.7";
+    _instaPasswordController.text = "Test123@";
     _targetProfileController.text = 'bonanza.pk4';
     _marketingMsg.text =
         "Hi there! Hope you are doing well. Would love to connect with you for valuable content :)\n\nSo, hit me up with that Follow button\nCheers :D";
@@ -200,10 +200,12 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                         )
                       : Container(),
                   const SizedBox(height: 25.0),
-                  Text(
-                    "Follower's Data",
-                    style: Theme.of(context).textTheme.headline2,
-                  ),
+                  !_dataScraped
+                      ? Container()
+                      : Text(
+                          "Target audience: ${_scrapedUsersData.length}",
+                          style: Theme.of(context).textTheme.headline2,
+                        ),
                   const SizedBox(height: 10.0),
                   !_dataScraped
                       ? Container()
@@ -235,57 +237,54 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      var data;
-      Future.delayed(Duration(seconds: 15), () async {
-        data = await InstagramMarketing()
-            .scrapeUserData(
-          _instaUsernameController.text.trim(),
-          _instaPasswordController.text.trim(),
-          _targetProfileController.text.trim(),
-        )
-            .whenComplete(() {
-          if (mounted) {
-            setState(() {
-              _isWorking = false;
-            });
-          }
-        });
-
-        if (data is String) {
-          print(data);
-          customSnackBar(
-              context,
-              Colors.red,
-              Row(
-                children: [
-                  const Icon(Icons.info, color: Colors.white),
-                  const SizedBox(width: 8.0),
-                  Text(
-                    'Please try again after 90 secs to avoid ban :)',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ));
-        } else {
+      var data = await InstagramMarketing()
+          .scrapeUserData(
+        _instaUsernameController.text.trim(),
+        _instaPasswordController.text.trim(),
+        _targetProfileController.text.trim(),
+      )
+          .whenComplete(() {
+        if (mounted) {
           setState(() {
-            _dataScraped = true;
-            _scrapedUsersData = data.scrapedUsers;
+            _isWorking = false;
           });
-          customSnackBar(
-              context,
-              kLightGreenColor,
-              Row(
-                children: [
-                  const Icon(Icons.check, color: Colors.white),
-                  const SizedBox(width: 8.0),
-                  const Text(
-                    "Data scraped successfully!",
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              ));
         }
       });
+
+      if (data is String) {
+        print(data);
+        customSnackBar(
+            context,
+            Colors.red,
+            Row(
+              children: [
+                const Icon(Icons.info, color: Colors.white),
+                const SizedBox(width: 8.0),
+                Text(
+                  'Please try again after 90 secs to avoid ban :)',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ));
+      } else {
+        setState(() {
+          _dataScraped = true;
+          _scrapedUsersData = data.scrapedUsers;
+        });
+        customSnackBar(
+            context,
+            kSecondaryBlueColor,
+            Row(
+              children: [
+                const Icon(Icons.check, color: Colors.white),
+                const SizedBox(width: 8.0),
+                const Text(
+                  "Data scraped successfully!",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ));
+      }
     }
   }
 
@@ -347,7 +346,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _marketingMsg.clear();
         customSnackBar(
           context,
-          kLightGreenColor,
+          kSecondaryBlueColor,
           Row(
             children: [
               const Icon(Icons.check, color: Colors.white),

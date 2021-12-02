@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 enum MediaType {
-  none,
+  text,
   image,
   video,
 }
@@ -32,7 +32,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
 
   ScrollController _controller = ScrollController();
 
-  MediaType _mediaType = MediaType.none;
+  MediaType _mediaType = MediaType.text;
 
   // date & time to be scheduled
   final format = DateFormat("dd-MM-yyyy");
@@ -123,6 +123,19 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   const Text('Add Image/Video:'),
                   Row(children: [
                     Radio(
+                      value: MediaType.text,
+                      groupValue: _mediaType,
+                      onChanged: (value) {
+                        setState(() {
+                          _fileUploaded = false;
+                          _urlMedia = "";
+                          someFile = null;
+                          _mediaType = value;
+                        });
+                      },
+                    ),
+                    const Text('Text'),
+                    Radio(
                       value: MediaType.image,
                       groupValue: _mediaType,
                       onChanged: (value) {
@@ -135,7 +148,6 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                       },
                     ),
                     const Text('Image'),
-                    const SizedBox(width: 30.0),
                     Radio(
                       value: MediaType.video,
                       groupValue: _mediaType,
@@ -164,7 +176,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: _mediaType == MediaType.none
+                    btnOnPressed: _mediaType == MediaType.text
                         ? null
                         : _mediaType == MediaType.image
                             ? () => _addAttachment(true)
@@ -175,7 +187,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                         : Text(
                             'Upload Media',
                             style: TextStyle(
-                              color: _mediaType == MediaType.none
+                              color: _mediaType == MediaType.text
                                   ? Colors.grey
                                   : kPrimaryBlueColor,
                             ),
@@ -312,7 +324,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                   CustomButton(
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
-                    btnOnPressed: _mediaType != MediaType.none
+                    btnOnPressed: _mediaType != MediaType.text
                         ? _mediaType == MediaType.image
                             ? _tweetImage
                             : _tweetVideo
@@ -467,7 +479,10 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
         _isUpdating = true;
       });
       var value = await TwitterMarketing()
-          .tweetText(_contentController.text.trim())
+          .tweetText(
+        _contentController.text.trim(),
+        "${_dateController.text.trim()} ${_timeController.text.trim()}",
+      )
           .whenComplete(() {
         setState(() {
           _isUpdating = false;
@@ -554,7 +569,11 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
         _isUpdating = true;
       });
       var value = await TwitterMarketing()
-          .tweetImage(_contentController.text.trim(), _urlMedia)
+          .tweetImage(
+        _contentController.text.trim(),
+        _urlMedia,
+        "${_dateController.text.trim()} ${_timeController.text.trim()}",
+      )
           .whenComplete(() {
         setState(() {
           _isUpdating = false;
@@ -619,7 +638,11 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
         _isUpdating = true;
       });
       var value = await TwitterMarketing()
-          .tweetVideo(_contentController.text.trim(), _urlMedia)
+          .tweetVideo(
+        _contentController.text.trim(),
+        _urlMedia,
+        "${_dateController.text.trim()} ${_timeController.text.trim()}",
+      )
           .whenComplete(() {
         setState(() {
           _isUpdating = false;

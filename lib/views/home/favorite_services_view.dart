@@ -24,7 +24,6 @@ class _FavoriteViewState extends State<FavoriteView> {
       _favorites = List.from(favs.services);
       _favNotLoaded = false;
     });
-    print(_favorites);
   }
 
   @override

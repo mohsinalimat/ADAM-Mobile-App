@@ -6,6 +6,7 @@ import 'package:adam/widgets/logoDisplay.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManageServicesView extends StatefulWidget {
   final List services;
@@ -143,6 +144,17 @@ class _ManageServicesViewState extends State<ManageServicesView> {
     );
   }
 
+  void _removeLocalID(int index) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    List<String> _ids = _prefs.getStringList('services');
+    _ids.remove(widget.services[index]['serviceData']['service_id']);
+
+    print(widget.services[index]['serviceData']['_id'].toString());
+
+    // store back
+    _prefs.setStringList('services', _ids);
+  }
+
   void _unSubscribe(int index) async {
     setState(() {
       _isUnsub = true;
@@ -202,6 +214,7 @@ class _ManageServicesViewState extends State<ManageServicesView> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(completedSnackBar);
+      _removeLocalID(index);
     }
   }
 }

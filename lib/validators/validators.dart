@@ -32,6 +32,8 @@ class Validators {
         .hasMatch(phoneNumber);
     if (phoneNumber.isEmpty) {
       return "Phone number cannot be empty!";
+    } else if (!phoneNumber.substring(0, 3).contains("+92")) {
+      return "Phone number must start with +92";
     } else if (!validPhone) {
       return "Invalid Phone Number!";
     }

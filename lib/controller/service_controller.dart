@@ -106,6 +106,7 @@ class ServiceController {
         "Authorization": "Bearer $_token",
       },
     );
+
     if (response.statusCode == 200) {
       return ServicesList.fromJSON(jsonDecode(response.body));
     } else {

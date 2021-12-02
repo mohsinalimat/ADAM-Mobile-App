@@ -25,14 +25,12 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
   String _passCheck = '';
-  final fullNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-  final dobController = TextEditingController();
-  final emailCodeController = TextEditingController();
-  final phoneCodeController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
 
   final format = DateFormat("dd-MM-yyyy");
 
@@ -65,8 +63,6 @@ class _SignUpViewState extends State<SignUpView> {
     passwordController.clear();
     confirmPasswordController.clear();
     dobController.clear();
-    emailCodeController.clear();
-    phoneCodeController.clear();
   }
 
   Future<String> loadCityData() async {
@@ -82,6 +78,7 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   void initState() {
+    phoneNumberController.text = "+92";
     loadCityData();
     super.initState();
   }
@@ -94,7 +91,6 @@ class _SignUpViewState extends State<SignUpView> {
     passwordController.dispose();
     confirmPasswordController.dispose();
     dobController.dispose();
-
     super.dispose();
   }
 
@@ -108,7 +104,8 @@ class _SignUpViewState extends State<SignUpView> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: AbsorbPointer(
-        absorbing: _isLoading,
+        absorbing:
+            _isLoading || _isGeneratingEmailCode || _isGeneratingPhoneCode,
         child: Scaffold(
           body: SafeArea(
             child: SingleChildScrollView(
@@ -702,7 +699,7 @@ class _SignUpViewState extends State<SignUpView> {
     });
 
     if (response.statusCode == 200) {
-      _showEmailCodeBox(true);
+      _showCodeAlertBox(true);
     } else if (response.statusCode == 204) {
       print('already taken email!');
       _errorSignup("Email has been taken already, please login!");
@@ -732,7 +729,7 @@ class _SignUpViewState extends State<SignUpView> {
     });
     print(response.statusCode);
     if (response.statusCode == 200) {
-      _showEmailCodeBox(false);
+      _showCodeAlertBox(false);
     } else {
       print('some other error!');
       _errorSignup("Unknown error occured!");
@@ -740,176 +737,180 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   // code box
-  void _showEmailCodeBox(bool isEmail) async {
+  void _showCodeAlertBox(bool isEmail) async {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(
-            isEmail ? "Email Verification" : "Phone Number Verification",
-            style: Theme.of(context).textTheme.headline2,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                child: Text(
-                  isEmail
-                      ? "Enter 4-Digit code sent at your email. \n\n*Check Spam/Promotion mails!"
-                      : "Enter 4-Digit code sent at your phone number.",
+      builder: (context) {
+        TextEditingController codeController = TextEditingController();
+
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: Text(
+              isEmail ? "Email Verification" : "Phone Number Verification",
+              style: Theme.of(context).textTheme.headline2,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  child: Text(
+                    isEmail
+                        ? "Enter 4-Digit code sent at your email. \n\n*Check Spam/Promotion mails!"
+                        : "Enter 4-Digit code sent at your phone number.",
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 12.0,
-              ),
-              PinCodeTextField(
-                controller: emailCodeController,
-                keyboardType: TextInputType.number,
-                textStyle: Provider.of<ThemeProvider>(context).darkTheme
-                    ? TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.black,
-                      )
-                    : TextStyle(fontSize: 14.0),
-                appContext: context,
-                length: 4,
-                onChanged: (value) {},
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(5),
-                  inactiveColor: kPrimaryBlueColor,
-                  activeColor: kMediumGreenColor,
+                const SizedBox(
+                  height: 12.0,
                 ),
-              ),
-              const SizedBox(
-                height: 12.0,
-              ),
-              CustomButton(
-                btnWidth: MediaQuery.of(context).size.width,
-                btnHeight: 42.0,
-                btnOnPressed: isEmail
-                    ? () async {
-                        setState(() {
-                          _isSubmittingEmailCode = true;
-                        });
-
-                        String _url =
-                            "https://adam-web-api.herokuapp.com/user/verify-email-code";
-
-                        https.Response response = await https.post(
-                          Uri.parse(_url),
-                          body: {
-                            "cust_email": emailController.text.trim(),
-                            "code": emailCodeController.text.trim(),
-                          },
-                        ).whenComplete(() {
+                PinCodeTextField(
+                  controller: codeController,
+                  keyboardType: TextInputType.number,
+                  textStyle: Provider.of<ThemeProvider>(context).darkTheme
+                      ? TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.black,
+                        )
+                      : TextStyle(fontSize: 14.0),
+                  appContext: context,
+                  length: 4,
+                  onChanged: (value) {},
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(5),
+                    inactiveColor: kPrimaryBlueColor,
+                    activeColor: kMediumGreenColor,
+                  ),
+                ),
+                const SizedBox(
+                  height: 12.0,
+                ),
+                CustomButton(
+                  btnWidth: MediaQuery.of(context).size.width,
+                  btnHeight: 42.0,
+                  btnOnPressed: isEmail
+                      ? () async {
                           setState(() {
-                            _isSubmittingEmailCode = false;
+                            _isSubmittingEmailCode = true;
                           });
-                        });
 
-                        if (response.statusCode == 200) {
-                          setState(() {
-                            _isEmailVerified = true;
-                            _isEmailTyping = false;
+                          String _url =
+                              "https://adam-web-api.herokuapp.com/user/verify-email-code";
+
+                          https.Response response = await https.post(
+                            Uri.parse(_url),
+                            body: {
+                              "cust_email": emailController.text.trim(),
+                              "code": codeController.text.trim(),
+                            },
+                          ).whenComplete(() {
+                            setState(() {
+                              _isSubmittingEmailCode = false;
+                            });
                           });
-                          customSnackBar(
-                            context,
-                            kSecondaryBlueColor,
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.mark_chat_read,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 8.0,
-                                ),
-                                Text(
-                                  "Email verified successfully!",
-                                  style: TextStyle(
+
+                          if (response.statusCode == 200) {
+                            setState(() {
+                              _isEmailVerified = true;
+                              _isEmailTyping = false;
+                            });
+                            customSnackBar(
+                              context,
+                              kSecondaryBlueColor,
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.mark_chat_read,
                                     color: Colors.white,
                                   ),
-                                )
-                              ],
-                            ),
-                          );
-                          Navigator.pop(context);
-                        } else if (response.statusCode == 204) {
-                          print('already taken email!');
-                          _errorSignup("Invalid code entered!");
-                        } else {
-                          print('some other error!');
-                          _errorSignup("Unknown error occured!");
+                                  SizedBox(
+                                    width: 8.0,
+                                  ),
+                                  Text(
+                                    "Email verified successfully!",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                            Navigator.pop(context);
+                          } else if (response.statusCode == 204) {
+                            print('already taken email!');
+                            _errorSignup("Invalid code entered!");
+                          } else {
+                            print('some other error!');
+                            _errorSignup("Unknown error occured!");
+                          }
                         }
-                      }
-                    : () async {
-                        setState(() {
-                          _isSubmittingPhoneCode = true;
-                        });
-
-                        String _url =
-                            "https://adam-web-api.herokuapp.com/user/verify-sms-code";
-
-                        https.Response response = await https.post(
-                          Uri.parse(_url),
-                          body: {
-                            "cust_phone": phoneNumberController.text.trim(),
-                            "code": emailCodeController.text.trim(),
-                          },
-                        ).whenComplete(() {
+                      : () async {
                           setState(() {
-                            _isSubmittingPhoneCode = false;
+                            _isSubmittingPhoneCode = true;
                           });
-                        });
 
-                        if (response.statusCode == 200) {
-                          setState(() {
-                            _isPhoneVerified = false;
-                            _isPhoneTyping = false;
+                          String _url =
+                              "https://adam-web-api.herokuapp.com/user/verify-sms-code";
+
+                          https.Response response = await https.post(
+                            Uri.parse(_url),
+                            body: {
+                              "cust_phone": phoneNumberController.text.trim(),
+                              "code": codeController.text.trim(),
+                            },
+                          ).whenComplete(() {
+                            setState(() {
+                              _isSubmittingPhoneCode = false;
+                            });
                           });
-                          customSnackBar(
-                            context,
-                            kSecondaryBlueColor,
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.phone,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 8.0,
-                                ),
-                                Text(
-                                  "Phone number verified successfully!",
-                                  style: TextStyle(
+
+                          if (response.statusCode == 200) {
+                            setState(() {
+                              _isPhoneVerified = false;
+                              _isPhoneTyping = false;
+                            });
+                            customSnackBar(
+                              context,
+                              kSecondaryBlueColor,
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.phone,
                                     color: Colors.white,
                                   ),
-                                )
-                              ],
-                            ),
-                          );
-                          Navigator.pop(context);
-                        } else if (response.statusCode == 204) {
-                          _errorSignup("Invalid code entered!");
-                        } else {
-                          print('some other error!');
-                          _errorSignup("Unknown error occured!");
-                        }
-                      },
-                btnColor: kMediumGreenColor,
-                btnText: _isSubmittingEmailCode || _isSubmittingPhoneCode
-                    ? kLoaderWhite
-                    : const Text(
-                        "Submit",
-                        style: kBtnTextStyle,
-                      ),
-              ),
-            ],
+                                  SizedBox(
+                                    width: 8.0,
+                                  ),
+                                  Text(
+                                    "Phone number verified successfully!",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                            Navigator.pop(context);
+                          } else if (response.statusCode == 204) {
+                            _errorSignup("Invalid code entered!");
+                          } else {
+                            print('some other error!');
+                            _errorSignup("Unknown error occured!");
+                          }
+                        },
+                  btnColor: kMediumGreenColor,
+                  btnText: _isSubmittingEmailCode || _isSubmittingPhoneCode
+                      ? kLoaderWhite
+                      : const Text(
+                          "Submit",
+                          style: kBtnTextStyle,
+                        ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

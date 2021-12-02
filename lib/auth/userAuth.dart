@@ -34,14 +34,11 @@ class UserAuth {
 
     if (response.statusCode == 200) {
       // account created
-      print("Account created!");
       return response.statusCode;
     } else if (response.statusCode == 204) {
       // already exists
-      print("Account already exists!");
       return response.statusCode;
     }
-    print("Undefined error!");
     return response.statusCode;
   }
 
@@ -64,20 +61,14 @@ class UserAuth {
       prefs.setString('token', json['token']);
       prefs.setString('userId', json['userId']);
 
-      print(prefs.getString('token'));
-
       return response.statusCode;
     } else if (response.statusCode == 204) {
-      print("User not found!");
       return response.statusCode;
     } else if (response.statusCode == 205) {
-      print("Password mismatch!");
       return response.statusCode;
     } else if (response.statusCode == 401) {
-      print("Token expire");
       return response.statusCode;
     }
-    print("Some error!");
     return response.statusCode;
   }
 
@@ -97,10 +88,7 @@ class UserAuth {
     });
 
     if (response.statusCode == 200) {
-      // logout success
-      // remove local data of user
       prefs.remove('userData');
-      print("LOGOUT!");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -129,7 +117,6 @@ class UserAuth {
     });
 
     if (response.statusCode == 200) {
-      print("PROFILE UPDATED!");
       Map json = jsonDecode(response.body);
       String jsonData = jsonEncode(UserData.fromJSON(json));
       prefs.setString("userData", jsonData);
@@ -161,7 +148,6 @@ class UserAuth {
       Map json = jsonDecode(response.body);
       String jsonData = jsonEncode(UserData.fromJSON(json));
       prefs.setString("userData", jsonData);
-      print("DP UPLOADED $photoUrl");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -176,11 +162,9 @@ class UserAuth {
     });
 
     if (response.statusCode == 200) {
-      print("Email found!");
       Map json = jsonDecode(response.body);
       return json['resetLink'];
     } else if (response.statusCode == 204) {
-      print("Account does not exists with this email!");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -209,12 +193,10 @@ class UserAuth {
       headers: headers,
       body: body,
     );
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
-      print('pass updated!');
       return response.statusCode;
     } else {
-      print('some error!');
       return response.statusCode;
     }
   }
@@ -241,15 +223,11 @@ class UserAuth {
       body: body,
     );
 
-    print(response.statusCode);
     if (response.statusCode == 200) {
-      print('account deleted!');
       return response.statusCode;
     } else if (response.statusCode == 204) {
-      print('password mismatched!');
       return response.statusCode;
     } else {
-      print('some error!');
       return response.statusCode;
     }
   }
@@ -276,12 +254,9 @@ class UserAuth {
         body: body,
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
-        print('account disabled!');
         return response.statusCode;
       } else {
-        print('some error!');
         return response.statusCode;
       }
     } catch (e) {

@@ -60,6 +60,8 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                     validatorFtn: (value) {
                       if (value.isEmpty) {
                         return "Subject cannot be empty!";
+                      } else if (value.substring(0, 1) == " ") {
+                        return "Empty spaces in start not allowed!";
                       }
                       return null;
                     },
@@ -77,6 +79,8 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                           return "Details cannot be empty!";
                         } else if (value.length < 15) {
                           return "Detials cannot be less than 15 characters!";
+                        } else if (value.substring(0, 1) == " ") {
+                          return "Empty spaces in start not allowed!";
                         }
                         return null;
                       },

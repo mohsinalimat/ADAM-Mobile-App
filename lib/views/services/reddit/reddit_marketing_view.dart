@@ -209,8 +209,6 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
         }
       });
 
-      print("RESPONSE GENERATED!!");
-
       if (data is String) {
         print(data);
         customSnackBar(
@@ -221,7 +219,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  data,
+                  'Some error occured!',
                   style: TextStyle(color: Colors.white),
                 ),
               ],
@@ -284,7 +282,6 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
       });
 
       if (data is String) {
-        print(data);
         customSnackBar(
             context,
             Colors.red,
@@ -293,7 +290,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  'Please try again after 90 secs to avoid ban :)',
+                  'Some error occured!',
                   style: TextStyle(color: Colors.white),
                 ),
               ],
