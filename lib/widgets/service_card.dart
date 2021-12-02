@@ -11,14 +11,10 @@ class ServiceCard extends StatefulWidget {
   const ServiceCard({
     Key key,
     this.service,
-    this.addFavorite,
-    this.isFavorite = false,
     this.refreshFtn,
   }) : super(key: key);
 
   final Service service;
-  final Function addFavorite;
-  final bool isFavorite;
   final Function(bool) refreshFtn;
 
   @override
@@ -28,9 +24,15 @@ class ServiceCard extends StatefulWidget {
 class _ServiceCardState extends State<ServiceCard> {
   bool _isFav = false;
 
+  void _getFavoriteOrNot() {
+    // setState(() {
+    //   _isFav = widget.service.isFavorite;
+    // });
+  }
+
   @override
   void initState() {
-    _isFav = widget.isFavorite;
+    _getFavoriteOrNot();
     super.initState();
   }
 
@@ -57,9 +59,7 @@ class _ServiceCardState extends State<ServiceCard> {
               ),
             ),
           );
-          print('came back!!!! $value');
           if (value == null) {
-            print('value was NULL');
             value = false;
           }
           if (value) {
@@ -156,11 +156,14 @@ class _ServiceCardState extends State<ServiceCard> {
                               Colors.pink,
                               Row(children: [
                                 Icon(
-                                    _isFav
-                                        ? Icons.favorite_rounded
-                                        : Icons.favorite_border_rounded,
-                                    color: Colors.white),
-                                const SizedBox(width: 8.0),
+                                  _isFav
+                                      ? Icons.favorite_rounded
+                                      : Icons.favorite_border_rounded,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(
+                                  width: 8.0,
+                                ),
                                 Text(
                                   "${widget.service.serviceName} added to favorites!",
                                   style: TextStyle(color: Colors.white),

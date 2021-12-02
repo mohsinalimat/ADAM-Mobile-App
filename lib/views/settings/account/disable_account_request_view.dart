@@ -1,3 +1,4 @@
+import 'package:adam/app_routes.dart';
 import 'package:adam/auth/userAuth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/themeController/themeProvider.dart';
@@ -177,7 +178,11 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
           ),
         );
       } else {
-        Navigator.of(context).pop();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.login,
+          (route) => route.settings.name == AppRoutes.login ? true : false,
+        );
         customSnackBar(
           context,
           kSecondaryBlueColor,
@@ -194,6 +199,7 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
             ],
           ),
         );
+        await UserAuth().logout(context);
       }
     }
   }

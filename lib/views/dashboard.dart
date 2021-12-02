@@ -97,8 +97,8 @@ class _DashboardState extends State<Dashboard>
           },
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10.0),
-              bottomLeft: Radius.circular(10.0),
+              topLeft: Radius.circular(8.0),
+              bottomLeft: Radius.circular(8.0),
             ),
             child: Scaffold(
               appBar: _bottomBarProviders.currentIndex == 1
