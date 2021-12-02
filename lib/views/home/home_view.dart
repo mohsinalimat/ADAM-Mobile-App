@@ -74,7 +74,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   // getting image locally
-
   String _photo;
   void _getLocalPhoto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
