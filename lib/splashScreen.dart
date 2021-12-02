@@ -18,12 +18,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   void _authCheck() async {
     String stringfyJson;
-    try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      stringfyJson = pref.getString("userData");
-    } catch (e) {
-      print(e.toString());
-    }
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    stringfyJson = pref.getString("userData");
     UserData userData;
     if (stringfyJson != null) {
       Map userDataObject = jsonDecode(stringfyJson);

@@ -191,6 +191,8 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
                                 validator: (value) {
                                   if (value.isEmpty) {
                                     return "Body cannot be empty!";
+                                  } else if (value.substring(0, 1) == " ") {
+                                    return "Empty spaces in start not allowed!";
                                   }
                                   return null;
                                 },

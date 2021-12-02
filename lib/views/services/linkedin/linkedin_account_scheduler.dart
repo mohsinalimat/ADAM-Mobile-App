@@ -34,14 +34,6 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
 
   bool _isUpdating = false; // updating posts
 
-  // file/media picking
-  FilePickerResult filePickerResult;
-  PlatformFile platformFile;
-  File someFile;
-  bool _uploadingFile = false;
-  bool _fileUploaded = false;
-  String path = "";
-
   List scheduledPosts = [
     ScheduledPostCard(
       caption: "Testing LinkedIn Post from Flutter app",
@@ -76,7 +68,7 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
-      absorbing: _isUpdating || _uploadingFile,
+      absorbing: _isUpdating,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -317,23 +309,6 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
     );
   }
 
-  // pickingFile
-  void _addAttachment() async {
-    filePickerResult = await FilePicker.platform.pickFiles();
-
-    if (filePickerResult != null) {
-      someFile = File(filePickerResult.files.single.path);
-      platformFile = filePickerResult.files.first;
-
-      // sending the file in chat
-      setState(() {
-        _uploadingFile = false;
-        _fileUploaded = true;
-        path = platformFile.path;
-      });
-    }
-  }
-
   // post
   void _post() async {
     if (_formKey.currentState.validate()) {
@@ -373,8 +348,6 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
         );
       } else {
         setState(() {
-          _fileUploaded = false;
-          someFile = null;
           scheduledPosts.insert(
               0,
               ScheduledPostCard(

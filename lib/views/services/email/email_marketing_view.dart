@@ -205,7 +205,15 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
                               icon: Icons.email,
                               trailing: Icons.add,
                               trailingCallBack: () {
-                                if (_customEmailController.text.isNotEmpty) {
+                                if (_emailData.contains(
+                                    _customEmailController.text.trim())) {
+                                  customSnackBar(
+                                    context,
+                                    Colors.red,
+                                    Text('Email already added!'),
+                                  );
+                                } else if (_customEmailController
+                                    .text.isNotEmpty) {
                                   setState(() {
                                     _emailData.insert(
                                         0, _customEmailController.text.trim());
@@ -400,7 +408,19 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8.0),
-              Text(value.toString()),
+              Text('Some error occured!'),
+            ],
+          ),
+        );
+      } else if (value == 204) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text("Cannot send empty text!"),
             ],
           ),
         );
@@ -455,7 +475,19 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8.0),
-              Text(value.toString()),
+              Text('Some error occured!'),
+            ],
+          ),
+        );
+      } else if (value == 204) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text("Cannot send empty text!"),
             ],
           ),
         );
@@ -508,7 +540,19 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8.0),
-              Text(value.toString()),
+              Text('Some error occured!'),
+            ],
+          ),
+        );
+      } else if (value == 204) {
+        customSnackBar(
+          context,
+          Colors.red,
+          Row(
+            children: [
+              const Icon(Icons.info, color: Colors.white),
+              const SizedBox(width: 8.0),
+              Text("Cannot send empty text!"),
             ],
           ),
         );

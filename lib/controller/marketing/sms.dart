@@ -17,16 +17,12 @@ class SMSMarketing {
         url,
         data: body,
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
-        print("SMS SENT CSV!");
         return response.statusCode;
       } else {
-        print('some error!');
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -42,16 +38,13 @@ class SMSMarketing {
         url,
         data: body,
       );
-      print(response.statusCode);
+
       if (response.statusCode == 200) {
-        print("SMS SENT DATA BANK!");
         return response.statusCode;
       } else {
-        print('some error!');
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
