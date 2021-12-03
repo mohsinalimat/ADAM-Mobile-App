@@ -1,5 +1,5 @@
 import 'package:adam/constants.dart';
-import 'package:adam/model/scraping/reddit/scraped_data.dart';
+import 'package:adam/model/scraping/reddit/scraped_user.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 

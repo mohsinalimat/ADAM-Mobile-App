@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/model/userData.dart';
-import 'package:adam/widgets/messageBubble.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/model/user_data.dart';
+import 'package:adam/views/chat/widgets/message_bubble.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_socket_io/flutter_socket_io.dart';

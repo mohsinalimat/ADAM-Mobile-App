@@ -1,5 +1,5 @@
 import 'package:adam/app_routes.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

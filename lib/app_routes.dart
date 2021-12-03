@@ -3,7 +3,6 @@ class AppRoutes {
   static final login = "/login";
   static final signUp = "/signUp";
   static final forgotPassword = "/forgotPassword";
-  static final emailNotVerified = "/emailNotVerified";
   static final dashboard = "/dashboard";
   static final deleteAccount = "/deleteAccount";
   static final changePassword = "/changePassword";

@@ -1,9 +1,9 @@
-import 'package:adam/animations/bottomAnimation.dart';
+import 'package:adam/animations/bottom_animation.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
-import 'package:adam/widgets/subscriptionHistoryCard.dart';
+import 'package:adam/views/subscription_history/widgets/subscription_history_card.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 

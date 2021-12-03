@@ -1,8 +1,8 @@
-import 'package:adam/animations/bottomAnimation.dart';
+import 'package:adam/animations/bottom_animation.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/widgets/logoDisplay.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/widgets/app_logo.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,14 +1,14 @@
 import 'package:adam/app_routes.dart';
-import 'package:adam/auth/userAuth.dart';
+import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-class MyDrawer extends StatelessWidget {
+class CustomDrawer extends StatelessWidget {
   final _userAuth = UserAuth();
   final _drawerOptions = [
     "Account",

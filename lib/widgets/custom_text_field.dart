@@ -1,5 +1,5 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';

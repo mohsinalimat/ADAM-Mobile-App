@@ -1,7 +1,7 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/widgets/custom_button.dart';
-import 'package:adam/widgets/customTextField.dart';
+import 'package:adam/widgets/custom_text_field.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

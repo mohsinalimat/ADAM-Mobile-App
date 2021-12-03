@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/instagram.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/widgets/customTextField.dart';
+import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/custom_button.dart';
-import 'package:adam/widgets/logoDisplay.dart';
+import 'package:adam/widgets/app_logo.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';

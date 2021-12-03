@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:adam/model/service.dart';
 import 'package:adam/model/subscription_history.dart';
-import 'package:adam/model/userData.dart';
+import 'package:adam/model/user_data.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';

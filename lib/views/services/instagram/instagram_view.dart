@@ -1,8 +1,8 @@
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
 import 'package:adam/views/services/instagram/instagram_marketing_view.dart';
-import 'package:adam/widgets/non_premium.dart';
+import 'package:adam/widgets/non_premium_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

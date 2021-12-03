@@ -1,13 +1,13 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/user_all_reviews.dart';
 import 'package:adam/views/stripe/stripePayment.dart';
 import 'package:adam/views/stripe/stripeServer.dart';
 import 'package:adam/widgets/custom_button.dart';
-import 'package:adam/widgets/feedbackCard.dart';
+import 'package:adam/views/services/widgets/feedback_card.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
