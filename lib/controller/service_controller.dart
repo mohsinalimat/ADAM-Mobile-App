@@ -87,11 +87,19 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print('services found!');
+      List<dynamic> _ids = response.data['subscribedServices'];
+      List<String> _stringIds = [];
+
+      for (int i = 0; i < _ids.length; i++) {
+        _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+      }
+
+      prefs.setStringList('services', _stringIds);
+
       return SubscribedServices.fromJson(response.data);
     } else {
       print(response.statusCode);
-      throw Exception('Failed to load services');
+      return "Some error occured!";
     }
   }
 

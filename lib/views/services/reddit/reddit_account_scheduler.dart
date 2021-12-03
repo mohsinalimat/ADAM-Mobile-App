@@ -4,6 +4,8 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/reddit.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
+import 'package:adam/views/services/widgets/scheduled_post_card.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/app_logo.dart';
@@ -675,38 +677,5 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
         }
       }
     }
-  }
-}
-
-class ScheduledPostCard extends StatelessWidget {
-  final String caption;
-  final String date;
-  final String time;
-
-  const ScheduledPostCard({
-    Key key,
-    this.caption = "Some caption here",
-    this.date = "12-10-2022",
-    this.time = "12:00 PM",
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final _themeProviders = Provider.of<ThemeProvider>(context);
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: AssetImage('assets/phoneVerify.gif'),
-        ),
-        title: Text(
-          // "${caption.substring(0, 17)}...",
-          caption,
-          style: TextStyle(
-            color: _themeProviders.darkTheme ? Colors.white : kPrimaryBlueColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text("$date at $time"),
-      ),
-    );
   }
 }
