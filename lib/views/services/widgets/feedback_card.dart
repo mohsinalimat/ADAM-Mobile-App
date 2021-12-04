@@ -1,5 +1,5 @@
 import 'package:adam/constants.dart';
-import 'package:adam/model/service.dart';
+import 'package:adam/model/service/service_comment.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 

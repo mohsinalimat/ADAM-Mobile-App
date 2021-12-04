@@ -1,7 +1,8 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/service.dart';
+import 'package:adam/model/service/service.dart';
+import 'package:adam/model/service/service_type.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/user_all_reviews.dart';
 import 'package:adam/views/stripe/stripe_payment.dart';
@@ -13,9 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceSubscriptionView extends StatefulWidget {
   final Service service;
@@ -31,6 +32,8 @@ class ServiceSubscriptionView extends StatefulWidget {
 }
 
 class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
+  final _hiveBox = Hive.box('subscribedServices');
+
   final _reviewController = TextEditingController();
   final ServiceController serviceController = ServiceController();
 
@@ -354,29 +357,32 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
   // get local IDs
   void _getLocalSubServicesID() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-
-    _localServicesIDs = _prefs.getStringList('services');
-    if (_localServicesIDs == null) {
+    List _cacheServices = _hiveBox.get('services');
+    if (_cacheServices == null || _cacheServices.isEmpty) {
       setState(() {
         _localServicesIDs = [];
       });
+    } else {
+      for (int i = 0; i < _cacheServices.length; i++) {
+        _localServicesIDs.add(_cacheServices[i]['serviceData']['_id']);
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   // store ID in local
   void _storeServiceID() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    List _cacheServices = _hiveBox.get('services');
 
     setState(() {
       _localServicesIDs.add(widget.service.serviceId);
+      _cacheServices.add(widget.service);
     });
 
     // store IDs locally
-    _prefs.setStringList(
+    await _hiveBox.put(
       'services',
-      _localServicesIDs,
+      _cacheServices,
     );
   }
 

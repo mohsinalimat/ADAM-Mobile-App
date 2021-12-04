@@ -38,7 +38,6 @@ class StripeServer {
       );
       return result.data['id'];
     } catch (e) {
-      print(e.response);
       throw e;
     }
   }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/utils/main_imports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,10 +20,10 @@ class _SplashScreenState extends State<SplashScreen> {
     String stringfyJson;
     SharedPreferences pref = await SharedPreferences.getInstance();
     stringfyJson = pref.getString("userData");
-    UserData userData;
+    User userData;
     if (stringfyJson != null) {
       Map userDataObject = jsonDecode(stringfyJson);
-      userData = UserData.fromJSON(userDataObject);
+      userData = User.fromJSON(userDataObject);
     }
 
     Future.delayed(Duration(seconds: 3), () {

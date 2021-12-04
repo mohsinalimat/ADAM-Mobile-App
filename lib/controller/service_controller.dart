@@ -1,13 +1,18 @@
 import 'dart:convert';
 
-import 'package:adam/model/service.dart';
+import 'package:adam/model/service/service.dart';
+import 'package:adam/model/service/services_list.dart';
+import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
 import 'package:adam/model/subscription_history.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:dio/dio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceController {
+  final _hiveBox = Hive.box('subscribedServices');
+
   Future<int> subscribeService(String serviceId, bool isPremium) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
@@ -26,15 +31,11 @@ class ServiceController {
         'isPremium': isPremium.toString(),
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
-      print('subscribed!');
       return response.statusCode;
     } else if (response.statusCode == 204) {
-      print('already subscribed!');
       return response.statusCode;
     } else {
-      print('some error!');
       return response.statusCode;
     }
   }
@@ -55,51 +56,53 @@ class ServiceController {
         'serviceId': serviceId,
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
-      print('unsubscribed!');
       return response.statusCode;
     } else {
-      print('some error!');
       return response.statusCode;
     }
   }
 
   Future getSubscribedServices() async {
     Dio dio = Dio();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String _token = prefs.getString('token');
+      String _userId = prefs.getString('userId');
+      String url =
+          "https://adam-web-api.herokuapp.com/user/view-subscribed-services";
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _token = prefs.getString('token');
-    String _userId = prefs.getString('userId');
-    String url =
-        "https://adam-web-api.herokuapp.com/user/view-subscribed-services";
-
-    Response response = await dio.post(
-      url,
-      data: {
-        "userId": _userId,
-      },
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $_token",
+      Response response = await dio.post(
+        url,
+        data: {
+          "userId": _userId,
         },
-      ),
-    );
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $_token",
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      List<dynamic> _ids = response.data['subscribedServices'];
-      List<String> _stringIds = [];
+      if (response.statusCode == 200) {
+        List<dynamic> _ids = response.data['subscribedServices'];
+        List<String> _stringIds = [];
 
-      for (int i = 0; i < _ids.length; i++) {
-        _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+        for (int i = 0; i < _ids.length; i++) {
+          _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+        }
+
+        prefs.setStringList('services', _stringIds);
+
+        // cache in Hive
+        await _hiveBox.put('services', _ids);
+
+        return SubscribedServices.fromJson(response.data);
+      } else {
+        return "Some error occured!";
       }
-
-      prefs.setStringList('services', _stringIds);
-
-      return SubscribedServices.fromJson(response.data);
-    } else {
-      print(response.statusCode);
-      return "Some error occured!";
+    } on DioError catch (e) {
+      return e.message;
     }
   }
 
@@ -116,6 +119,18 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
+      List<Service> _services = [];
+      List<dynamic> _campaigns = json.decode(response.body)['services'];
+
+      for (int i = 0; i < _campaigns.length; i++) {
+        _services.add(Service.fromJSON(_campaigns[i]));
+      }
+
+      await _hiveBox.put(
+        'campaigns',
+        _services,
+      );
+
       return ServicesList.fromJSON(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load services');
@@ -128,10 +143,10 @@ class ServiceController {
     // local data
     String _token = prefs.getString('token');
     String stringfyJson = prefs.getString("userData");
-    UserData userData;
+    User userData;
 
     Map userDataObject = jsonDecode(stringfyJson);
-    userData = UserData.fromJSON(userDataObject); // userdata object
+    userData = User.fromJSON(userDataObject); // userdata object
 
     String url = "https://adam-web-api.herokuapp.com/user/add-feedback";
 
@@ -152,7 +167,6 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print("FEEDBACK SUCCESS!");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -179,7 +193,6 @@ class ServiceController {
       },
     );
     if (response.statusCode == 200) {
-      print("FAVORITES VIEW!");
       return ServicesList.fromJSON(jsonDecode(response.body));
     } else if (response.statusCode == 204) {
       return ServicesList.fromJSON({"services": []});
@@ -210,7 +223,6 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print("FAVORITE ADDED!");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -239,7 +251,6 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print("FAVORITE DELETED!");
       return response.statusCode;
     } else {
       return response.statusCode;

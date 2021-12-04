@@ -1,4 +1,4 @@
-class UserData {
+class User {
   final String token;
   final String refreshToken;
 
@@ -14,7 +14,7 @@ class UserData {
   final String country;
   final String photo;
 
-  UserData({
+  User({
     this.token,
     this.refreshToken,
     this.userId,
@@ -30,8 +30,8 @@ class UserData {
     this.photo,
   });
 
-  factory UserData.fromJSON(var json) {
-    return UserData(
+  factory User.fromJSON(var json) {
+    return User(
       token: json['token'],
       userId: json['userId'],
       refreshToken: json['refreshToken'],

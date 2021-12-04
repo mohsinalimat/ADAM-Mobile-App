@@ -1,10 +1,10 @@
 import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/icons/forgot_pass.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -55,10 +55,11 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       SizedBox(
                         height: height * 0.05,
                       ),
-                      SvgPicture.asset(
-                        'assets/forgot.svg',
-                        height: 100,
-                        // height: height * 0.2,
+                      CustomPaint(
+                        size: ForgotIconPainter.size(
+                          MediaQuery.of(context).size.width * 0.4,
+                        ),
+                        painter: ForgotIconPainter(),
                       ),
                       SizedBox(
                         height: height * 0.03,
@@ -113,7 +114,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                 _isLoading = false;
                               });
                             });
-                            print(result);
                             if (result is String) {
                               forgorEmailTextController.clear();
 
@@ -156,21 +156,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                   ],
                                 ),
                               );
-                              // var snackBar = SnackBar(
-                              //     content: Row(
-                              //   children: [
-                              //     Icon(Icons.link, color: Colors.white),
-                              //     const SizedBox(width: 8.0),
-                              //     Expanded(
-                              //       child: Text(
-                              //         "Reset link has been sent to your Email",
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ));
-                              // ScaffoldMessenger.of(context)
-                              //     .showSnackBar(snackBar);
-                              // Navigator.pop(context);
                             } else if (result == 204) {
                               var snackBar = SnackBar(
                                   backgroundColor: Colors.red,
@@ -210,54 +195,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             }
-
-                            // var value = await _auth
-                            //     .forgotPassword(
-                            //         forgorEmailTextController.text.trim())
-                            //     .whenComplete(() {
-                            //   setState(() {
-                            //     _isLoading = false;
-                            //   });
-                            // });
-                            // if (value is String) {
-                            //   print("Valueeee: " + value.toString());
-                            // var snackBar = SnackBar(
-                            //     backgroundColor: Colors.red,
-                            //     content: Row(
-                            //       children: [
-                            //         Icon(
-                            //           Icons.info,
-                            //           color: Colors.white,
-                            //         ),
-                            //         Text(
-                            //           " $value",
-                            //           style: TextStyle(
-                            //             color: Colors.white,
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ));
-                            // ScaffoldMessenger.of(context)
-                            //     .showSnackBar(snackBar);
-                            // } else {
-                            // forgorEmailTextController.clear();
-                            // var snackBar = SnackBar(
-                            //     content: Row(
-                            //   children: [
-                            //     Icon(Icons.link, color: Colors.white),
-                            //     const SizedBox(width: 8.0),
-                            //     Expanded(
-                            //       child: Text(
-                            //         "Reset link has been sent to your Email",
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ));
-                            // ScaffoldMessenger.of(context)
-                            //     .showSnackBar(snackBar);
-
-                            // Navigator.pop(context);
-                            // }
                           }
                         },
                         btnColor: _themeProvider.darkTheme

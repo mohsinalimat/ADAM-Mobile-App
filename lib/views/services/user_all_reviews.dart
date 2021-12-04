@@ -1,5 +1,5 @@
 import 'package:adam/animations/bottom_animation.dart';
-import 'package:adam/model/service.dart';
+import 'package:adam/model/service/service_comment.dart';
 import 'package:adam/views/services/widgets/feedback_card.dart';
 import 'package:flutter/material.dart';
 

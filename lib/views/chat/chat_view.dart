@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/views/chat/widgets/message_bubble.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -36,9 +36,9 @@ class _ChatViewState extends State<ChatView> {
   void _addAttachment() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String stringfyJson = preferences.getString("userData");
-    UserData userData;
+    User userData;
     Map userDataObject = jsonDecode(stringfyJson);
-    userData = UserData.fromJSON(userDataObject);
+    userData = User.fromJSON(userDataObject);
 
     filePickerResult = await FilePicker.platform.pickFiles();
 
@@ -63,59 +63,11 @@ class _ChatViewState extends State<ChatView> {
   void initState() {
     _focus = FocusNode();
     _focus.addListener(() {
-      print("FOCUS ${_focus.hasFocus}");
       _fieldEnabled = _focus.hasFocus;
-      print("MESSAGE ENABLED! $_fieldEnabled");
     });
-
-    // initSocket();
 
     super.initState();
   }
-
-  // void initSocket() {
-  //   _socketIO = SocketIOManager().createSocketIO(
-  //     'https://adam-web-api.herokuapp.com',
-  //     '/',
-  //   );
-
-  //   _socketIO.init();
-
-  //   print(_socketIO.getId());
-
-  //   _socketIO.subscribe(
-  //     'response',
-  //     () {
-  //       print("CONECTED HO GYAAA!!!!!!!!!!");
-  //     },
-  //   );
-
-  //   _socketIO.connect();
-  // }
-
-  // void initSocket() {
-  //   try {
-  //     _socket = IO.io(
-  //       'https://adam-web-api.herokuapp.com/',
-  //       <String, dynamic>{
-  //         'transports': ['websocket'],
-  //         'autoConnect': false,
-  //       },
-  //     );
-
-  //     print(_socket.connected);
-
-  //     _socket.connect();
-
-  //     _socket.onConnect((data) => print('connnect to socket'));
-
-  //     _socket.on('connected', (data) => print("DATA ON CONN: $data"));
-
-  //     _socket.on('response', (data) => print("DATA ON RESPONSE: $data"));
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -215,9 +167,9 @@ class _ChatViewState extends State<ChatView> {
                                 await SharedPreferences.getInstance();
                             String stringfyJson =
                                 preferences.getString("userData");
-                            UserData userData;
+                            User userData;
                             Map userDataObject = jsonDecode(stringfyJson);
-                            userData = UserData.fromJSON(userDataObject);
+                            userData = User.fromJSON(userDataObject);
 
                             // _socketIO.sendMessage(
                             //   'chat',

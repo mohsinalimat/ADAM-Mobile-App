@@ -3,6 +3,7 @@ import 'package:adam/controller/marketing/twitter.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/twitter/scraped_user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/app_logo.dart';
@@ -24,6 +25,8 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
 
   // marketing data
   List _scrapedUsersData = [];
+
+  List<String> _usernames = [];
 
   @override
   void initState() {
@@ -50,7 +53,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
         child: SingleChildScrollView(
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -61,7 +64,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BackButton(
+                         CustomBackButton(
                           onPressed: () => Navigator.pop(context),
                         ),
                         const LogoDisplay()
@@ -165,6 +168,12 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                           "Target audience: ${_scrapedUsersData.length}",
                           style: Theme.of(context).textTheme.headline2,
                         ),
+                  const SizedBox(height: 5.0),
+                  !_dataScraped
+                      ? Container()
+                      : Text(
+                          "Tap the profile picture to select individual target audience",
+                        ),
                   const SizedBox(height: 10.0),
                   !_dataScraped
                       ? Container()
@@ -175,6 +184,23 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                             _scrapedUsersData.length,
                             (index) => TwitterScrapedUserDataCard(
                               twitterScrapedUser: _scrapedUsersData[index],
+                              usernames: _usernames,
+                              markForMessage: () {
+                                if (!_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames
+                                        .add(_scrapedUsersData[index].username);
+                                  });
+                                } else if (_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames.remove(
+                                        _scrapedUsersData[index].username);
+                                  });
+                                }
+                                print(_usernames);
+                              },
                             ),
                           ),
                         ),
@@ -272,6 +298,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
       var data = await TwitterMarketing()
           .sendDMs(
         _marketingMsg.text.trim(),
+        _usernames,
       )
           .whenComplete(() {
         if (mounted) {
@@ -298,6 +325,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
             ));
       } else {
         setState(() {
+          _usernames = [];
           _dataScraped = false;
         });
         _marketingMsg.clear();
@@ -323,19 +351,34 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
 
 class TwitterScrapedUserDataCard extends StatelessWidget {
   final TwitterScrapedUser twitterScrapedUser;
+  final Function markForMessage;
+  final List<String> usernames;
 
-  const TwitterScrapedUserDataCard({Key key, @required this.twitterScrapedUser})
-      : super(key: key);
+  const TwitterScrapedUserDataCard({
+    Key key,
+    @required this.twitterScrapedUser,
+    this.usernames,
+    this.markForMessage,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Card(
       child: ExpansionTile(
-        leading: CircleAvatar(
-          backgroundImage: twitterScrapedUser.photo ==
-                  "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
-              ? AssetImage('assets/dp.png')
-              : NetworkImage(twitterScrapedUser.photo),
+        leading: GestureDetector(
+          onTap: markForMessage,
+          child: CircleAvatar(
+            backgroundImage: usernames.contains(twitterScrapedUser.username)
+                ? null
+                : twitterScrapedUser.photo ==
+                        "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+                    ? AssetImage('assets/dp.png')
+                    : NetworkImage(twitterScrapedUser.photo),
+            child: usernames.contains(twitterScrapedUser.username)
+                ? Icon(Icons.check)
+                : Container(),
+          ),
         ),
         title: Text(
           twitterScrapedUser.username,

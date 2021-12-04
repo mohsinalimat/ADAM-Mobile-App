@@ -1,7 +1,7 @@
 import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -17,7 +17,7 @@ import 'package:flutter/services.dart';
 
 class EditProfileView extends StatefulWidget {
   // final User user;
-  final UserData userData;
+  final User userData;
 
   const EditProfileView({
     Key key,
@@ -66,7 +66,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   bool _informationUpdated() {
-    print(dobController.text.trim());
     if (_oldName != fullNameController.text.trim() ||
         _oldPhone != phoneNumberController.text.trim() ||
         _oldDob != dobController.text.trim() ||
@@ -250,7 +249,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   setState(() {
                                     _gender = value;
                                   });
-                                  print(_gender);
                                 },
                               ),
                             ],
@@ -266,7 +264,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   setState(() {
                                     _gender = value;
                                   });
-                                  print(_gender);
                                 },
                               ),
                             ],
@@ -282,7 +279,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   setState(() {
                                     _gender = value;
                                   });
-                                  print(_gender);
                                 },
                               ),
                             ],
@@ -321,7 +317,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                       setState(() {
                                         _country = value;
                                       });
-                                      print(_country);
                                     },
                                   ),
                                 ),
@@ -358,7 +353,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                       setState(() {
                                         _city = value;
                                       });
-                                      print(_city);
                                     },
                                   ),
                                 ),
@@ -375,7 +369,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                           btnHeight: 40.0,
                           btnOnPressed: () async {
                             if (_informationUpdated()) {
-                              print(dobController.text.trim());
                               if (_formKey.currentState.validate()) {
                                 setState(() {
                                   _isLoading = true;

@@ -1,6 +1,7 @@
 import 'package:adam/animations/bottom_animation.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/icons/graph_icon.dart';
 import 'package:adam/providers/bottom_navbar_provider.dart';
 import 'package:adam/views/home/home_view.dart';
 import 'package:adam/views/custom_drawer.dart';
@@ -9,7 +10,6 @@ import 'package:adam/views/settings/settings_view.dart';
 import 'package:adam/views/stats/stats_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
@@ -144,17 +144,25 @@ class _DashboardState extends State<Dashboard>
                             onPressed: () =>
                                 _bottomBarProviders.currentIndex = i,
                             icon: i == 1
-                                ? SvgPicture.asset(
-                                    'assets/stats.svg',
-                                    height:
+                                ? CustomPaint(
+                                    size: GraphIconPainter.size(
                                         _bottomBarProviders.currentIndex == i
-                                            ? 24
-                                            : 22,
-                                    color: _bottomBarProviders.currentIndex == i
-                                        ? _themeProvider.darkTheme
-                                            ? Colors.white
-                                            : kPrimaryBlueColor
-                                        : Colors.grey[400],
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.07
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.06),
+                                    painter: GraphIconPainter(
+                                      color:
+                                          _bottomBarProviders.currentIndex == i
+                                              ? _themeProvider.darkTheme
+                                                  ? Colors.white
+                                                  : kPrimaryBlueColor
+                                              : Colors.grey[400],
+                                    ),
                                   )
                                 : Icon(
                                     _bottomIcons[i],

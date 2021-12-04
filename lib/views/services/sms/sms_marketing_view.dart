@@ -6,6 +6,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/sms.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/app_logo.dart';
 import 'package:csv/csv.dart';
@@ -108,7 +109,7 @@ class _SMSMarketingViewState extends State<SMSMarketingView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          BackButton(
+                          CustomBackButton(
                             onPressed: () => Navigator.pop(context),
                           ),
                           const LogoDisplay()

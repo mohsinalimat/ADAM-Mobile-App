@@ -2,6 +2,7 @@ import 'package:adam/app_routes.dart';
 import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/icons/forgot_pass.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -9,7 +10,6 @@ import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/pass_requirement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class ChangePasswordView extends StatefulWidget {
@@ -23,8 +23,6 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   String _passCheck = "";
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  // final _oldPassController = TextEditingController();
-  // final _auth = Auth();
   final _formKey = GlobalKey<FormState>();
   bool _updatingPass = false;
 
@@ -69,10 +67,10 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                         SizedBox(
                           height: height * 0.035,
                         ),
-                        SvgPicture.asset(
-                          'assets/forgot.svg',
-                          height: 100,
-                          // height: height * 0.2,
+                        CustomPaint(
+                          size: ForgotIconPainter.size(
+                              MediaQuery.of(context).size.width * 0.4),
+                          painter: ForgotIconPainter(),
                         ),
                         SizedBox(
                           height: height * 0.03,

@@ -31,9 +31,7 @@ class NoServiceFoundCard extends StatelessWidget {
                   child: FloatingActionButton(
                     elevation: 2.5,
                     heroTag: 'noservice',
-                    onPressed: () {
-                      animateToIndex(4.0, controller);
-                    },
+                    onPressed: animateToIndex,
                     child: const Icon(
                       Icons.arrow_downward,
                       size: 25.0,

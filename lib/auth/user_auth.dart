@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,7 +56,7 @@ class UserAuth {
       // login success
       // token & refreshToken
       Map json = jsonDecode(response.body);
-      String jsonData = jsonEncode(UserData.fromJSON(json));
+      String jsonData = jsonEncode(User.fromJSON(json));
       prefs.setString("userData", jsonData);
       prefs.setString('token', json['token']);
       prefs.setString('userId', json['userId']);
@@ -75,9 +75,9 @@ class UserAuth {
   Future<int> logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String stringfyJson = prefs.getString("userData");
-    UserData userData;
+    User userData;
     Map userDataObject = jsonDecode(stringfyJson);
-    userData = UserData.fromJSON(userDataObject);
+    userData = User.fromJSON(userDataObject);
 
     String _token = userData.token;
 
@@ -118,7 +118,7 @@ class UserAuth {
 
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
-      String jsonData = jsonEncode(UserData.fromJSON(json));
+      String jsonData = jsonEncode(User.fromJSON(json));
       prefs.setString("userData", jsonData);
       return response.statusCode;
     } else {
@@ -146,7 +146,7 @@ class UserAuth {
 
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
-      String jsonData = jsonEncode(UserData.fromJSON(json));
+      String jsonData = jsonEncode(User.fromJSON(json));
       prefs.setString("userData", jsonData);
       return response.statusCode;
     } else {

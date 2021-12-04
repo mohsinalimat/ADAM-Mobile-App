@@ -29,31 +29,30 @@ class RedditMarketing {
       );
 
       if (response.statusCode == 200) {
-        print("GOT THE DATA!");
         return RedditScrapedDataList.fromJSON(response.data);
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
 
-  Future startMarketing(
-      List<dynamic> redditDataList, String marketingContent) async {
+  Future startMarketing(List<dynamic> redditDataList, String marketingContent,
+      List<String> usernames) async {
     try {
       String url = "$kAzureIP:5050/reddit/marketing";
 
       // getting usernames from redditScrapedData list
-      List<String> _usernames = [];
-      for (int i = 0; i < redditDataList.length; i++) {
-        _usernames.add(redditDataList[i].username);
+      if (usernames.length == 0) {
+        for (int i = 0; i < redditDataList.length; i++) {
+          usernames.add(redditDataList[i].username);
+        }
       }
 
       var body = {
         "marketing_content": marketingContent,
-        "usernames_list": _usernames,
+        "usernames_list": usernames,
       };
 
       Response response = await dio.post(
@@ -65,13 +64,11 @@ class RedditMarketing {
       );
 
       if (response.statusCode == 200) {
-        print("GOT THE DATA!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -124,7 +121,6 @@ class RedditMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -151,7 +147,6 @@ class RedditMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -176,7 +171,6 @@ class RedditMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }

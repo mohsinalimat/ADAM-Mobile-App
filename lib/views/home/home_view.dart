@@ -5,8 +5,10 @@ import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/service.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/icons/drawer_icon.dart';
+import 'package:adam/model/service/services_list.dart';
+import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/providers/bottom_navbar_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
@@ -17,7 +19,7 @@ import 'package:adam/views/home/widgets/service_card.dart';
 import 'package:adam/views/home/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +33,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final _hivebox = Hive.box('subscribedServices');
+
   // scroll effect
   ScrollController _controller = ScrollController();
 
@@ -40,50 +44,21 @@ class _HomeViewState extends State<HomeView> {
   // future instance to presist FutureBuilder from calling again and again
   Future _servicesSubscribedFuture;
 
-  List subscribedServices = []; // dummy list to create the dots
-  List servicesAvailable = [];
+  // subscribed services
+  List _subscribedServices = [];
+  bool _noSubscribedServices = true;
+
+  // social media services
+  List _servicesAvailable = [];
 
   // get local user object
-  UserData _userData;
-  void _getLocalUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Map userDataObject = jsonDecode(prefs.getString("userData"));
-    UserData userData = UserData.fromJSON(userDataObject);
-    setState(() {
-      _userData = userData;
-    });
-  }
-
-  // fetching data
-  void _getServices() async {
-    ServicesList servicesList = await serviceController.getServices();
-    setState(() {
-      servicesAvailable = List.from(servicesList.services);
-    });
-  }
+  User _userData;
 
   // call back refresh
   bool refreshProfile = false;
-  callBack(boolVar) {
-    if (boolVar) {
-      setState(() {
-        refreshProfile = boolVar;
-        _servicesSubscribedFuture = serviceController.getSubscribedServices();
-      });
-      _getSubscribedServicesList();
-    }
-  }
 
   // getting image locally
   String _photo;
-  void _getLocalPhoto() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _userId = prefs.getString('userId');
-    String _path = prefs.get('${_userId}dp');
-    setState(() {
-      _photo = _path;
-    });
-  }
 
   @override
   void initState() {
@@ -97,12 +72,15 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final _width = MediaQuery.of(context).size.width;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _bottomBarProviders = Provider.of<BottomNavBarProvider>(context);
 
     return _userData == null
         ? Center(
-            child: CircularProgressIndicator(),
+            child: JumpingDotsProgressIndicator(
+              fontSize: 18.0,
+            ),
           )
         : SingleChildScrollView(
             controller: _controller,
@@ -121,13 +99,10 @@ class _HomeViewState extends State<HomeView> {
                             _bottomBarProviders
                                 .toggleDrawer(widget.animationController);
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: SvgPicture.asset(
-                              'assets/menu.svg',
-                              color: _themeProvider.darkTheme
-                                  ? Colors.white
-                                  : kPrimaryBlueColor,
+                          child: CustomPaint(
+                            size: DrawerIconPainter.size(_width * 0.07),
+                            painter: DrawerIconPainter(
+                              color: kPrimaryBlueColor,
                             ),
                           ),
                         ),
@@ -186,7 +161,7 @@ class _HomeViewState extends State<HomeView> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => ManageServicesView(
-                                services: subscribedServices,
+                                services: _subscribedServices,
                               ),
                             ),
                           );
@@ -210,65 +185,49 @@ class _HomeViewState extends State<HomeView> {
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  FutureBuilder(
-                    future: _servicesSubscribedFuture,
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data.subscribedServices.length == 0) {
-                          return NoServiceFoundCard(
-                            controller: _controller,
-                            animateToIndex: animateToIndex,
-                          );
-                        } else {
-                          return CarouselSlider.builder(
-                            itemCount: snapshot.data.subscribedServices.length,
-                            itemBuilder: (_, index, i) {
-                              return YourServiceCard(
-                                serviceIcon:
-                                    snapshot.data.subscribedServices[index]
-                                        ['serviceData']['service_icon'],
-                                serviceTitle:
-                                    snapshot.data.subscribedServices[index]
-                                        ['serviceData']['service_name'],
-                                isPremium: snapshot.data
-                                    .subscribedServices[index]['isPremium'],
-                                isRunning: snapshot.data
-                                    .subscribedServices[index]['isRunning'],
-                              );
+                  _subscribedServices.length == 0
+                      ? _noSubscribedServices
+                          ? Center(child: ShimmerLoaderYourServices())
+                          : NoServiceFoundCard(
+                              controller: _controller,
+                              animateToIndex: () =>
+                                  animateToIndex(4.0, _controller),
+                            )
+                      : CarouselSlider(
+                          options: CarouselOptions(
+                            enableInfiniteScroll: false,
+                            enlargeCenterPage: true,
+                            viewportFraction: 1,
+                            height: 330.0,
+                            onPageChanged: (index, reas) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
                             },
-                            options: CarouselOptions(
-                              enableInfiniteScroll: false,
-                              enlargeCenterPage: true,
-                              viewportFraction: 1,
-                              height: 330.0,
-                              onPageChanged: (index, reas) {
-                                setState(() {
-                                  _currentIndex = index;
-                                });
-                              },
-                            ),
-                          );
-                        }
-                      } else if (snapshot.hasError) {
-                        return Center(
-                          child: Text(snapshot.error.toString()),
-                        );
-                      } else {
-                        return Center(child: ShimmerLoaderYourServices());
-                      }
-                    },
-                  ),
+                          ),
+                          items: _subscribedServices
+                              .map(
+                                (e) => YourServiceCard(
+                                  serviceIcon: e['serviceData']['service_icon'],
+                                  serviceTitle: e['serviceData']
+                                      ['service_name'],
+                                  isPremium: e['isPremium'],
+                                  isRunning: e['isRunning'],
+                                ),
+                              )
+                              .toList(),
+                        ),
                   const SizedBox(height: 10.0),
-                  subscribedServices.length == 0
+                  _subscribedServices.length == 0
                       ? Center(
                           child: Container(
                               height:
-                                  subscribedServices.length == 0 ? 0.0 : 27.0),
+                                  _subscribedServices.length == 0 ? 0.0 : 27.0),
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: subscribedServices.map((service) {
-                            int index = subscribedServices.indexOf(service);
+                          children: _subscribedServices.map((service) {
+                            int index = _subscribedServices.indexOf(service);
                             return AnimatedContainer(
                               duration: Duration(milliseconds: 200),
                               width: _currentIndex == index ? 25.0 : 7.0,
@@ -285,7 +244,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             );
                           }).toList()),
-                  SizedBox(height: subscribedServices.length == 0 ? 0 : 30.0),
+                  SizedBox(height: _subscribedServices.length == 0 ? 0 : 8.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -300,7 +259,7 @@ class _HomeViewState extends State<HomeView> {
                     ],
                   ),
                   const SizedBox(height: 10.0),
-                  servicesAvailable.length == 0
+                  _servicesAvailable.length == 0
                       ? Center(
                           child: JumpingDotsProgressIndicator(
                             fontSize: 40.0,
@@ -313,9 +272,9 @@ class _HomeViewState extends State<HomeView> {
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           children: List.generate(
-                            servicesAvailable.length,
+                            _servicesAvailable.length,
                             (index) => ServiceCard(
-                              service: servicesAvailable[index],
+                              service: _servicesAvailable[index],
                               refreshFtn: callBack,
                             ),
                           ),
@@ -327,18 +286,31 @@ class _HomeViewState extends State<HomeView> {
   }
 
   // getting list of subscribed services of current user
-  Future<void> _getSubscribedServicesList() async {
-    SubscribedServices value = await _servicesSubscribedFuture;
-    if (mounted) {
+  Future<void> _getSubscribedServicesList(
+      {bool newServiceCheck = false}) async {
+    List _cacheServices = await _hivebox.get('services');
+    if (_cacheServices == null || _cacheServices.isEmpty || newServiceCheck) {
+      SubscribedServices value = await _servicesSubscribedFuture;
+      if (mounted) {
+        setState(() {
+          if (value.subscribedServices.isEmpty) {
+            _noSubscribedServices = true;
+          }
+          _noSubscribedServices = false;
+          _subscribedServices = List.from(value.subscribedServices);
+        });
+      }
+    } else {
       setState(() {
-        subscribedServices = List.from(value.subscribedServices);
+        _noSubscribedServices = false;
+        _subscribedServices = List.from(_cacheServices);
       });
     }
   }
 
   // to referch the services of user
   Future<void> _refreshServices() async {
-    await _getSubscribedServicesList();
+    await _getSubscribedServicesList(newServiceCheck: true);
     customSnackBar(
       context,
       kSecondaryBlueColor,
@@ -350,5 +322,50 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
+  }
+
+  Future<void> _getLocalPhoto() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _userId = prefs.getString('userId');
+    String _path = prefs.get('${_userId}dp');
+    setState(() {
+      _photo = _path;
+    });
+  }
+
+  callBack(boolVar) {
+    if (boolVar) {
+      setState(() {
+        refreshProfile = boolVar;
+        _servicesSubscribedFuture = serviceController.getSubscribedServices();
+      });
+      _getSubscribedServicesList(newServiceCheck: true);
+    }
+  }
+
+  // fetching data
+  Future<void> _getServices() async {
+    List _cacheCampaigns = await _hivebox.get('campaigns');
+
+    if (_cacheCampaigns == null || _cacheCampaigns.isEmpty) {
+      ServicesList servicesList = await serviceController.getServices();
+      if (mounted) {
+        setState(() {
+          _servicesAvailable = List.from(servicesList.services);
+        });
+      }
+    } else {
+      _servicesAvailable = List.from(_cacheCampaigns);
+      setState(() {});
+    }
+  }
+
+  Future<void> _getLocalUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map userDataObject = jsonDecode(prefs.getString("userData"));
+    User userData = User.fromJSON(userDataObject);
+    setState(() {
+      _userData = userData;
+    });
   }
 }

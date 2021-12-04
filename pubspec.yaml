@@ -27,14 +27,6 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  flutter_custom_clippers: ^2.0.0
-
-  google_fonts: ^2.1.0
-  flutter_svg: ^0.22.0
-  font_awesome_flutter: ^9.0.0
-  datetime_picker_formfield: ^2.0.0
-  date_time_picker: ^2.1.0  
 
   # firebase
   firebase_core: ^1.7.0
@@ -42,13 +34,12 @@ dependencies:
   
   # local storage
   shared_preferences: ^2.0.8
-
-  progress_indicators: ^1.0.0
-  flutter_rating_bar: ^4.0.0
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0
+  
+  # loader
   shimmer: ^2.0.0
-  flutter_overboard: ^3.0.0
-
-  syncfusion_flutter_charts: ^19.3.44+1
+  progress_indicators: ^1.0.0
 
   # attachments
   image_picker: ^0.8.4+2
@@ -63,36 +54,45 @@ dependencies:
   http: ^0.13.3
   js: ^0.6.3
 
+  # notification
   flutter_local_notifications: any
 
   # encryption
   flutter_dotenv: ^5.0.0
 
-  pin_code_fields: ^7.2.0
-  clippy_flutter: ^1.1.1
-  carousel_slider: ^3.0.0
-
   # saving subscription history
   path_provider: ^2.0.2
   screenshot: ^1.2.1
-
-  csv: ^5.0.0
 
   # share app
   share: ^2.0.4
   launch_review: ^3.0.1
 
-  url_launcher: ^6.0.9
+  # utils
   permission_handler: ^8.1.4+1
-
-  # chat
-  # flutter_socket_io: ^0.6.0
-  # socket_io_client: ^1.0.2
-
+  url_launcher: ^6.0.9
+  csv: ^5.0.0
+  flutter_rating_bar: ^4.0.0
+  flutter_overboard: ^3.0.0
+  syncfusion_flutter_charts: ^19.3.44+1
+  pin_code_fields: ^7.2.0
+  clippy_flutter: ^1.1.1
+  carousel_slider: ^3.0.0
+  cupertino_icons: ^1.0.2
+  flutter_custom_clippers: ^2.0.0
+  google_fonts: ^2.1.0
+  flutter_svg: ^0.22.0
+  font_awesome_flutter: ^9.0.0
+  datetime_picker_formfield: ^2.0.0
+  date_time_picker: ^2.1.0  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
+  # cache local storage
+  build_runner: ^2.1.5
+  hive_generator: ^1.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -5,7 +5,6 @@ import 'package:adam/controller/marketing/twitter.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/main_imports.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
-import 'package:adam/views/services/instagram/instagram_account_scheduler.dart';
 import 'package:adam/views/services/widgets/scheduled_post_card.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/custom_button.dart';

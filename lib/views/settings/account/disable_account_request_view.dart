@@ -2,10 +2,10 @@ import 'package:adam/app_routes.dart';
 import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/icons/disable_icon.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class DisableAccountRequestView extends StatefulWidget {
@@ -38,9 +38,10 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
           child: Column(
             children: [
               const SizedBox(height: 20.0),
-              SvgPicture.asset(
-                'assets/disable.svg',
-                height: 100,
+              CustomPaint(
+                size: DisableIconPainter.size(
+                    MediaQuery.of(context).size.width * 0.32),
+                painter: DisableIconPainter(),
               ),
               const SizedBox(height: 20.0),
               Text(
