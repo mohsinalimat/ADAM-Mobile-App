@@ -4,7 +4,6 @@ class LinkedInScrapedUserList {
   LinkedInScrapedUserList({this.scrapedUsers});
 
   factory LinkedInScrapedUserList.fromJSON(Map<String, dynamic> json) {
-    print(json);
     Iterable users = json['followers_data'];
     List<LinkedInScrapedUser> scrapedUser =
         users.map((data) => LinkedInScrapedUser.fromJSON(data)).toList();

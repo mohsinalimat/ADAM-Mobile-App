@@ -2,11 +2,11 @@ import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/icons/problem_icon.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class ReportProblemView extends StatefulWidget {
@@ -43,12 +43,12 @@ class _ReportProblemViewState extends State<ReportProblemView> {
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 20.0),
-                  SvgPicture.asset(
-                    'assets/problem.svg',
-                    height: 130,
+                  CustomPaint(
+                    size: ProblemIconPainter.size(
+                        MediaQuery.of(context).size.width * 0.4),
+                    painter: ProblemIconPainter(),
                   ),
                   const SizedBox(height: 35.0),
                   CustomTextField(
@@ -107,7 +107,7 @@ class _ReportProblemViewState extends State<ReportProblemView> {
                   ),
                   const SizedBox(height: 30.0),
                   CustomButton(
-                    btnWidth: 100.0,
+                    btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
                     btnOnPressed: _reportProblem,
                     btnColor: kPrimaryBlueColor,

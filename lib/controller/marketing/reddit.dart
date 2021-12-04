@@ -29,13 +29,11 @@ class RedditMarketing {
       );
 
       if (response.statusCode == 200) {
-        print("GOT THE DATA!");
         return RedditScrapedDataList.fromJSON(response.data);
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -66,13 +64,11 @@ class RedditMarketing {
       );
 
       if (response.statusCode == 200) {
-        print("GOT THE DATA!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -125,7 +121,6 @@ class RedditMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -152,7 +147,6 @@ class RedditMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -177,7 +171,6 @@ class RedditMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }

@@ -34,7 +34,6 @@ class LinkedInMarketing {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -89,7 +88,6 @@ class LinkedInMarketing {
         return response.statusCode;
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }

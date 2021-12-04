@@ -3,6 +3,7 @@ import 'package:adam/controller/marketing/reddit.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/reddit/scraped_user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/app_logo.dart';
@@ -50,8 +51,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -62,7 +62,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BackButton(
+                        CustomBackButton(
                           onPressed: () => Navigator.pop(context),
                         ),
                         const LogoDisplay()

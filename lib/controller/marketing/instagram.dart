@@ -34,7 +34,6 @@ class InstagramMarketing {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -58,13 +57,11 @@ class InstagramMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("SENT ALL MSGS!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -73,7 +70,6 @@ class InstagramMarketing {
   Future postImageStatus(String username, String password, String caption,
       String imagePath) async {
     try {
-      print('IMAGE SEND API!');
       String url = "$kAzureIP:8080/insta/post/status/image";
 
       var body = {
@@ -90,13 +86,11 @@ class InstagramMarketing {
       );
 
       if (response.statusCode == 200) {
-        print('posted an image status!');
         return response.statusCode;
       } else {
-        throw 'status failed!';
+        return 'status failed!';
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -117,15 +111,12 @@ class InstagramMarketing {
         data: body,
         options: Options(headers: headers),
       );
-      print(response.data);
       if (response.statusCode == 200) {
-        print('posted a video status!');
         return response.statusCode;
       } else {
-        throw 'status failed!';
+        return 'status failed!';
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -146,15 +137,12 @@ class InstagramMarketing {
         data: body,
         options: Options(headers: headers),
       );
-      print(response.data);
       if (response.statusCode == 200) {
-        print('posted an image story!');
         return response.statusCode;
       } else {
-        throw 'status failed!';
+        return 'Status failed!';
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -174,15 +162,12 @@ class InstagramMarketing {
         data: body,
         options: Options(headers: headers),
       );
-      print(response.data);
       if (response.statusCode == 200) {
-        print('posted a video story!');
         return response.statusCode;
       } else {
-        throw 'status failed!';
+        return 'Status failed!';
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }

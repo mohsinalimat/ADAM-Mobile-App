@@ -3,6 +3,7 @@ import 'package:adam/controller/marketing/twitter.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/twitter/scraped_user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/app_logo.dart';
@@ -52,7 +53,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
         child: SingleChildScrollView(
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -63,7 +64,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BackButton(
+                         CustomBackButton(
                           onPressed: () => Navigator.pop(context),
                         ),
                         const LogoDisplay()

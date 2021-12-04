@@ -129,7 +129,7 @@ class _SignUpViewState extends State<SignUpView> {
                       tag: 'logoText',
                       child: Material(
                         child: const Text(
-                          "Automated Digital Assitant in Marketing",
+                          "Automated Digital Assistant in Marketing",
                           style: TextStyle(letterSpacing: 1.5),
                         ),
                       ),
@@ -181,7 +181,6 @@ class _SignUpViewState extends State<SignUpView> {
                             icon: Icons.email,
                             validatorFtn: Validators.emailValidator,
                             onChangeFtn: (value) {
-                              print(value);
 
                               if (value.length == 0) {
                                 setState(() {
@@ -221,7 +220,6 @@ class _SignUpViewState extends State<SignUpView> {
                             hintText: "Phone Number",
                             icon: Icons.phone,
                             onChangeFtn: (value) {
-                              print(value);
 
                               if (value.length == 0) {
                                 setState(() {
@@ -596,7 +594,6 @@ class _SignUpViewState extends State<SignUpView> {
 
   /// `Node signup`
   void _signUp() async {
-    print(_isEmailVerified);
 
     if (_formKey.currentState.validate()) {
       if (!_isEmailVerified || !_isPhoneVerified) {
@@ -837,10 +834,8 @@ class _SignUpViewState extends State<SignUpView> {
                             );
                             Navigator.pop(context);
                           } else if (response.statusCode == 204) {
-                            print('already taken email!');
                             _errorSignup("Invalid code entered!");
                           } else {
-                            print('some other error!');
                             _errorSignup("Unknown error occured!");
                           }
                         }
@@ -894,7 +889,6 @@ class _SignUpViewState extends State<SignUpView> {
                           } else if (response.statusCode == 204) {
                             _errorSignup("Invalid code entered!");
                           } else {
-                            print('some other error!');
                             _errorSignup("Unknown error occured!");
                           }
                         },

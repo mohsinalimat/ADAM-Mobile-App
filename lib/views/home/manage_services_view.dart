@@ -149,8 +149,6 @@ class _ManageServicesViewState extends State<ManageServicesView> {
     List<String> _ids = _prefs.getStringList('services');
     _ids.remove(widget.services[index]['serviceData']['service_id']);
 
-    print(widget.services[index]['serviceData']['_id'].toString());
-
     // store back
     _prefs.setStringList('services', _ids);
   }

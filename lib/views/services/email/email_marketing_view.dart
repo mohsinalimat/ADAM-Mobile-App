@@ -5,6 +5,7 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/email.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
 import 'package:adam/widgets/app_logo.dart';
@@ -69,7 +70,6 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
         _data = List.from(fields[j]);
         _emailData.add(_data[0]);
       }
-      print(_emailData);
     }
   }
 
@@ -110,7 +110,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          BackButton(
+                          CustomBackButton(
                             onPressed: () => Navigator.pop(context),
                           ),
                           const LogoDisplay()
@@ -381,7 +381,6 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
         ),
       );
     } else if (_formkey.currentState.validate()) {
-      print(_emailData);
       FocusScope.of(context).unfocus();
 
       setState(() {
@@ -513,7 +512,6 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
   // send custom emails
   void _sendEmailsCustomList() async {
     if (_formkey.currentState.validate()) {
-      print(_emailData);
       FocusScope.of(context).unfocus();
 
       setState(() {

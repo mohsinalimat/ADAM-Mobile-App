@@ -66,7 +66,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   bool _informationUpdated() {
-    print(dobController.text.trim());
     if (_oldName != fullNameController.text.trim() ||
         _oldPhone != phoneNumberController.text.trim() ||
         _oldDob != dobController.text.trim() ||
@@ -250,7 +249,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   setState(() {
                                     _gender = value;
                                   });
-                                  print(_gender);
                                 },
                               ),
                             ],
@@ -266,7 +264,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   setState(() {
                                     _gender = value;
                                   });
-                                  print(_gender);
                                 },
                               ),
                             ],
@@ -282,7 +279,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   setState(() {
                                     _gender = value;
                                   });
-                                  print(_gender);
                                 },
                               ),
                             ],
@@ -321,7 +317,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                       setState(() {
                                         _country = value;
                                       });
-                                      print(_country);
                                     },
                                   ),
                                 ),
@@ -358,7 +353,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                       setState(() {
                                         _city = value;
                                       });
-                                      print(_city);
                                     },
                                   ),
                                 ),
@@ -375,7 +369,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                           btnHeight: 40.0,
                           btnOnPressed: () async {
                             if (_informationUpdated()) {
-                              print(dobController.text.trim());
                               if (_formKey.currentState.validate()) {
                                 setState(() {
                                   _isLoading = true;

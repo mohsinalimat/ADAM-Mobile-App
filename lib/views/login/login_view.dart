@@ -68,7 +68,7 @@ class _LoginViewState extends State<LoginView> {
                           tag: 'logoText',
                           child: Material(
                             child: const Text(
-                              "Automated Digital Assitant in Marketing",
+                              "Automated Digital Assistant in Marketing",
                               style: const TextStyle(
                                 letterSpacing: 1.5,
                               ),
@@ -182,7 +182,6 @@ class _LoginViewState extends State<LoginView> {
           _isLoading = false;
         });
       });
-      print(result);
       if (result == 200) {
         emailTextController.clear();
         passwordTextController.clear();
@@ -200,7 +199,6 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _errorLogin(String value) {
-    print("Error: " + value);
     customSnackBar(
       context,
       Colors.red,

@@ -285,7 +285,6 @@ class _ServiceCardState extends State<ServiceCard> {
                             ),
                           ),
                         );
-                        print("value $value");
                         if (value == null) {
                           value = false;
                         }

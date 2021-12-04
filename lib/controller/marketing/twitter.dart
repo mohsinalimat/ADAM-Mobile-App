@@ -29,13 +29,11 @@ class TwitterMarketing {
       );
 
       if (response.statusCode == 200) {
-        print("GOT THE DATA!");
         return TwitterScrapedUserList.fromJSON(response.data);
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -58,13 +56,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("SENT MESSAGES!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -87,13 +83,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("TWEETED TEXT!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -120,13 +114,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("TWEETED IMAGE!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -153,13 +145,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("TWEETED VIDEO!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -176,13 +166,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("GREETING MSG HAS BEEN SENT!!");
         return TwitterScrapedUserList.fromJSON(response.data);
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -203,13 +191,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("GREETING MSG HAS BEEN SENT!!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }
@@ -231,13 +217,11 @@ class TwitterMarketing {
         ),
       );
       if (response.statusCode == 200) {
-        print("AUTO REPLIED MENTIONS!");
         return response.statusCode;
       } else {
         return "Some error!";
       }
     } on DioError catch (e) {
-      print(e.message);
       return e.message;
     }
   }

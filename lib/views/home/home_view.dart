@@ -5,6 +5,7 @@ import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/icons/drawer_icon.dart';
 import 'package:adam/model/service.dart';
 import 'package:adam/model/user_data.dart';
 import 'package:adam/providers/bottom_navbar_provider.dart';
@@ -17,7 +18,6 @@ import 'package:adam/views/home/widgets/service_card.dart';
 import 'package:adam/views/home/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,6 +97,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final _width = MediaQuery.of(context).size.width;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _bottomBarProviders = Provider.of<BottomNavBarProvider>(context);
 
@@ -121,13 +122,10 @@ class _HomeViewState extends State<HomeView> {
                             _bottomBarProviders
                                 .toggleDrawer(widget.animationController);
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: SvgPicture.asset(
-                              'assets/menu.svg',
-                              color: _themeProvider.darkTheme
-                                  ? Colors.white
-                                  : kPrimaryBlueColor,
+                          child: CustomPaint(
+                            size: DrawerIconPainter.size(_width * 0.07),
+                            painter: DrawerIconPainter(
+                              color: kPrimaryBlueColor,
                             ),
                           ),
                         ),

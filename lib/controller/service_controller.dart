@@ -26,15 +26,11 @@ class ServiceController {
         'isPremium': isPremium.toString(),
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
-      print('subscribed!');
       return response.statusCode;
     } else if (response.statusCode == 204) {
-      print('already subscribed!');
       return response.statusCode;
     } else {
-      print('some error!');
       return response.statusCode;
     }
   }
@@ -55,12 +51,9 @@ class ServiceController {
         'serviceId': serviceId,
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
-      print('unsubscribed!');
       return response.statusCode;
     } else {
-      print('some error!');
       return response.statusCode;
     }
   }
@@ -154,7 +147,6 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print("FEEDBACK SUCCESS!");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -181,7 +173,6 @@ class ServiceController {
       },
     );
     if (response.statusCode == 200) {
-      print("FAVORITES VIEW!");
       return ServicesList.fromJSON(jsonDecode(response.body));
     } else if (response.statusCode == 204) {
       return ServicesList.fromJSON({"services": []});
@@ -212,7 +203,6 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print("FAVORITE ADDED!");
       return response.statusCode;
     } else {
       return response.statusCode;
@@ -241,7 +231,6 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print("FAVORITE DELETED!");
       return response.statusCode;
     } else {
       return response.statusCode;

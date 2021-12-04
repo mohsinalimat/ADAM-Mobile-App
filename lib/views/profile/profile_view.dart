@@ -5,8 +5,8 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/user_data.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/views/profile/editProfileView.dart';
-import 'package:adam/views/profile/verificationBadges.dart';
+import 'package:adam/views/profile/edit_profile.dart';
+import 'package:adam/views/profile/widgets/verification_badges.dart';
 import 'package:adam/widgets/custom_loader.dart';
 import 'package:adam/views/profile/widgets/profile_info_widget.dart';
 import 'package:flutter/material.dart';
@@ -367,7 +367,7 @@ class _ProfileViewState extends State<ProfileView> {
 
       Navigator.pop(context);
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
   }
 
@@ -398,7 +398,7 @@ class _ProfileViewState extends State<ProfileView> {
 
       Navigator.pop(context);
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
   }
 }

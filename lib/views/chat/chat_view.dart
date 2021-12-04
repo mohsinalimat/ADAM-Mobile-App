@@ -63,59 +63,11 @@ class _ChatViewState extends State<ChatView> {
   void initState() {
     _focus = FocusNode();
     _focus.addListener(() {
-      print("FOCUS ${_focus.hasFocus}");
       _fieldEnabled = _focus.hasFocus;
-      print("MESSAGE ENABLED! $_fieldEnabled");
     });
-
-    // initSocket();
 
     super.initState();
   }
-
-  // void initSocket() {
-  //   _socketIO = SocketIOManager().createSocketIO(
-  //     'https://adam-web-api.herokuapp.com',
-  //     '/',
-  //   );
-
-  //   _socketIO.init();
-
-  //   print(_socketIO.getId());
-
-  //   _socketIO.subscribe(
-  //     'response',
-  //     () {
-  //       print("CONECTED HO GYAAA!!!!!!!!!!");
-  //     },
-  //   );
-
-  //   _socketIO.connect();
-  // }
-
-  // void initSocket() {
-  //   try {
-  //     _socket = IO.io(
-  //       'https://adam-web-api.herokuapp.com/',
-  //       <String, dynamic>{
-  //         'transports': ['websocket'],
-  //         'autoConnect': false,
-  //       },
-  //     );
-
-  //     print(_socket.connected);
-
-  //     _socket.connect();
-
-  //     _socket.onConnect((data) => print('connnect to socket'));
-
-  //     _socket.on('connected', (data) => print("DATA ON CONN: $data"));
-
-  //     _socket.on('response', (data) => print("DATA ON RESPONSE: $data"));
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
 
   @override
   void dispose() {

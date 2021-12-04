@@ -1,12 +1,11 @@
 import 'package:adam/app_routes.dart';
 import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
+import 'package:adam/icons/delete_icon.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class DeleteAccountView extends StatefulWidget {
   @override
@@ -17,8 +16,6 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final UserAuth _userAuth = UserAuth();
-  // Auth _auth = Auth();
-  // FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   bool _deleting = false;
 
@@ -57,9 +54,10 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                     SizedBox(
                       height: 30.0,
                     ),
-                    SvgPicture.asset(
-                      'assets/delete.svg',
-                      height: 100,
+                    CustomPaint(
+                      size: DeleteIconPainter.size(
+                          MediaQuery.of(context).size.width * 0.32),
+                      painter: DeleteIconPainter(),
                     ),
                     SizedBox(
                       height: height * 0.03,
@@ -159,7 +157,8 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
                   const Text('Account has been deleted successfully!')
                 ],
               ));
-          Navigator.popUntil(context, (route) => route.settings.name == AppRoutes.login);
+          Navigator.popUntil(
+              context, (route) => route.settings.name == AppRoutes.login);
         }
       } else if (code == 204) {
         customSnackBar(
