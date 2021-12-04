@@ -29,30 +29,30 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.ADAM_TOKEN }}
 
-  send_mail:
-    name: Build release email
-    runs-on: ubuntu-latest
-    - uses: dawidd6/action-send-mail@v3
-    with:
-      # Required mail server address:
-      server_address: smtp.gmail.com
 
-      # Required mail server port:
-      server_port: 465
-      
-      # Required mail subject:
-      subject: ADAM Mobile APK - New Release
+      name: Build release email
+      runs-on: ubuntu-latest
+      - uses: dawidd6/action-send-mail@v3
+      with:
+        # Required mail server address:
+        server_address: smtp.gmail.com
 
-      # Required recipients' addresses:
-      to: hamza.6.shakeel@gmail.com
-      
-      # Required sender full name (address can be skipped):
-      from: Muhammad Hamza # <user@example.com>
+        # Required mail server port:
+        server_port: 465
+        
+        # Required mail subject:
+        subject: ADAM Mobile APK - New Release
 
-      # Optional whether this connection use TLS (default is true if server_port is 465)
-      secure: true
+        # Required recipients' addresses:
+        to: hamza.6.shakeel@gmail.com
+        
+        # Required sender full name (address can be skipped):
+        from: Muhammad Hamza # <user@example.com>
 
-      # Optional plain body:
-      body: Build job of ${{github.repository}} completed successfully!
-      
-      priority: high
+        # Optional whether this connection use TLS (default is true if server_port is 465)
+        secure: true
+
+        # Optional plain body:
+        body: Build job of ${{github.repository}} completed successfully!
+        
+        priority: high
