@@ -25,6 +25,8 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
   // marketing data
   List _scrapedUsersData = [];
 
+  List<String> _usernames = [];
+
   @override
   void initState() {
     _marketingMsg.text =
@@ -175,6 +177,23 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                             _scrapedUsersData.length,
                             (index) => TwitterScrapedUserDataCard(
                               twitterScrapedUser: _scrapedUsersData[index],
+                              usernames: _usernames,
+                              markForMessage: () {
+                                if (!_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames
+                                        .add(_scrapedUsersData[index].username);
+                                  });
+                                } else if (_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames.remove(
+                                        _scrapedUsersData[index].username);
+                                  });
+                                }
+                                print(_usernames);
+                              },
                             ),
                           ),
                         ),
@@ -272,6 +291,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
       var data = await TwitterMarketing()
           .sendDMs(
         _marketingMsg.text.trim(),
+        _usernames,
       )
           .whenComplete(() {
         if (mounted) {
@@ -298,6 +318,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
             ));
       } else {
         setState(() {
+          _usernames = [];
           _dataScraped = false;
         });
         _marketingMsg.clear();
@@ -321,30 +342,53 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
   }
 }
 
-class TwitterScrapedUserDataCard extends StatelessWidget {
+class TwitterScrapedUserDataCard extends StatefulWidget {
   final TwitterScrapedUser twitterScrapedUser;
+  final Function markForMessage;
+  final List<String> usernames;
 
-  const TwitterScrapedUserDataCard({Key key, @required this.twitterScrapedUser})
-      : super(key: key);
+  const TwitterScrapedUserDataCard({
+    Key key,
+    @required this.twitterScrapedUser,
+    this.usernames,
+    this.markForMessage,
+  }) : super(key: key);
+
+  @override
+  State<TwitterScrapedUserDataCard> createState() =>
+      _TwitterScrapedUserDataCardState();
+}
+
+class _TwitterScrapedUserDataCardState
+    extends State<TwitterScrapedUserDataCard> {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Card(
       child: ExpansionTile(
-        leading: CircleAvatar(
-          backgroundImage: twitterScrapedUser.photo ==
-                  "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
-              ? AssetImage('assets/dp.png')
-              : NetworkImage(twitterScrapedUser.photo),
+        leading: GestureDetector(
+          onTap: widget.markForMessage,
+          child: CircleAvatar(
+            backgroundImage: widget.usernames
+                    .contains(widget.twitterScrapedUser.username)
+                ? null
+                : widget.twitterScrapedUser.photo ==
+                        "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+                    ? AssetImage('assets/dp.png')
+                    : NetworkImage(widget.twitterScrapedUser.photo),
+            child: widget.usernames.contains(widget.twitterScrapedUser.username)
+                ? Icon(Icons.check)
+                : Container(),
+          ),
         ),
         title: Text(
-          twitterScrapedUser.username,
+          widget.twitterScrapedUser.username,
           style: TextStyle(
             color: _themeProvider.darkTheme ? Colors.white : Colors.black,
           ),
         ),
         subtitle: Text(
-          twitterScrapedUser.profileUrl,
+          widget.twitterScrapedUser.profileUrl,
           style: TextStyle(
             color: _themeProvider.darkTheme ? Colors.white : Colors.black,
           ),
@@ -354,27 +398,27 @@ class TwitterScrapedUserDataCard extends StatelessWidget {
             "Bio:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          twitterScrapedUser.bio == ""
+          widget.twitterScrapedUser.bio == ""
               ? Text('*No Bio Found*')
-              : Text(twitterScrapedUser.bio),
+              : Text(widget.twitterScrapedUser.bio),
           const SizedBox(height: 5.0),
           Text(
             "Followers:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          Text(twitterScrapedUser.followers.toString()),
+          Text(widget.twitterScrapedUser.followers.toString()),
           const SizedBox(height: 5.0),
           Text(
             "Following:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          Text(twitterScrapedUser.following.toString()),
+          Text(widget.twitterScrapedUser.following.toString()),
           const SizedBox(height: 5.0),
           Text(
             "Location:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          Text(twitterScrapedUser.location),
+          Text(widget.twitterScrapedUser.location),
         ],
         childrenPadding: const EdgeInsets.all(8.0),
         expandedCrossAxisAlignment: CrossAxisAlignment.stretch,

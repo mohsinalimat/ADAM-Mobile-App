@@ -41,12 +41,13 @@ class TwitterMarketing {
   }
 
   // sending DMs
-  Future sendDMs(String msg) async {
+  Future sendDMs(String msg, List<String> usernames) async {
     try {
-      String url = "$kAzureIP:8080/twitter/marketing";
+      String url = "$kAzureIP:3030/twitter/marketing";
 
       var body = {
         "msg": msg,
+        "usernames_list": usernames,
       };
 
       Response response = await dio.post(
