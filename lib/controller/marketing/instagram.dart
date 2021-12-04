@@ -39,13 +39,15 @@ class InstagramMarketing {
     }
   }
 
-  Future sendDM(String msg, String username, String password) async {
+  Future sendDM(String msg, String username, String password,
+      List<String> usernames) async {
     try {
       String url = "$kAzureIP:8080/insta/marketing";
       var body = {
         "username": 'khaadi.pk.7',
         "password": 'Test123@',
         'marketing_content': msg,
+        "usernames_list": usernames,
       };
 
       Response response = await dio.post(

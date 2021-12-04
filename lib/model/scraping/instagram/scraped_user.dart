@@ -4,7 +4,6 @@ class InstaScrapedUserList {
   InstaScrapedUserList({this.scrapedUsers});
 
   factory InstaScrapedUserList.fromJSON(Map<String, dynamic> json) {
-    print(json);
     Iterable users = json['followers_data'];
     List<InstaScrapedUser> scrapedUser =
         users.map((data) => InstaScrapedUser.fromJSON(data)).toList();

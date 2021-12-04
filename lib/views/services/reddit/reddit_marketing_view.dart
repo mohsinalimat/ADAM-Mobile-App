@@ -24,6 +24,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
 
   // marketing data
   List _scrapedUsersData = [];
+  List<String> _usernames = [];
 
   @override
   void initState() {
@@ -166,6 +167,12 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                           "Target Audience: ${_scrapedUsersData.length}",
                           style: Theme.of(context).textTheme.headline2,
                         ),
+                  const SizedBox(height: 5.0),
+                  !_dataScraped
+                      ? Container()
+                      : Text(
+                          "Tap the profile picture to select individual target audience",
+                        ),
                   const SizedBox(height: 10.0),
                   !_dataScraped
                       ? Container()
@@ -176,6 +183,23 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                             _scrapedUsersData.length,
                             (index) => RedditScrapedDataCard(
                               redditScrapedData: _scrapedUsersData[index],
+                              usernames: _usernames,
+                              markForMessage: () {
+                                if (!_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames
+                                        .add(_scrapedUsersData[index].username);
+                                  });
+                                } else if (_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames.remove(
+                                        _scrapedUsersData[index].username);
+                                  });
+                                }
+                                print(_usernames);
+                              },
                             ),
                           ),
                         ),
@@ -272,6 +296,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
           .startMarketing(
         _scrapedUsersData,
         _marketingMsg.text.trim(),
+        _usernames,
       )
           .whenComplete(() {
         if (mounted) {
@@ -322,17 +347,32 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
 
 class RedditScrapedDataCard extends StatelessWidget {
   final RedditScrapedData redditScrapedData;
+  final Function markForMessage;
+  final List<String> usernames;
 
-  const RedditScrapedDataCard({Key key, @required this.redditScrapedData})
-      : super(key: key);
+  const RedditScrapedDataCard({
+    Key key,
+    @required this.redditScrapedData,
+    this.markForMessage,
+    this.usernames,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(redditScrapedData.profileUrl),
+        leading: GestureDetector(
+          onTap: markForMessage,
+          child: CircleAvatar(
+            backgroundImage: usernames.contains(redditScrapedData.username)
+                ? null
+                : NetworkImage(redditScrapedData.profilePic),
+            child: usernames.contains(redditScrapedData.username)
+                ? Icon(Icons.check)
+                : Container(),
+          ),
         ),
         title: Text(redditScrapedData.username),
+        subtitle: Text(redditScrapedData.profileUrl),
       ),
     );
   }

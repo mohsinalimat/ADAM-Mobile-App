@@ -4,7 +4,6 @@ class RedditScrapedDataList {
   RedditScrapedDataList({this.scrapedUsers});
 
   factory RedditScrapedDataList.fromJSON(Map<String, dynamic> json) {
-    print("ALL USER DATA!!");
     Iterable usersData = json['data'];
     List<RedditScrapedData> scrapedData =
         usersData.map((usr) => RedditScrapedData.fromJSON(usr)).toList();
@@ -18,17 +17,19 @@ class RedditScrapedDataList {
 class RedditScrapedData {
   final String username;
   final String profileUrl;
+  final String profilePic;
 
   RedditScrapedData({
     this.username,
     this.profileUrl,
+    this.profilePic,
   });
 
   factory RedditScrapedData.fromJSON(Map<String, dynamic> json) {
-    print("PER USER DATA!!");
     return RedditScrapedData(
       username: json['username'],
-      profileUrl: json['img'],
+      profilePic: json['img'],
+      profileUrl: json['profile_url'],
     );
   }
 }

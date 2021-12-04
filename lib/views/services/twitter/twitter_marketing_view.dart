@@ -167,6 +167,12 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                           "Target audience: ${_scrapedUsersData.length}",
                           style: Theme.of(context).textTheme.headline2,
                         ),
+                  const SizedBox(height: 5.0),
+                  !_dataScraped
+                      ? Container()
+                      : Text(
+                          "Tap the profile picture to select individual target audience",
+                        ),
                   const SizedBox(height: 10.0),
                   !_dataScraped
                       ? Container()
@@ -342,7 +348,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
   }
 }
 
-class TwitterScrapedUserDataCard extends StatefulWidget {
+class TwitterScrapedUserDataCard extends StatelessWidget {
   final TwitterScrapedUser twitterScrapedUser;
   final Function markForMessage;
   final List<String> usernames;
@@ -355,40 +361,32 @@ class TwitterScrapedUserDataCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<TwitterScrapedUserDataCard> createState() =>
-      _TwitterScrapedUserDataCardState();
-}
-
-class _TwitterScrapedUserDataCardState
-    extends State<TwitterScrapedUserDataCard> {
-  @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Card(
       child: ExpansionTile(
         leading: GestureDetector(
-          onTap: widget.markForMessage,
+          onTap: markForMessage,
           child: CircleAvatar(
-            backgroundImage: widget.usernames
-                    .contains(widget.twitterScrapedUser.username)
+            backgroundImage: usernames.contains(twitterScrapedUser.username)
                 ? null
-                : widget.twitterScrapedUser.photo ==
+                : twitterScrapedUser.photo ==
                         "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
                     ? AssetImage('assets/dp.png')
-                    : NetworkImage(widget.twitterScrapedUser.photo),
-            child: widget.usernames.contains(widget.twitterScrapedUser.username)
+                    : NetworkImage(twitterScrapedUser.photo),
+            child: usernames.contains(twitterScrapedUser.username)
                 ? Icon(Icons.check)
                 : Container(),
           ),
         ),
         title: Text(
-          widget.twitterScrapedUser.username,
+          twitterScrapedUser.username,
           style: TextStyle(
             color: _themeProvider.darkTheme ? Colors.white : Colors.black,
           ),
         ),
         subtitle: Text(
-          widget.twitterScrapedUser.profileUrl,
+          twitterScrapedUser.profileUrl,
           style: TextStyle(
             color: _themeProvider.darkTheme ? Colors.white : Colors.black,
           ),
@@ -398,27 +396,27 @@ class _TwitterScrapedUserDataCardState
             "Bio:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          widget.twitterScrapedUser.bio == ""
+          twitterScrapedUser.bio == ""
               ? Text('*No Bio Found*')
-              : Text(widget.twitterScrapedUser.bio),
+              : Text(twitterScrapedUser.bio),
           const SizedBox(height: 5.0),
           Text(
             "Followers:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          Text(widget.twitterScrapedUser.followers.toString()),
+          Text(twitterScrapedUser.followers.toString()),
           const SizedBox(height: 5.0),
           Text(
             "Following:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          Text(widget.twitterScrapedUser.following.toString()),
+          Text(twitterScrapedUser.following.toString()),
           const SizedBox(height: 5.0),
           Text(
             "Location:",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
           ),
-          Text(widget.twitterScrapedUser.location),
+          Text(twitterScrapedUser.location),
         ],
         childrenPadding: const EdgeInsets.all(8.0),
         expandedCrossAxisAlignment: CrossAxisAlignment.stretch,

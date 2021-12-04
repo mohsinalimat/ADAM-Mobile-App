@@ -67,39 +67,41 @@ class ServiceController {
 
   Future getSubscribedServices() async {
     Dio dio = Dio();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String _token = prefs.getString('token');
+      String _userId = prefs.getString('userId');
+      String url =
+          "https://adam-web-api.herokuapp.com/user/view-subscribed-services";
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _token = prefs.getString('token');
-    String _userId = prefs.getString('userId');
-    String url =
-        "https://adam-web-api.herokuapp.com/user/view-subscribed-services";
-
-    Response response = await dio.post(
-      url,
-      data: {
-        "userId": _userId,
-      },
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $_token",
+      Response response = await dio.post(
+        url,
+        data: {
+          "userId": _userId,
         },
-      ),
-    );
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $_token",
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      List<dynamic> _ids = response.data['subscribedServices'];
-      List<String> _stringIds = [];
+      if (response.statusCode == 200) {
+        List<dynamic> _ids = response.data['subscribedServices'];
+        List<String> _stringIds = [];
 
-      for (int i = 0; i < _ids.length; i++) {
-        _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+        for (int i = 0; i < _ids.length; i++) {
+          _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+        }
+
+        prefs.setStringList('services', _stringIds);
+
+        return SubscribedServices.fromJson(response.data);
+      } else {
+        return "Some error occured!";
       }
-
-      prefs.setStringList('services', _stringIds);
-
-      return SubscribedServices.fromJson(response.data);
-    } else {
-      print(response.statusCode);
-      return "Some error occured!";
+    } on DioError catch (e) {
+      return e.message;
     }
   }
 

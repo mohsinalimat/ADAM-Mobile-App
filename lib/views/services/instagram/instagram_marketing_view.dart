@@ -26,6 +26,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
 
   // marketing data
   List _scrapedUsersData = [];
+  List<String> _usernames = [];
 
   // placeholding data
   void _placeholdingData() {
@@ -206,6 +207,12 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                           "Target audience: ${_scrapedUsersData.length}",
                           style: Theme.of(context).textTheme.headline2,
                         ),
+                  const SizedBox(height: 5.0),
+                  !_dataScraped
+                      ? Container()
+                      : Text(
+                          "Tap the profile picture to select individual target audience",
+                        ),
                   const SizedBox(height: 10.0),
                   !_dataScraped
                       ? Container()
@@ -216,6 +223,23 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                             _scrapedUsersData.length,
                             (index) => InstaScrapedUserDataCard(
                               instaScrapedUser: _scrapedUsersData[index],
+                              usernames: _usernames,
+                              markForMessage: () {
+                                if (!_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames
+                                        .add(_scrapedUsersData[index].username);
+                                  });
+                                } else if (_usernames.contains(
+                                    _scrapedUsersData[index].username)) {
+                                  setState(() {
+                                    _usernames.remove(
+                                        _scrapedUsersData[index].username);
+                                  });
+                                }
+                                print(_usernames);
+                              },
                             ),
                           ),
                         )
@@ -308,13 +332,12 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      print("FTN CALLED AT FRONT END!!");
-
       var data = await InstagramMarketing()
           .sendDM(
         _marketingMsg.text.trim(),
         _instaUsernameController.text.trim(),
         _instaPasswordController.text.trim(),
+        _usernames,
       )
           .whenComplete(() {
         if (mounted) {
@@ -334,7 +357,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  'Please try again after 90 secs to avoid ban :)',
+                  'Error occured, please try again!',
                   style: TextStyle(color: Colors.white),
                 ),
               ],
@@ -365,16 +388,30 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
 
 class InstaScrapedUserDataCard extends StatelessWidget {
   final InstaScrapedUser instaScrapedUser;
+  final Function markForMessage;
+  final List<String> usernames;
 
-  const InstaScrapedUserDataCard({Key key, @required this.instaScrapedUser})
-      : super(key: key);
+  const InstaScrapedUserDataCard({
+    Key key,
+    @required this.instaScrapedUser,
+    this.markForMessage,
+    this.usernames,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Card(
       child: ExpansionTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(instaScrapedUser.photoUrl),
+        leading: GestureDetector(
+          onTap: markForMessage,
+          child: CircleAvatar(
+            backgroundImage: usernames.contains(instaScrapedUser.username)
+                ? null
+                : NetworkImage(instaScrapedUser.photoUrl),
+            child: usernames.contains(instaScrapedUser.username)
+                ? Icon(Icons.check)
+                : Container(),
+          ),
         ),
         title: Text(
           instaScrapedUser.username,
