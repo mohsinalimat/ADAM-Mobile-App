@@ -1,13 +1,17 @@
 import 'dart:convert';
 
-import 'package:adam/model/service.dart';
+import 'package:adam/model/service/services_list.dart';
+import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
 import 'package:adam/model/subscription_history.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:dio/dio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceController {
+  final _hiveBox = Hive.box('subscribedServices');
+
   Future<int> subscribeService(String serviceId, bool isPremium) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
@@ -89,6 +93,9 @@ class ServiceController {
 
         prefs.setStringList('services', _stringIds);
 
+        // cache in Hive
+        await _hiveBox.put('services', _ids);
+
         return SubscribedServices.fromJson(response.data);
       } else {
         return "Some error occured!";
@@ -123,10 +130,10 @@ class ServiceController {
     // local data
     String _token = prefs.getString('token');
     String stringfyJson = prefs.getString("userData");
-    UserData userData;
+    User userData;
 
     Map userDataObject = jsonDecode(stringfyJson);
-    userData = UserData.fromJSON(userDataObject); // userdata object
+    userData = User.fromJSON(userDataObject); // userdata object
 
     String url = "https://adam-web-api.herokuapp.com/user/add-feedback";
 

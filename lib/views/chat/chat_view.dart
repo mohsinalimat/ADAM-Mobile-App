@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/views/chat/widgets/message_bubble.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -36,9 +36,9 @@ class _ChatViewState extends State<ChatView> {
   void _addAttachment() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String stringfyJson = preferences.getString("userData");
-    UserData userData;
+    User userData;
     Map userDataObject = jsonDecode(stringfyJson);
-    userData = UserData.fromJSON(userDataObject);
+    userData = User.fromJSON(userDataObject);
 
     filePickerResult = await FilePicker.platform.pickFiles();
 
@@ -167,9 +167,9 @@ class _ChatViewState extends State<ChatView> {
                                 await SharedPreferences.getInstance();
                             String stringfyJson =
                                 preferences.getString("userData");
-                            UserData userData;
+                            User userData;
                             Map userDataObject = jsonDecode(stringfyJson);
-                            userData = UserData.fromJSON(userDataObject);
+                            userData = User.fromJSON(userDataObject);
 
                             // _socketIO.sendMessage(
                             //   'chat',

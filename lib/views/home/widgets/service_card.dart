@@ -1,6 +1,6 @@
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/service.dart';
+import 'package:adam/model/service/service.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/service_subscription_view.dart';
 import 'package:flutter/material.dart';
@@ -24,15 +24,8 @@ class ServiceCard extends StatefulWidget {
 class _ServiceCardState extends State<ServiceCard> {
   bool _isFav = false;
 
-  void _getFavoriteOrNot() {
-    // setState(() {
-    //   _isFav = widget.service.isFavorite;
-    // });
-  }
-
   @override
   void initState() {
-    _getFavoriteOrNot();
     super.initState();
   }
 

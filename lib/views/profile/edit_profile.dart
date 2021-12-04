@@ -1,7 +1,7 @@
 import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
-import 'package:adam/model/user_data.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/custom_button.dart';
@@ -17,7 +17,7 @@ import 'package:flutter/services.dart';
 
 class EditProfileView extends StatefulWidget {
   // final User user;
-  final UserData userData;
+  final User userData;
 
   const EditProfileView({
     Key key,

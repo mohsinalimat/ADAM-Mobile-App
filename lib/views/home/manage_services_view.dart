@@ -5,6 +5,7 @@ import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/widgets/app_logo.dart';
 import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -144,7 +145,12 @@ class _ManageServicesViewState extends State<ManageServicesView> {
     );
   }
 
-  void _removeLocalID(int index) async {
+  Future<void> _removeLocalID(int index) async {
+    final _hiveBox = Hive.box('subscribedServices');
+    List _cacheservices = _hiveBox.get('services');
+    _cacheservices.remove(widget.services[index]['serviceData']);
+    await _hiveBox.put('services', _cacheservices);
+
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     List<String> _ids = _prefs.getStringList('services');
     _ids.remove(widget.services[index]['serviceData']['service_id']);
@@ -206,13 +212,13 @@ class _ManageServicesViewState extends State<ManageServicesView> {
     });
 
     if (code == 200) {
+      await _removeLocalID(index);
       setState(() {
         widget.services.remove(widget.services[index]);
       });
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(completedSnackBar);
-      _removeLocalID(index);
     }
   }
 }

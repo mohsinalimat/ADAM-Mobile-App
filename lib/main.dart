@@ -1,5 +1,12 @@
 import 'package:adam/app_routes.dart';
+import 'package:adam/model/service/service.dart';
+import 'package:adam/model/service/service_comment.dart';
+import 'package:adam/model/service/service_type.dart';
+import 'package:adam/model/service/services_list.dart';
+import 'package:adam/model/subscribed_services/subscribed_services.dart';
+import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'utils/main_imports.dart';
 
@@ -7,6 +14,20 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp();
+
+  // hive
+  await Hive.initFlutter();
+
+  // hive adapter
+  Hive.registerAdapter<SubscribedServices>(SubscribedServicesAdapter());
+  Hive.registerAdapter<SubscribedService>(SubscribedServiceAdapter());
+  Hive.registerAdapter<Service>(ServiceAdapter());
+  Hive.registerAdapter<ServiceType>(ServiceTypeAdapter());
+  Hive.registerAdapter<ServiceComment>(ServiceCommentAdapter());
+  Hive.registerAdapter<ServicesList>(ServicesListAdapter());
+  // hive box
+  await Hive.openBox('subscribedServices');
+
   runApp(MyApp());
 }
 
