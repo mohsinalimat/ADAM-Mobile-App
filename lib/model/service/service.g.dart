@@ -17,11 +17,11 @@ class ServiceAdapter extends TypeAdapter<Service> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Service(
-      serviceName: fields[1] as String,
       serviceId: fields[0] as String,
+      serviceName: fields[1] as String,
       serviceIcon: fields[2] as String,
-      serviceType: (fields[4] as List)?.cast<ServiceType>(),
       serviceColor: (fields[3] as List)?.cast<dynamic>(),
+      serviceType: (fields[4] as List)?.cast<ServiceType>(),
       serviceRatings: fields[5] as int,
       serviceComments: (fields[6] as List)?.cast<ServiceComment>(),
       isFavorite: fields[7] as bool,

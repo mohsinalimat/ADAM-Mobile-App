@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:adam/model/service/service.dart';
 import 'package:adam/model/service/services_list.dart';
 import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
 import 'package:adam/model/subscription_history.dart';
@@ -118,6 +119,18 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
+      List<Service> _services = [];
+      List<dynamic> _campaigns = json.decode(response.body)['services'];
+
+      for (int i = 0; i < _campaigns.length; i++) {
+        _services.add(Service.fromJSON(_campaigns[i]));
+      }
+
+      await _hiveBox.put(
+        'campaigns',
+        _services,
+      );
+
       return ServicesList.fromJSON(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load services');

@@ -33,6 +33,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final _hivebox = Hive.box('subscribedServices');
+
   // scroll effect
   ScrollController _controller = ScrollController();
 
@@ -47,7 +49,7 @@ class _HomeViewState extends State<HomeView> {
   bool _noSubscribedServices = true;
 
   // social media services
-  List servicesAvailable = [];
+  List _servicesAvailable = [];
 
   // get local user object
   User _userData;
@@ -76,7 +78,9 @@ class _HomeViewState extends State<HomeView> {
 
     return _userData == null
         ? Center(
-            child: JumpingDotsProgressIndicator(),
+            child: JumpingDotsProgressIndicator(
+              fontSize: 18.0,
+            ),
           )
         : SingleChildScrollView(
             controller: _controller,
@@ -255,7 +259,7 @@ class _HomeViewState extends State<HomeView> {
                     ],
                   ),
                   const SizedBox(height: 10.0),
-                  servicesAvailable.length == 0
+                  _servicesAvailable.length == 0
                       ? Center(
                           child: JumpingDotsProgressIndicator(
                             fontSize: 40.0,
@@ -268,9 +272,9 @@ class _HomeViewState extends State<HomeView> {
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           children: List.generate(
-                            servicesAvailable.length,
+                            _servicesAvailable.length,
                             (index) => ServiceCard(
-                              service: servicesAvailable[index],
+                              service: _servicesAvailable[index],
                               refreshFtn: callBack,
                             ),
                           ),
@@ -284,7 +288,7 @@ class _HomeViewState extends State<HomeView> {
   // getting list of subscribed services of current user
   Future<void> _getSubscribedServicesList(
       {bool newServiceCheck = false}) async {
-    List _cacheServices = await Hive.box('subscribedServices').get('services');
+    List _cacheServices = await _hivebox.get('services');
     if (_cacheServices == null || _cacheServices.isEmpty || newServiceCheck) {
       SubscribedServices value = await _servicesSubscribedFuture;
       if (mounted) {
@@ -320,7 +324,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  void _getLocalPhoto() async {
+  Future<void> _getLocalPhoto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _userId = prefs.getString('userId');
     String _path = prefs.get('${_userId}dp');
@@ -340,16 +344,23 @@ class _HomeViewState extends State<HomeView> {
   }
 
   // fetching data
-  void _getServices() async {
-    ServicesList servicesList = await serviceController.getServices();
-    if (mounted) {
-      setState(() {
-        servicesAvailable = List.from(servicesList.services);
-      });
+  Future<void> _getServices() async {
+    List _cacheCampaigns = await _hivebox.get('campaigns');
+
+    if (_cacheCampaigns == null || _cacheCampaigns.isEmpty) {
+      ServicesList servicesList = await serviceController.getServices();
+      if (mounted) {
+        setState(() {
+          _servicesAvailable = List.from(servicesList.services);
+        });
+      }
+    } else {
+      _servicesAvailable = List.from(_cacheCampaigns);
+      setState(() {});
     }
   }
 
-  void _getLocalUserData() async {
+  Future<void> _getLocalUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Map userDataObject = jsonDecode(prefs.getString("userData"));
     User userData = User.fromJSON(userDataObject);

@@ -18,10 +18,10 @@ class ServiceCommentAdapter extends TypeAdapter<ServiceComment> {
     };
     return ServiceComment(
       userId: fields[0] as String,
-      comment: fields[3] as String,
-      vote: fields[4] as int,
       userFullName: fields[1] as String,
       userRatings: fields[2] as String,
+      comment: fields[3] as String,
+      vote: fields[4] as int,
     );
   }
 
