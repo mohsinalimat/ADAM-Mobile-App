@@ -1,11 +1,11 @@
 import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/instagram.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/instagram/scraped_user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/widgets/custom_button.dart';
-import 'package:adam/widgets/customTextField.dart';
-import 'package:adam/widgets/logoDisplay.dart';
+import 'package:adam/widgets/custom_text_field.dart';
+import 'package:adam/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

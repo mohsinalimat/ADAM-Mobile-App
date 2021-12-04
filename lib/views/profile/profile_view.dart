@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/model/userData.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/model/user_data.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/profile/editProfileView.dart';
 import 'package:adam/views/profile/verificationBadges.dart';
 import 'package:adam/widgets/custom_loader.dart';
-import 'package:adam/widgets/profileInfoWidget.dart';
+import 'package:adam/views/profile/widgets/profile_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';

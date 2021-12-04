@@ -4,16 +4,17 @@ import 'dart:io';
 import 'package:adam/app_routes.dart';
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/service.dart';
-import 'package:adam/model/userData.dart';
-import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/model/user_data.dart';
+import 'package:adam/providers/bottom_navbar_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/utils/scroll_down_effect.dart';
 import 'package:adam/views/home/manage_services_view.dart';
-import 'package:adam/widgets/custom_home_service_card.dart';
-import 'package:adam/widgets/service_card.dart';
-import 'package:adam/widgets/shimmer_loader_services.dart';
+import 'package:adam/views/home/widgets/custom_your_service_card.dart';
+import 'package:adam/views/home/widgets/no_service_found.dart';
+import 'package:adam/views/home/widgets/service_card.dart';
+import 'package:adam/views/home/widgets/shimmer_loader_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -216,6 +217,7 @@ class _HomeViewState extends State<HomeView> {
                         if (snapshot.data.subscribedServices.length == 0) {
                           return NoServiceFoundCard(
                             controller: _controller,
+                            animateToIndex: animateToIndex,
                           );
                         } else {
                           return CarouselSlider.builder(
@@ -346,51 +348,6 @@ class _HomeViewState extends State<HomeView> {
           const SizedBox(width: 5.0),
           const Text("Services has been refreshed!")
         ],
-      ),
-    );
-  }
-}
-
-class NoServiceFoundCard extends StatelessWidget {
-  final ScrollController controller;
-  NoServiceFoundCard({@required this.controller});
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        height: 330.0,
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "No Services Found!",
-                  style: Theme.of(context).textTheme.headline2,
-                ),
-                const SizedBox(height: 8.0),
-                const Text("Subscribe a Service to get started!"),
-                const SizedBox(height: 20.0),
-                SizedBox(
-                  height: 50.0,
-                  child: FloatingActionButton(
-                    elevation: 2.5,
-                    heroTag: 'noservice',
-                    onPressed: () {
-                      animateToIndex(4.0, controller);
-                    },
-                    child: const Icon(
-                      Icons.arrow_downward,
-                      size: 25.0,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

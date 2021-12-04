@@ -1,6 +1,6 @@
-import 'package:adam/animations/bottomAnimation.dart';
+import 'package:adam/animations/bottom_animation.dart';
 import 'package:adam/model/service.dart';
-import 'package:adam/widgets/feedbackCard.dart';
+import 'package:adam/views/services/widgets/feedback_card.dart';
 import 'package:flutter/material.dart';
 
 class UserReviews extends StatelessWidget {

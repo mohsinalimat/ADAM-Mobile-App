@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:adam/model/service.dart';
 import 'package:adam/model/subscription_history.dart';
-import 'package:adam/model/userData.dart';
+import 'package:adam/model/user_data.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,11 +87,19 @@ class ServiceController {
     );
 
     if (response.statusCode == 200) {
-      print('services found!');
+      List<dynamic> _ids = response.data['subscribedServices'];
+      List<String> _stringIds = [];
+
+      for (int i = 0; i < _ids.length; i++) {
+        _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+      }
+
+      prefs.setStringList('services', _stringIds);
+
       return SubscribedServices.fromJson(response.data);
     } else {
       print(response.statusCode);
-      throw Exception('Failed to load services');
+      return "Some error occured!";
     }
   }
 

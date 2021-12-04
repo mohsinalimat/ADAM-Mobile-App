@@ -1,8 +1,8 @@
 import 'package:adam/app_routes.dart';
-import 'package:adam/auth/userAuth.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
+import 'package:adam/auth/user_auth.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/utils/custom_snackbar.dart';
-import 'package:adam/widgets/logoDisplay.dart';
+import 'package:adam/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';

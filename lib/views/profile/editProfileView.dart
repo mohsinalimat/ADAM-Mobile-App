@@ -1,11 +1,11 @@
-import 'package:adam/auth/userAuth.dart';
+import 'package:adam/auth/user_auth.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/model/userData.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/model/user_data.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/custom_button.dart';
-import 'package:adam/widgets/editableCustomTextField.dart';
+import 'package:adam/widgets/edit_custom_text_field.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

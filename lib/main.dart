@@ -1,6 +1,4 @@
 import 'package:adam/app_routes.dart';
-import 'package:adam/custom_scroll_effect.dart';
-import 'package:adam/views/settings/help/in_app_guide_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'utils/main_imports.dart';
@@ -65,7 +63,6 @@ class _MyAppState extends State<MyApp> {
             AppRoutes.login: (context) => LoginView(),
             AppRoutes.dashboard: (context) => Dashboard(),
             AppRoutes.signUp: (context) => SignUpView(),
-            AppRoutes.emailNotVerified: (context) => EmailNotVerfied(),
             AppRoutes.forgotPassword: (context) => ForgotPasswordView(),
             AppRoutes.deleteAccount: (context) => DeleteAccountView(),
             AppRoutes.changePassword: (context) => ChangePasswordView(),

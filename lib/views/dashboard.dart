@@ -1,9 +1,9 @@
-import 'package:adam/animations/bottomAnimation.dart';
+import 'package:adam/animations/bottom_animation.dart';
 import 'package:adam/constants.dart';
-import 'package:adam/controller/themeController/themeProvider.dart';
-import 'package:adam/providers/bottomNavBarProvider.dart';
+import 'package:adam/controller/theme_controller/theme_provider.dart';
+import 'package:adam/providers/bottom_navbar_provider.dart';
 import 'package:adam/views/home/home_view.dart';
-import 'package:adam/views/mydrawer.dart';
+import 'package:adam/views/custom_drawer.dart';
 import 'package:adam/views/profile/profile_view.dart';
 import 'package:adam/views/settings/settings_view.dart';
 import 'package:adam/views/stats/stats_view.dart';
@@ -79,7 +79,7 @@ class _DashboardState extends State<Dashboard>
             final contentScale = 1.0 - (0.3 * animValue);
             return Stack(
               children: <Widget>[
-                MyDrawer(),
+                CustomDrawer(),
                 Transform(
                   transform: Matrix4.identity()
                     ..translate(slideAmount)

@@ -1,4 +1,4 @@
-import 'package:adam/controller/themeController/themePreference.dart';
+import 'package:adam/controller/theme_controller/theme_prefs.dart';
 import 'package:flutter/cupertino.dart';
 
 class ThemeProvider with ChangeNotifier {
