@@ -7,7 +7,6 @@ import 'package:adam/validators/validators.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/edit_custom_text_field.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +28,6 @@ class EditProfileView extends StatefulWidget {
 }
 
 class _EditProfileViewState extends State<EditProfileView> {
-  final _userAuth = UserAuth();
-
   List<dynamic> _citiesName = [];
 
   final fullNameController = TextEditingController();
@@ -374,8 +371,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   _isLoading = true;
                                 });
 
-                                int result = await _userAuth
-                                    .editProfile(
+                                int result = await UserAuth.editProfile(
                                   fullNameController.text.trim(),
                                   emailController.text.trim(),
                                   phoneNumberController.text.trim(),
@@ -383,8 +379,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   _gender,
                                   _city,
                                   _country,
-                                )
-                                    .whenComplete(() {
+                                ).whenComplete(() {
                                   setState(() {
                                     _isLoading = false;
                                   });

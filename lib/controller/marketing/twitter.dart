@@ -3,17 +3,17 @@ import 'package:adam/model/scraping/twitter/scraped_user.dart';
 import 'package:dio/dio.dart';
 
 class TwitterMarketing {
-  Dio dio = Dio(); // dio instance to avoid recreating it with every call
+  static Dio dio = Dio(); // dio instance to avoid recreating it with every call
 
   // common header
-  var headers = {
+  static var headers = {
     "Accept": "application/json",
     "Access-Control-Allow-Origin": "*"
   };
 
   /// Marketing Methods
   // scraping data
-  Future scrapeUserData(String targetUsername) async {
+  static Future scrapeUserData(String targetUsername) async {
     try {
       String url = "$kAzureIP:3030/twitter/scraper";
 
@@ -39,7 +39,7 @@ class TwitterMarketing {
   }
 
   // sending DMs
-  Future sendDMs(String msg, List<String> usernames) async {
+  static Future sendDMs(String msg, List<String> usernames) async {
     try {
       String url = "$kAzureIP:3030/twitter/marketing";
 
@@ -67,7 +67,7 @@ class TwitterMarketing {
 
   /// Account Scheduling
   // Tweet without Media
-  Future tweetText(String caption, String dateTime) async {
+  static Future tweetText(String caption, String dateTime) async {
     try {
       String url = "$kLocalHostIP:3030/twitter/schedule-tweet";
       var body = {
@@ -93,7 +93,8 @@ class TwitterMarketing {
   }
 
   // Tweet image
-  Future tweetImage(String caption, String imagePath, String dateTime) async {
+  static Future tweetImage(
+      String caption, String imagePath, String dateTime) async {
     try {
       if (caption.isEmpty) {
         caption = "";
@@ -124,7 +125,8 @@ class TwitterMarketing {
   }
 
   // Tweet video
-  Future tweetVideo(String caption, String videoPath, String dateTime) async {
+  static Future tweetVideo(
+      String caption, String videoPath, String dateTime) async {
     try {
       if (caption.isEmpty) {
         caption = "";
@@ -155,7 +157,7 @@ class TwitterMarketing {
   }
 
   // greeting message to new followers
-  Future checkNewFollowers() async {
+  static Future checkNewFollowers() async {
     try {
       String url = "$kAzureIP:3030/twitter/check-followers";
 
@@ -175,7 +177,7 @@ class TwitterMarketing {
     }
   }
 
-  Future sendGreetingMsg(String msg) async {
+  static Future sendGreetingMsg(String msg) async {
     try {
       String url = "$kAzureIP:3030/twitter/greeting-dm";
 
@@ -201,7 +203,7 @@ class TwitterMarketing {
   }
 
   // auto reply to mentions
-  Future autoReply(String msg) async {
+  static Future autoReply(String msg) async {
     try {
       String url = "$kAzureIP:3030/twitter/auto-reply";
 

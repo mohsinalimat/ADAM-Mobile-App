@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserAuth {
   // sign up
-  Future<int> signUp(
+  static Future<int> signUp(
       {String fullName,
       String email,
       String phone,
@@ -42,7 +42,7 @@ class UserAuth {
     return response.statusCode;
   }
 
-  Future<int> login({String email, String password}) async {
+  static Future<int> login({String email, String password}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String url = "https://adam-web-api.herokuapp.com/user/login";
@@ -72,7 +72,7 @@ class UserAuth {
     return response.statusCode;
   }
 
-  Future<int> logout(BuildContext context) async {
+  static Future<int> logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String stringfyJson = prefs.getString("userData");
     User userData;
@@ -95,7 +95,7 @@ class UserAuth {
     }
   }
 
-  Future<int> editProfile(String fullName, String email, String phone,
+  static Future<int> editProfile(String fullName, String email, String phone,
       String dob, String gender, String city, String country) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
@@ -126,7 +126,7 @@ class UserAuth {
     }
   }
 
-  Future<int> updateProfilePic(String photoUrl) async {
+  static Future<int> updateProfilePic(String photoUrl) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
     String _userId = prefs.getString('userId');
@@ -154,7 +154,7 @@ class UserAuth {
     }
   }
 
-  Future forgotPassword(String email) async {
+  static Future forgotPassword(String email) async {
     String url = "https://adam-web-api.herokuapp.com/user/forgot-password";
 
     http.Response response = await http.post(Uri.parse(url), body: {
@@ -171,7 +171,7 @@ class UserAuth {
     }
   }
 
-  Future changePassword(String pass, String confirmPass) async {
+  static Future changePassword(String pass, String confirmPass) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
     String _userId = prefs.getString('userId');
@@ -201,7 +201,7 @@ class UserAuth {
     }
   }
 
-  Future<int> deleteAccount(String password) async {
+  static Future<int> deleteAccount(String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
     String _userId = prefs.getString('userId');
@@ -232,7 +232,7 @@ class UserAuth {
     }
   }
 
-  Future disableAccount(String reason, String explanation) async {
+  static Future disableAccount(String reason, String explanation) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String _token = prefs.getString('token');
 

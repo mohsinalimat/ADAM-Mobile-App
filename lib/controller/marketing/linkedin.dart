@@ -3,14 +3,14 @@ import 'package:adam/model/scraping/linkedin/scraped_user.dart';
 import 'package:dio/dio.dart';
 
 class LinkedInMarketing {
-  Dio dio = Dio();
+  static Dio dio = Dio();
 
-  var headers = {
+  static var headers = {
     "Accept": "application/json",
     "Access-Control-Allow-Origin": "*"
   };
 
-  Future scrapeUserData(
+  static Future scrapeUserData(
       String emailLinkedIn, String passwordLinkedIn, String keyword) async {
     try {
       String url = "$kAzureIP:5000/linkedin/scraper";
@@ -38,7 +38,7 @@ class LinkedInMarketing {
     }
   }
 
-  Future marketing(String email, String password, String message) async {
+  static Future marketing(String email, String password, String message) async {
     try {
       String url = "$kAzureIP:5000/linkedin/marketing";
       var body = {
@@ -64,7 +64,7 @@ class LinkedInMarketing {
     }
   }
 
-  Future postTextOnly(
+  static Future postTextOnly(
       String emailLinkedIn, String passwordLinkedIn, String postText) async {
     try {
       String url = "$kAzureIP:5000/linkedin/post/text";
@@ -92,7 +92,7 @@ class LinkedInMarketing {
     }
   }
 
-  Future addConnection(String email, String password) async {
+  static Future addConnection(String email, String password) async {
     try {
       String _url = "$kAzureIP:5000/linkedin/add-connection";
 

@@ -8,8 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
 class SettingsView extends StatelessWidget {
-  final _userAuth = UserAuth();
-
   final _settingsOptionsIcons = [
     Icons.vpn_key_rounded,
     Icons.notifications_rounded,
@@ -110,7 +108,7 @@ class SettingsView extends StatelessWidget {
       AppRoutes.login,
       (route) => route.settings.name == AppRoutes.login ? true : false,
     );
-    await _userAuth.logout(context);
+    await UserAuth.logout(context);
   }
 }
 

@@ -232,7 +232,7 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
   }
 
   // scrape the user data information
-  void _scrapeData() async {
+  Future<void> _scrapeData() async {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
 
@@ -240,13 +240,11 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
         _isWorking = true;
       });
 
-      var data = await LinkedInMarketing()
-          .scrapeUserData(
+      var data = await LinkedInMarketing.scrapeUserData(
         _linkedinUserNameController.text.trim(),
         _linkedinPasswordController.text.trim(),
         _keywordController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _email = _linkedinUserNameController.text.trim();
@@ -296,9 +294,9 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
   }
 
   // marketing
-  void _marketing() async {
+  Future<void> _marketing() async {
     if (_marketingMsg.text.trim().isNotEmpty) {
-      var value = LinkedInMarketing().marketing(
+      var value = LinkedInMarketing.marketing(
         _email,
         _password,
         _marketingMsg.text.trim(),

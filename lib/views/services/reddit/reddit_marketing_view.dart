@@ -2,7 +2,9 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/reddit.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/reddit/scraped_user.dart';
+import 'package:adam/utils/audience_utils.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/views/services/widgets/audience_chip.dart';
 import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
@@ -173,7 +175,28 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                       : Text(
                           "Tap the profile picture to select individual target audience",
                         ),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 5.0),
+                  _dataScraped
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: _usernames
+                                .map(
+                                  (e) => AudienceChip(
+                                    username: e,
+                                    onDelete: () {
+                                      setState(() {
+                                        _usernames.remove(e);
+                                      });
+                                      AudienceUtils.targetRemoved(e, context);
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                      : Container(),
+                  const SizedBox(height: 5.0),
                   !_dataScraped
                       ? Container()
                       : ListView(
@@ -191,12 +214,18 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                                     _usernames
                                         .add(_scrapedUsersData[index].username);
                                   });
+                                  AudienceUtils.targetAdded(
+                                      _scrapedUsersData[index].username,
+                                      context);
                                 } else if (_usernames.contains(
                                     _scrapedUsersData[index].username)) {
                                   setState(() {
                                     _usernames.remove(
                                         _scrapedUsersData[index].username);
                                   });
+                                  AudienceUtils.targetRemoved(
+                                      _scrapedUsersData[index].username,
+                                      context);
                                 }
                                 print(_usernames);
                               },
@@ -213,7 +242,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
   }
 
   // scrape the user data information
-  void _scrapeData() async {
+  Future<void> _scrapeData() async {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
 
@@ -221,11 +250,9 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
         _isWorking = true;
       });
 
-      var data = await RedditMarketing()
-          .getUserData(
+      var data = await RedditMarketing.getUserData(
         _searchKeyWordController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _isWorking = false;
@@ -273,7 +300,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
   }
 
 // start sending DMs to scraped users
-  void _sendDMs() async {
+  Future<void> _sendDMs() async {
     if (_marketingMsg.text.isEmpty) {
       customSnackBar(
           context,
@@ -292,13 +319,11 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
         _isWorking = true;
       });
 
-      var data = await RedditMarketing()
-          .startMarketing(
+      var data = await RedditMarketing.startMarketing(
         _scrapedUsersData,
         _marketingMsg.text.trim(),
         _usernames,
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _isWorking = false;
@@ -323,6 +348,7 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
       } else {
         setState(() {
           _dataScraped = false;
+          _usernames = [];
         });
         _marketingMsg.clear();
         _searchKeyWordController.clear();

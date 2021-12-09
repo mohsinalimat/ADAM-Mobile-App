@@ -18,8 +18,6 @@ class ChangePasswordView extends StatefulWidget {
 }
 
 class _ChangePasswordViewState extends State<ChangePasswordView> {
-  final UserAuth _userAuth = UserAuth();
-
   String _passCheck = "";
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -224,12 +222,10 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
         _updatingPass = true;
       });
 
-      int code = await _userAuth
-          .changePassword(
+      int code = await UserAuth.changePassword(
         _newPasswordController.text.trim(),
         _confirmPasswordController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _updatingPass = false;
         });
@@ -250,7 +246,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
           );
           Navigator.popUntil(
               context, (route) => route.settings?.name == AppRoutes.login);
-          await _userAuth.logout(context);
+          await UserAuth.logout(context);
         }
       }
     }

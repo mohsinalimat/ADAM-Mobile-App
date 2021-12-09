@@ -2,7 +2,9 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/twitter.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/twitter/scraped_user.dart';
+import 'package:adam/utils/audience_utils.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/views/services/widgets/audience_chip.dart';
 import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
@@ -52,8 +54,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -64,7 +65,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                         CustomBackButton(
+                        CustomBackButton(
                           onPressed: () => Navigator.pop(context),
                         ),
                         const LogoDisplay()
@@ -174,7 +175,28 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                       : Text(
                           "Tap the profile picture to select individual target audience",
                         ),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 5.0),
+                  _dataScraped
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: _usernames
+                                .map(
+                                  (e) => AudienceChip(
+                                    username: e,
+                                    onDelete: () {
+                                      setState(() {
+                                        _usernames.remove(e);
+                                      });
+                                      AudienceUtils.targetRemoved(e, context);
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                      : Container(),
+                  const SizedBox(height: 5.0),
                   !_dataScraped
                       ? Container()
                       : ListView(
@@ -192,12 +214,18 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                                     _usernames
                                         .add(_scrapedUsersData[index].username);
                                   });
+                                  AudienceUtils.targetAdded(
+                                      _scrapedUsersData[index].username,
+                                      context);
                                 } else if (_usernames.contains(
                                     _scrapedUsersData[index].username)) {
                                   setState(() {
                                     _usernames.remove(
                                         _scrapedUsersData[index].username);
                                   });
+                                  AudienceUtils.targetRemoved(
+                                      _scrapedUsersData[index].username,
+                                      context);
                                 }
                                 print(_usernames);
                               },
@@ -214,7 +242,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
   }
 
   // scrape the user data information
-  void _scrapeData() async {
+  Future<void> _scrapeData() async {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
 
@@ -222,11 +250,9 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
         _isWorking = true;
       });
 
-      var data = await TwitterMarketing()
-          .scrapeUserData(
+      var data = await TwitterMarketing.scrapeUserData(
         _targetProfileController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _isWorking = false;
@@ -276,7 +302,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
   }
 
 // start sending DMs to scraped users
-  void _sendDMs() async {
+  Future<void> _sendDMs() async {
     if (_marketingMsg.text.isEmpty) {
       customSnackBar(
           context,
@@ -295,12 +321,10 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
         _isWorking = true;
       });
 
-      var data = await TwitterMarketing()
-          .sendDMs(
+      var data = await TwitterMarketing.sendDMs(
         _marketingMsg.text.trim(),
         _usernames,
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _isWorking = false;
@@ -309,7 +333,6 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
       });
 
       if (data is String) {
-        print(data);
         customSnackBar(
             context,
             Colors.red,
@@ -318,7 +341,7 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  'Please try again after 90 secs to avoid ban :)',
+                  'Some error occured!',
                   style: TextStyle(color: Colors.white),
                 ),
               ],

@@ -18,8 +18,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _userAuth = UserAuth();
-
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
@@ -172,12 +170,10 @@ class _LoginViewState extends State<LoginView> {
         _isLoading = true;
       });
 
-      int result = await _userAuth
-          .login(
+      int result = await UserAuth.login(
         email: emailTextController.text.trim(),
         password: passwordTextController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isLoading = false;
         });

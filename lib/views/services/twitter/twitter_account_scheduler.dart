@@ -89,7 +89,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
-      absorbing: _isUpdating,
+      absorbing: _isUpdating || _uploadingFile,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -148,19 +148,6 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                       },
                     ),
                     const Text('Image'),
-                    Radio(
-                      value: MediaType.video,
-                      groupValue: _mediaType,
-                      onChanged: (value) {
-                        setState(() {
-                          _fileUploaded = false;
-                          _urlMedia = "";
-                          someFile = null;
-                          _mediaType = value;
-                        });
-                      },
-                    ),
-                    const Text('Video'),
                   ]),
                   _fileUploaded
                       ? Container(
@@ -472,18 +459,16 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // post a text based tweet
-  void _tweetTextOnly() async {
+  Future<void> _tweetTextOnly() async {
     if (_formKey.currentState.validate()) {
       print("VALID!");
       setState(() {
         _isUpdating = true;
       });
-      var value = await TwitterMarketing()
-          .tweetText(
+      var value = await TwitterMarketing.tweetText(
         _contentController.text.trim(),
         "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
         });
@@ -528,9 +513,10 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // pickingFile
-  void _addAttachment(bool isImage) async {
+  Future<void> _addAttachment(bool isImage) async {
     filePickerResult = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['png', 'jpg', 'jpeg']);
+        type: FileType.custom,
+        allowedExtensions: isImage ? ['png', 'jpg', 'jpeg'] : ['mp4']);
 
     if (filePickerResult != null) {
       someFile = File(filePickerResult.files.single.path);
@@ -550,7 +536,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // tweet with Media + caption (optional)
-  void _tweetImage() async {
+  Future<void> _tweetImage() async {
     if (someFile == null && _mediaType == MediaType.image) {
       customSnackBar(
         context,
@@ -568,16 +554,13 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
       setState(() {
         _isUpdating = true;
       });
-      var value = await TwitterMarketing()
-          .tweetImage(
+      var value = await TwitterMarketing.tweetImage(
         _contentController.text.trim(),
         _urlMedia,
         "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
-          _fileUploaded = false;
         });
       });
 
@@ -594,6 +577,9 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
           ),
         );
       } else {
+        setState(() {
+          _fileUploaded = false;
+        });
         customSnackBar(
           context,
           kSecondaryBlueColor,
@@ -619,7 +605,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
     }
   }
 
-  void _tweetVideo() async {
+  Future<void> _tweetVideo() async {
     if (someFile == null && _mediaType == MediaType.video) {
       customSnackBar(
         context,
@@ -637,16 +623,13 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
       setState(() {
         _isUpdating = true;
       });
-      var value = await TwitterMarketing()
-          .tweetVideo(
+      var value = await TwitterMarketing.tweetVideo(
         _contentController.text.trim(),
         _urlMedia,
         "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
-          _fileUploaded = false;
         });
       });
 
@@ -663,6 +646,9 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
           ),
         );
       } else {
+        setState(() {
+          _fileUploaded = false;
+        });
         customSnackBar(
           context,
           kSecondaryBlueColor,
@@ -691,6 +677,9 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   // upload and get URL from firestorage
   // IMAGE
   Future<void> _imageToFirebase() async {
+    setState(() {
+      _uploadingFile = true;
+    });
     print(path);
     Reference ref = _firebaseStorage.ref('twitter').child('image');
 
@@ -720,6 +709,9 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
 
   // VIDEO
   Future<void> _videoToFirebase() async {
+    setState(() {
+      _uploadingFile = true;
+    });
     print(path);
     Reference ref = _firebaseStorage.ref('twitter').child('video');
 
@@ -748,14 +740,14 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // auto reply to mentions
-  void _autoReply() async {
+  Future<void> _autoReply() async {
     if (_autoReplyMsgController.text.isNotEmpty) {
       setState(() {
         _autoReplying = true;
       });
-      var value = await TwitterMarketing()
-          .autoReply(_autoReplyMsgController.text.trim())
-          .whenComplete(() {
+      var value =
+          await TwitterMarketing.autoReply(_autoReplyMsgController.text.trim())
+              .whenComplete(() {
         setState(() {
           _autoReplying = false;
         });
@@ -810,11 +802,11 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // check new followers
-  void _checkNewFollowers() async {
+  Future<void> _checkNewFollowers() async {
     setState(() {
       _isCheckingNewFollowers = true;
     });
-    var value = await TwitterMarketing().checkNewFollowers().whenComplete(() {
+    var value = await TwitterMarketing.checkNewFollowers().whenComplete(() {
       setState(() {
         _isCheckingNewFollowers = false;
       });
@@ -859,15 +851,15 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // sending greeting msg
-  void _sendGreetingMessage() async {
+  Future<void> _sendGreetingMessage() async {
     if (_msgController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
       setState(() {
         _isGreeted = true;
       });
-      var value = await TwitterMarketing()
-          .sendGreetingMsg(_msgController.text.trim())
-          .whenComplete(() {
+      var value =
+          await TwitterMarketing.sendGreetingMsg(_msgController.text.trim())
+              .whenComplete(() {
         setState(() {
           _isGreeted = false;
         });

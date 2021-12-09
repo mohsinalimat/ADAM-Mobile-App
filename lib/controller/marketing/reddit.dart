@@ -4,16 +4,16 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
 class RedditMarketing {
-  Dio dio = Dio(); // dio instance to avoid recreating it with every call
+  static Dio dio = Dio(); // dio instance to avoid recreating it with every call
 
   // common header
-  var headers = {
+  static var headers = {
     "Accept": "application/json",
     "Access-Control-Allow-Origin": "*"
   };
 
   // scraper & marketing
-  Future getUserData(String keyword) async {
+  static Future getUserData(String keyword) async {
     try {
       String url = "$kAzureIP:5050/reddit/scraper";
       var body = {
@@ -38,8 +38,8 @@ class RedditMarketing {
     }
   }
 
-  Future startMarketing(List<dynamic> redditDataList, String marketingContent,
-      List<String> usernames) async {
+  static Future startMarketing(List<dynamic> redditDataList,
+      String marketingContent, List<String> usernames) async {
     try {
       String url = "$kAzureIP:5050/reddit/marketing";
 
@@ -74,7 +74,7 @@ class RedditMarketing {
   }
 
   // account schedule
-  Future postText(String title, String bodyText, String dateTime) async {
+  static Future postText(String title, String bodyText, String dateTime) async {
     try {
       String url = "$kLocalHostIP:3030/reddit/schedule-text";
 
@@ -99,7 +99,8 @@ class RedditMarketing {
     }
   }
 
-  Future postImage(String title, String imagePathUrl, String dateTime) async {
+  static Future postImage(
+      String title, String imagePathUrl, String dateTime) async {
     try {
       String url = "$kLocalHostIP:3030/reddit/schedule-image";
       var body = {
@@ -125,7 +126,8 @@ class RedditMarketing {
     }
   }
 
-  Future postVideo(String title, String videoPathUrl, String dateTime) async {
+  static Future postVideo(
+      String title, String videoPathUrl, String dateTime) async {
     try {
       String url = "$kLocalHostIP:3030/reddit/schedule-video";
       var body = {
@@ -152,7 +154,7 @@ class RedditMarketing {
   }
 
   // auto reply
-  Future autoReply(String msg) async {
+  static Future autoReply(String msg) async {
     try {
       String url = "$kAzureIP:5050/reddit/auto-reply";
       var body = {

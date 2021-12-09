@@ -441,7 +441,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   }
 
   // pickingFile
-  void _addAttachment(bool isImage) async {
+  Future<void> _addAttachment(bool isImage) async {
     filePickerResult = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: isImage ? ['png', 'jpg', 'jpeg'] : ['mp4'],
@@ -467,8 +467,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   }
 
   // post image method
-  void _postImage() async {
-    print('Posting Image!');
+  Future<void> _postImage() async {
     if (someFile == null) {
       customSnackBar(
         context,
@@ -485,14 +484,12 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
       setState(() {
         _isUpdating = true;
       });
-      var value = await InstagramMarketing()
-          .postImageStatus(
+      var value = await InstagramMarketing.postImageStatus(
         _instaUsernameController.text.trim(),
         _instaPasswordController.text.trim(),
         _contentController.text.trim(),
         _urlMedia,
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
         });
@@ -532,7 +529,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8),
-              Expanded(child: Text(value)),
+              Expanded(
+                  child: Text('Some error, please check username/password')),
             ],
           ),
         );
@@ -541,7 +539,7 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   }
 
   // post video method
-  void _postVideo() async {
+  Future<void> _postVideo() async {
     print('Posting Video!');
     if (someFile == null) {
       customSnackBar(
@@ -559,14 +557,12 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
       setState(() {
         _isUpdating = true;
       });
-      var value = await InstagramMarketing()
-          .postVideoStatus(
+      var value = await InstagramMarketing.postVideoStatus(
         _instaUsernameController.text.trim(),
         _instaPasswordController.text.trim(),
         _contentController.text.trim(),
         _urlMedia,
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
         });
@@ -615,18 +611,16 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   }
 
   // story image method
-  void _storyImage() async {
+  Future<void> _storyImage() async {
     print('Posting Story Image!');
     setState(() {
       _isUpdating = true;
     });
-    var value = await InstagramMarketing()
-        .postImageStory(
+    var value = await InstagramMarketing.postImageStory(
       _instaUsernameController.text.trim(),
       _instaPasswordController.text.trim(),
       _urlMedia,
-    )
-        .whenComplete(() {
+    ).whenComplete(() {
       setState(() {
         _isUpdating = false;
       });
@@ -674,18 +668,16 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
   }
 
   // story video method
-  void _storyVideo() async {
+  Future<void> _storyVideo() async {
     print('Posting Story Video!');
     setState(() {
       _isUpdating = true;
     });
-    var value = await InstagramMarketing()
-        .postVideoStory(
+    var value = await InstagramMarketing.postVideoStory(
       _instaUsernameController.text.trim(),
       _instaPasswordController.text.trim(),
       _urlMedia,
-    )
-        .whenComplete(() {
+    ).whenComplete(() {
       setState(() {
         _isUpdating = false;
       });

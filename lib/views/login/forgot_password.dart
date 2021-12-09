@@ -17,7 +17,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final forgorEmailTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final node = FocusNode();
-  final _userAuth = UserAuth();
 
   bool _isLoading = false;
 
@@ -106,8 +105,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                               _isLoading = true;
                             });
 
-                            var result = await _userAuth
-                                .forgotPassword(
+                            var result = await UserAuth.forgotPassword(
                                     forgorEmailTextController.text.trim())
                                 .whenComplete(() {
                               setState(() {
