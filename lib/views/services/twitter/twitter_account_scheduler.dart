@@ -18,7 +18,6 @@ import 'package:intl/intl.dart';
 enum MediaType {
   text,
   image,
-  video,
 }
 
 class TwitterAccountScheduler extends StatefulWidget {
@@ -147,7 +146,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                         });
                       },
                     ),
-                    const Text('Image'),
+                    const Text('Media'),
                   ]),
                   _fileUploaded
                       ? Container(
@@ -312,9 +311,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
                     btnOnPressed: _mediaType != MediaType.text
-                        ? _mediaType == MediaType.image
-                            ? _tweetImage
-                            : _tweetVideo
+                        ? _tweetImage
                         : _tweetTextOnly,
                     btnColor: kPrimaryBlueColor,
                     btnText: _isUpdating
@@ -605,74 +602,74 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
     }
   }
 
-  Future<void> _tweetVideo() async {
-    if (someFile == null && _mediaType == MediaType.video) {
-      customSnackBar(
-        context,
-        Colors.red,
-        Row(
-          children: [
-            const Icon(Icons.video_camera_back, color: Colors.white),
-            const SizedBox(width: 8.0),
-            const Text('Please select video file!'),
-          ],
-        ),
-      );
-    } else if (_formKey.currentState.validate()) {
-      print("VALID!");
-      setState(() {
-        _isUpdating = true;
-      });
-      var value = await TwitterMarketing.tweetVideo(
-        _contentController.text.trim(),
-        _urlMedia,
-        "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      ).whenComplete(() {
-        setState(() {
-          _isUpdating = false;
-        });
-      });
+  // Future<void> _tweetVideo() async {
+  //   if (someFile == null && _mediaType == MediaType.video) {
+  //     customSnackBar(
+  //       context,
+  //       Colors.red,
+  //       Row(
+  //         children: [
+  //           const Icon(Icons.video_camera_back, color: Colors.white),
+  //           const SizedBox(width: 8.0),
+  //           const Text('Please select video file!'),
+  //         ],
+  //       ),
+  //     );
+  //   } else if (_formKey.currentState.validate()) {
+  //     print("VALID!");
+  //     setState(() {
+  //       _isUpdating = true;
+  //     });
+  //     var value = await TwitterMarketing.tweetVideo(
+  //       _contentController.text.trim(),
+  //       _urlMedia,
+  //       "${_dateController.text.trim()} ${_timeController.text.trim()}",
+  //     ).whenComplete(() {
+  //       setState(() {
+  //         _isUpdating = false;
+  //       });
+  //     });
 
-      if (value is String) {
-        customSnackBar(
-          context,
-          Colors.red,
-          Row(
-            children: [
-              const Icon(Icons.info, color: Colors.white),
-              const SizedBox(width: 8.0),
-              Text(value),
-            ],
-          ),
-        );
-      } else {
-        setState(() {
-          _fileUploaded = false;
-        });
-        customSnackBar(
-          context,
-          kSecondaryBlueColor,
-          Row(
-            children: [
-              const Icon(Icons.check, color: Colors.white),
-              const SizedBox(width: 8.0),
-              const Text("Video Tweet has been scheduled!"),
-            ],
-          ),
-        );
-        scheduledPosts.insert(
-            0,
-            ScheduledPostCard(
-              date: _dateController.text.trim(),
-              time: _timeController.text.trim(),
-              caption: _contentController.text.trim(),
-            ));
-        _contentController.clear();
-        _dateController.clear();
-        _timeController.clear();
-      }
-    }
-  }
+  //     if (value is String) {
+  //       customSnackBar(
+  //         context,
+  //         Colors.red,
+  //         Row(
+  //           children: [
+  //             const Icon(Icons.info, color: Colors.white),
+  //             const SizedBox(width: 8.0),
+  //             Text(value),
+  //           ],
+  //         ),
+  //       );
+  //     } else {
+  //       setState(() {
+  //         _fileUploaded = false;
+  //       });
+  //       customSnackBar(
+  //         context,
+  //         kSecondaryBlueColor,
+  //         Row(
+  //           children: [
+  //             const Icon(Icons.check, color: Colors.white),
+  //             const SizedBox(width: 8.0),
+  //             const Text("Video Tweet has been scheduled!"),
+  //           ],
+  //         ),
+  //       );
+  //       scheduledPosts.insert(
+  //           0,
+  //           ScheduledPostCard(
+  //             date: _dateController.text.trim(),
+  //             time: _timeController.text.trim(),
+  //             caption: _contentController.text.trim(),
+  //           ));
+  //       _contentController.clear();
+  //       _dateController.clear();
+  //       _timeController.clear();
+  //     }
+  //   }
+  // }
 
   // upload and get URL from firestorage
   // IMAGE

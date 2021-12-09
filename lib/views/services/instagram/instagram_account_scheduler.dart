@@ -530,7 +530,8 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8),
               Expanded(
-                  child: Text('Some error, please check username/password')),
+                child: Text('Some error, Image aspect ratio not valid'),
+              ),
             ],
           ),
         );
