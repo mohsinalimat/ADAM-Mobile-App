@@ -153,9 +153,9 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
         _isDisabling = true;
       });
 
-      var value = await UserAuth()
-          .disableAccount(_reason, _commentController.text.trim())
-          .whenComplete(() {
+      var value =
+          await UserAuth.disableAccount(_reason, _commentController.text.trim())
+              .whenComplete(() {
         setState(() {
           _isDisabling = false;
         });
@@ -200,7 +200,7 @@ class _DisableAccountRequestViewState extends State<DisableAccountRequestView> {
             ],
           ),
         );
-        await UserAuth().logout(context);
+        await UserAuth.logout(context);
       }
     }
   }

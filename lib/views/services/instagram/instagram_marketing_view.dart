@@ -2,7 +2,9 @@ import 'package:adam/constants.dart';
 import 'package:adam/controller/marketing/instagram.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/scraping/instagram/scraped_user.dart';
+import 'package:adam/utils/audience_utils.dart';
 import 'package:adam/utils/custom_snackbar.dart';
+import 'package:adam/views/services/widgets/audience_chip.dart';
 import 'package:adam/widgets/back_button.dart';
 import 'package:adam/widgets/custom_button.dart';
 import 'package:adam/widgets/custom_text_field.dart';
@@ -213,7 +215,28 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                       : Text(
                           "Tap the profile picture to select individual target audience",
                         ),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 5.0),
+                  _dataScraped
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: _usernames
+                                .map(
+                                  (e) => AudienceChip(
+                                    username: e,
+                                    onDelete: () {
+                                      setState(() {
+                                        _usernames.remove(e);
+                                      });
+                                      AudienceUtils.targetRemoved(e, context);
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        )
+                      : Container(),
+                  const SizedBox(height: 5.0),
                   !_dataScraped
                       ? Container()
                       : ListView(
@@ -231,12 +254,18 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                                     _usernames
                                         .add(_scrapedUsersData[index].username);
                                   });
+                                  AudienceUtils.targetAdded(
+                                      _scrapedUsersData[index].username,
+                                      context);
                                 } else if (_usernames.contains(
                                     _scrapedUsersData[index].username)) {
                                   setState(() {
                                     _usernames.remove(
                                         _scrapedUsersData[index].username);
                                   });
+                                  AudienceUtils.targetRemoved(
+                                      _scrapedUsersData[index].username,
+                                      context);
                                 }
                                 print(_usernames);
                               },
@@ -261,13 +290,11 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      var data = await InstagramMarketing()
-          .scrapeUserData(
+      var data = await InstagramMarketing.scrapeUserData(
         _instaUsernameController.text.trim(),
         _instaPasswordController.text.trim(),
         _targetProfileController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _isWorking = false;
@@ -285,7 +312,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
                 const Icon(Icons.info, color: Colors.white),
                 const SizedBox(width: 8.0),
                 Text(
-                  'Please try again after 90 secs to avoid ban :)',
+                  'Some error occured!',
                   style: TextStyle(color: Colors.white),
                 ),
               ],
@@ -332,14 +359,12 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
         _isWorking = true;
       });
 
-      var data = await InstagramMarketing()
-          .sendDM(
+      var data = await InstagramMarketing.sendDM(
         _marketingMsg.text.trim(),
         _instaUsernameController.text.trim(),
         _instaPasswordController.text.trim(),
         _usernames,
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         if (mounted) {
           setState(() {
             _isWorking = false;
@@ -365,6 +390,7 @@ class _InstagramMarketingViewState extends State<InstagramMarketingView> {
       } else {
         setState(() {
           _dataScraped = false;
+          _usernames = [];
         });
         _marketingMsg.clear();
         customSnackBar(

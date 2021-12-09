@@ -3,14 +3,14 @@ import 'package:adam/model/scraping/instagram/scraped_user.dart';
 import 'package:dio/dio.dart';
 
 class InstagramMarketing {
-  Dio dio = Dio();
+  static Dio dio = Dio();
 
-  var headers = {
+  static var headers = {
     "Accept": "application/json",
     "Access-Control-Allow-Origin": "*"
   };
 
-  Future scrapeUserData(
+  static Future scrapeUserData(
       String userInsta, String passInsta, String targetUsername) async {
     try {
       String url = "$kAzureIP:8080/insta/scraper";
@@ -38,7 +38,7 @@ class InstagramMarketing {
     }
   }
 
-  Future sendDM(String msg, String username, String password,
+  static Future sendDM(String msg, String username, String password,
       List<String> usernames) async {
     try {
       String url = "$kAzureIP:8080/insta/marketing";
@@ -67,8 +67,8 @@ class InstagramMarketing {
   }
 
   // image post scheduler
-  Future postImageStatus(String username, String password, String caption,
-      String imagePath) async {
+  static Future postImageStatus(String username, String password,
+      String caption, String imagePath) async {
     try {
       String url = "$kAzureIP:8080/insta/post/status/image";
 
@@ -95,8 +95,8 @@ class InstagramMarketing {
     }
   }
 
-  Future postVideoStatus(String username, String password, String caption,
-      String videoPath) async {
+  static Future postVideoStatus(String username, String password,
+      String caption, String videoPath) async {
     try {
       String url = "$kAzureIP:8080/insta/post/status/video";
       var body = {
@@ -122,7 +122,7 @@ class InstagramMarketing {
   }
 
   // image story scheduler
-  Future postImageStory(
+  static Future postImageStory(
       String username, String password, String imagePath) async {
     try {
       String url = "$kAzureIP:8080/insta/post/story/image";
@@ -147,7 +147,7 @@ class InstagramMarketing {
     }
   }
 
-  Future postVideoStory(
+  static Future postVideoStory(
       String username, String password, String videoPath) async {
     try {
       String url = "$kAzureIP:8080/insta/post/story/video";

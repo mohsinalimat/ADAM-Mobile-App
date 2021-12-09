@@ -18,7 +18,6 @@ import 'package:intl/intl.dart';
 enum MediaType {
   text,
   image,
-  video,
 }
 
 class TwitterAccountScheduler extends StatefulWidget {
@@ -89,7 +88,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return AbsorbPointer(
-      absorbing: _isUpdating,
+      absorbing: _isUpdating || _uploadingFile,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -147,20 +146,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                         });
                       },
                     ),
-                    const Text('Image'),
-                    Radio(
-                      value: MediaType.video,
-                      groupValue: _mediaType,
-                      onChanged: (value) {
-                        setState(() {
-                          _fileUploaded = false;
-                          _urlMedia = "";
-                          someFile = null;
-                          _mediaType = value;
-                        });
-                      },
-                    ),
-                    const Text('Video'),
+                    const Text('Media'),
                   ]),
                   _fileUploaded
                       ? Container(
@@ -325,9 +311,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                     btnWidth: MediaQuery.of(context).size.width,
                     btnHeight: 45.0,
                     btnOnPressed: _mediaType != MediaType.text
-                        ? _mediaType == MediaType.image
-                            ? _tweetImage
-                            : _tweetVideo
+                        ? _tweetImage
                         : _tweetTextOnly,
                     btnColor: kPrimaryBlueColor,
                     btnText: _isUpdating
@@ -472,18 +456,16 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // post a text based tweet
-  void _tweetTextOnly() async {
+  Future<void> _tweetTextOnly() async {
     if (_formKey.currentState.validate()) {
       print("VALID!");
       setState(() {
         _isUpdating = true;
       });
-      var value = await TwitterMarketing()
-          .tweetText(
+      var value = await TwitterMarketing.tweetText(
         _contentController.text.trim(),
         "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
         });
@@ -528,9 +510,10 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // pickingFile
-  void _addAttachment(bool isImage) async {
+  Future<void> _addAttachment(bool isImage) async {
     filePickerResult = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ['png', 'jpg', 'jpeg']);
+        type: FileType.custom,
+        allowedExtensions: isImage ? ['png', 'jpg', 'jpeg'] : ['mp4']);
 
     if (filePickerResult != null) {
       someFile = File(filePickerResult.files.single.path);
@@ -550,7 +533,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // tweet with Media + caption (optional)
-  void _tweetImage() async {
+  Future<void> _tweetImage() async {
     if (someFile == null && _mediaType == MediaType.image) {
       customSnackBar(
         context,
@@ -568,16 +551,13 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
       setState(() {
         _isUpdating = true;
       });
-      var value = await TwitterMarketing()
-          .tweetImage(
+      var value = await TwitterMarketing.tweetImage(
         _contentController.text.trim(),
         _urlMedia,
         "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
-          _fileUploaded = false;
         });
       });
 
@@ -594,6 +574,9 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
           ),
         );
       } else {
+        setState(() {
+          _fileUploaded = false;
+        });
         customSnackBar(
           context,
           kSecondaryBlueColor,
@@ -619,78 +602,81 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
     }
   }
 
-  void _tweetVideo() async {
-    if (someFile == null && _mediaType == MediaType.video) {
-      customSnackBar(
-        context,
-        Colors.red,
-        Row(
-          children: [
-            const Icon(Icons.video_camera_back, color: Colors.white),
-            const SizedBox(width: 8.0),
-            const Text('Please select video file!'),
-          ],
-        ),
-      );
-    } else if (_formKey.currentState.validate()) {
-      print("VALID!");
-      setState(() {
-        _isUpdating = true;
-      });
-      var value = await TwitterMarketing()
-          .tweetVideo(
-        _contentController.text.trim(),
-        _urlMedia,
-        "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
-        setState(() {
-          _isUpdating = false;
-          _fileUploaded = false;
-        });
-      });
+  // Future<void> _tweetVideo() async {
+  //   if (someFile == null && _mediaType == MediaType.video) {
+  //     customSnackBar(
+  //       context,
+  //       Colors.red,
+  //       Row(
+  //         children: [
+  //           const Icon(Icons.video_camera_back, color: Colors.white),
+  //           const SizedBox(width: 8.0),
+  //           const Text('Please select video file!'),
+  //         ],
+  //       ),
+  //     );
+  //   } else if (_formKey.currentState.validate()) {
+  //     print("VALID!");
+  //     setState(() {
+  //       _isUpdating = true;
+  //     });
+  //     var value = await TwitterMarketing.tweetVideo(
+  //       _contentController.text.trim(),
+  //       _urlMedia,
+  //       "${_dateController.text.trim()} ${_timeController.text.trim()}",
+  //     ).whenComplete(() {
+  //       setState(() {
+  //         _isUpdating = false;
+  //       });
+  //     });
 
-      if (value is String) {
-        customSnackBar(
-          context,
-          Colors.red,
-          Row(
-            children: [
-              const Icon(Icons.info, color: Colors.white),
-              const SizedBox(width: 8.0),
-              Text(value),
-            ],
-          ),
-        );
-      } else {
-        customSnackBar(
-          context,
-          kSecondaryBlueColor,
-          Row(
-            children: [
-              const Icon(Icons.check, color: Colors.white),
-              const SizedBox(width: 8.0),
-              const Text("Video Tweet has been scheduled!"),
-            ],
-          ),
-        );
-        scheduledPosts.insert(
-            0,
-            ScheduledPostCard(
-              date: _dateController.text.trim(),
-              time: _timeController.text.trim(),
-              caption: _contentController.text.trim(),
-            ));
-        _contentController.clear();
-        _dateController.clear();
-        _timeController.clear();
-      }
-    }
-  }
+  //     if (value is String) {
+  //       customSnackBar(
+  //         context,
+  //         Colors.red,
+  //         Row(
+  //           children: [
+  //             const Icon(Icons.info, color: Colors.white),
+  //             const SizedBox(width: 8.0),
+  //             Text(value),
+  //           ],
+  //         ),
+  //       );
+  //     } else {
+  //       setState(() {
+  //         _fileUploaded = false;
+  //       });
+  //       customSnackBar(
+  //         context,
+  //         kSecondaryBlueColor,
+  //         Row(
+  //           children: [
+  //             const Icon(Icons.check, color: Colors.white),
+  //             const SizedBox(width: 8.0),
+  //             const Text("Video Tweet has been scheduled!"),
+  //           ],
+  //         ),
+  //       );
+  //       scheduledPosts.insert(
+  //           0,
+  //           ScheduledPostCard(
+  //             date: _dateController.text.trim(),
+  //             time: _timeController.text.trim(),
+  //             caption: _contentController.text.trim(),
+  //           ));
+  //       _contentController.clear();
+  //       _dateController.clear();
+  //       _timeController.clear();
+  //     }
+  //   }
+  // }
 
   // upload and get URL from firestorage
   // IMAGE
   Future<void> _imageToFirebase() async {
+    setState(() {
+      _uploadingFile = true;
+    });
     print(path);
     Reference ref = _firebaseStorage.ref('twitter').child('image');
 
@@ -720,6 +706,9 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
 
   // VIDEO
   Future<void> _videoToFirebase() async {
+    setState(() {
+      _uploadingFile = true;
+    });
     print(path);
     Reference ref = _firebaseStorage.ref('twitter').child('video');
 
@@ -748,14 +737,14 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // auto reply to mentions
-  void _autoReply() async {
+  Future<void> _autoReply() async {
     if (_autoReplyMsgController.text.isNotEmpty) {
       setState(() {
         _autoReplying = true;
       });
-      var value = await TwitterMarketing()
-          .autoReply(_autoReplyMsgController.text.trim())
-          .whenComplete(() {
+      var value =
+          await TwitterMarketing.autoReply(_autoReplyMsgController.text.trim())
+              .whenComplete(() {
         setState(() {
           _autoReplying = false;
         });
@@ -810,11 +799,11 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // check new followers
-  void _checkNewFollowers() async {
+  Future<void> _checkNewFollowers() async {
     setState(() {
       _isCheckingNewFollowers = true;
     });
-    var value = await TwitterMarketing().checkNewFollowers().whenComplete(() {
+    var value = await TwitterMarketing.checkNewFollowers().whenComplete(() {
       setState(() {
         _isCheckingNewFollowers = false;
       });
@@ -859,15 +848,15 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
   }
 
   // sending greeting msg
-  void _sendGreetingMessage() async {
+  Future<void> _sendGreetingMessage() async {
     if (_msgController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
       setState(() {
         _isGreeted = true;
       });
-      var value = await TwitterMarketing()
-          .sendGreetingMsg(_msgController.text.trim())
-          .whenComplete(() {
+      var value =
+          await TwitterMarketing.sendGreetingMsg(_msgController.text.trim())
+              .whenComplete(() {
         setState(() {
           _isGreeted = false;
         });

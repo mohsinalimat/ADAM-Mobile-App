@@ -307,19 +307,17 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
   }
 
   // post
-  void _post() async {
+  Future<void> _post() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         _isUpdating = true;
       });
 
-      var value = await LinkedInMarketing()
-          .postTextOnly(
+      var value = await LinkedInMarketing.postTextOnly(
         _linkedinEmailController.text.trim(),
         _linkedinPassController.text.trim(),
         _contentController.text.trim(),
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
         });
@@ -377,8 +375,8 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
   }
 
   // add connection
-  void _sendConnectionRequest() async {
-    var value = await LinkedInMarketing().addConnection(
+  Future<void> _sendConnectionRequest() async {
+    var value = await LinkedInMarketing.addConnection(
       _linkedinEmailController.text.trim(),
       _linkedinPassController.text.trim(),
     );

@@ -9,7 +9,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatelessWidget {
-  final _userAuth = UserAuth();
   final _drawerOptions = [
     "Account",
     "Subscription History",
@@ -174,6 +173,6 @@ class CustomDrawer extends StatelessWidget {
       AppRoutes.login,
       (route) => route.settings.name == AppRoutes.login ? true : false,
     );
-    await _userAuth.logout(context);
+    await UserAuth.logout(context);
   }
 }

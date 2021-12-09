@@ -385,7 +385,7 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
   }
 
   // pickingFile
-  void _addAttachment(bool isImage) async {
+  Future<void> _addAttachment(bool isImage) async {
     filePickerResult = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: isImage ? ['png', 'jpg', 'jpeg'] : ['mp4'],
@@ -470,20 +470,18 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
   }
 
   // text post
-  void _postText() async {
+  Future<void> _postText() async {
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState.validate()) {
       setState(() {
         _isUpdating = true;
       });
-      var value = await RedditMarketing()
-          .postText(
+      var value = await RedditMarketing.postText(
         _titleController.text.trim(),
         _bodyController.text.trim(),
         "${_dateController.text.trim()} ${_timeController.text.trim()}",
-      )
-          .whenComplete(() {
+      ).whenComplete(() {
         setState(() {
           _isUpdating = false;
         });
@@ -531,7 +529,7 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
   }
 
   // image post
-  void _postImage() async {
+  Future<void> _postImage() async {
     if (someFile == null) {
       customSnackBar(
         context,
@@ -549,13 +547,11 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
         setState(() {
           _isUpdating = true;
         });
-        var value = await RedditMarketing()
-            .postImage(
+        var value = await RedditMarketing.postImage(
           _titleController.text.trim(),
           _urlMedia,
           "${_dateController.text.trim()} ${_timeController.text.trim()}",
-        )
-            .whenComplete(() {
+        ).whenComplete(() {
           setState(() {
             _isUpdating = false;
           });
@@ -605,7 +601,7 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
   }
 
   // video post
-  void _postVideo() async {
+  Future<void> _postVideo() async {
     if (someFile == null) {
       customSnackBar(
         context,
@@ -623,13 +619,11 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
         setState(() {
           _isUpdating = true;
         });
-        var value = await RedditMarketing()
-            .postVideo(
+        var value = await RedditMarketing.postVideo(
           _titleController.text.trim(),
           _urlMedia,
           "${_dateController.text.trim()} ${_timeController.text.trim()}",
-        )
-            .whenComplete(() {
+        ).whenComplete(() {
           setState(() {
             _isUpdating = false;
           });

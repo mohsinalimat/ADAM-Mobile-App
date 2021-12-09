@@ -34,8 +34,6 @@ class _SignUpViewState extends State<SignUpView> {
 
   final format = DateFormat("dd-MM-yyyy");
 
-  final _userAuth = UserAuth();
-
   String _gender = "Male";
   String _country = "Pakistan";
   String _city = "Islamabad";
@@ -181,7 +179,6 @@ class _SignUpViewState extends State<SignUpView> {
                             icon: Icons.email,
                             validatorFtn: Validators.emailValidator,
                             onChangeFtn: (value) {
-
                               if (value.length == 0) {
                                 setState(() {
                                   _isEmailTyping = false;
@@ -220,7 +217,6 @@ class _SignUpViewState extends State<SignUpView> {
                             hintText: "Phone Number",
                             icon: Icons.phone,
                             onChangeFtn: (value) {
-
                               if (value.length == 0) {
                                 setState(() {
                                   _isPhoneTyping = false;
@@ -594,7 +590,6 @@ class _SignUpViewState extends State<SignUpView> {
 
   /// `Node signup`
   void _signUp() async {
-
     if (_formKey.currentState.validate()) {
       if (!_isEmailVerified || !_isPhoneVerified) {
         _errorSignup('Email/Phone Number NOT verified!');
@@ -603,8 +598,7 @@ class _SignUpViewState extends State<SignUpView> {
           _isLoading = true;
         });
 
-        int result = await _userAuth
-            .signUp(
+        int result = await UserAuth.signUp(
           fullName: fullNameController.text.trim(),
           email: emailController.text.trim(),
           phone: phoneNumberController.text.trim(),
@@ -613,8 +607,7 @@ class _SignUpViewState extends State<SignUpView> {
           gender: _gender,
           city: _city,
           country: _country,
-        )
-            .whenComplete(() {
+        ).whenComplete(() {
           setState(() {
             _isLoading = false;
           });

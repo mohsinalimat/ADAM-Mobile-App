@@ -15,7 +15,6 @@ class DeleteAccountView extends StatefulWidget {
 class _DeleteAccountViewState extends State<DeleteAccountView> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final UserAuth _userAuth = UserAuth();
 
   bool _deleting = false;
 
@@ -137,8 +136,7 @@ class _DeleteAccountViewState extends State<DeleteAccountView> {
       setState(() {
         _deleting = true;
       });
-      int code = await _userAuth
-          .deleteAccount(_passwordController.text.trim())
+      int code = await UserAuth.deleteAccount(_passwordController.text.trim())
           .whenComplete(() {
         setState(() {
           _deleting = false;
