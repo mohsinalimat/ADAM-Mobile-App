@@ -84,7 +84,7 @@ class _HomeViewState extends State<HomeView> {
     return _userData == null
         ? Center(
             child: JumpingDotsProgressIndicator(
-              fontSize: 18.0,
+              fontSize: 10.0,
             ),
           )
         : SingleChildScrollView(
@@ -107,7 +107,9 @@ class _HomeViewState extends State<HomeView> {
                           child: CustomPaint(
                             size: DrawerIconPainter.size(_width * 0.07),
                             painter: DrawerIconPainter(
-                              color: kPrimaryBlueColor,
+                              color: _themeProvider.darkTheme
+                                  ? Colors.white
+                                  : kPrimaryBlueColor,
                             ),
                           ),
                         ),

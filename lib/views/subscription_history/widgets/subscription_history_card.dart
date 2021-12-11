@@ -95,158 +95,220 @@ class _SubscriptionHistoryCardState extends State<SubscriptionHistoryCard> {
 
   void _viewHistory(BuildContext context) {
     showDialog(
-      context: context,
-      builder: (context) => Screenshot(
-        controller: screenshotController,
-        child: Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(1),
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: ClipPath(
-                  clipper: MovieTicketBothSidesClipper(),
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 20.0),
-                          color: Colors.grey[100],
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+        context: context,
+        builder: (context) {
+          final _theme = Provider.of<ThemeProvider>(context);
+          return Screenshot(
+            controller: screenshotController,
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.all(1),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: ClipPath(
+                      clipper: MovieTicketBothSidesClipper(),
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 20.0),
+                              color: Colors.grey[100],
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  InkWell(
-                                    onTap: () => Navigator.pop(context),
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      size: 18,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      InkWell(
+                                        onTap: () => Navigator.pop(context),
+                                        child: Icon(
+                                          Icons.cancel_outlined,
+                                          size: 18,
+                                          color: _theme.darkTheme
+                                              ? Colors.black
+                                              : kPrimaryBlueColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SvgPicture.asset(
+                                    _theme.darkTheme
+                                        ? 'assets/logo/logoBlack.svg'
+                                        : 'assets/logo/logoColor.svg',
+                                    height: 40,
+                                  ),
+                                  const SizedBox(height: 5.0),
+                                  Center(
+                                    child: Text(
+                                      "Automated Digital Assitant in Marketing",
+                                      style: TextStyle(
+                                        color: _theme.darkTheme
+                                            ? Colors.black
+                                            : kPrimaryBlueColor,
+                                        fontSize: 12.0,
+                                      ),
                                     ),
                                   ),
+                                  const SizedBox(height: 15.0),
                                 ],
                               ),
-                              SvgPicture.asset(
-                                'assets/logo/logoColor.svg',
-                                height: 40,
-                              ),
-                              const SizedBox(height: 5.0),
-                              Center(
-                                child: const Text(
-                                  "Automated Digital Assitant in Marketing",
-                                  style: const TextStyle(
-                                    color: kPrimaryBlueColor,
-                                    fontSize: 12.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    "ID#${widget.sId}",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    "Service Name:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.serviceName,
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    "Type:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.isPrem ? "Premium" : "Standard",
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    "Date:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.date,
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    "Time:",
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    "02:54:10 PM",
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: _theme.darkTheme
+                                          ? Colors.black
+                                          : kPrimaryBlueColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5.0),
+                                ],
                               ),
-                              const SizedBox(height: 15.0),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10.0),
-                              Text(
-                                "ID#${widget.sId}",
-                                style: TextStyle(fontSize: 12.0),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                "Service Name:",
-                                style: TextStyle(fontSize: 12.0),
-                              ),
-                              Text(
-                                widget.serviceName,
-                                style: TextStyle(fontSize: 13.0),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                "Type:",
-                                style: TextStyle(fontSize: 12.0),
-                              ),
-                              Text(
-                                widget.isPrem ? "Premium" : "Standard",
-                                style: TextStyle(fontSize: 13.0),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                "Date:",
-                                style: TextStyle(fontSize: 12.0),
-                              ),
-                              Text(
-                                widget.date,
-                                style: TextStyle(fontSize: 13.0),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                "Time:",
-                                style: TextStyle(fontSize: 12.0),
-                              ),
-                              Text(
-                                "02:54:10 PM",
-                                style: TextStyle(fontSize: 13.0),
-                              ),
-                              const SizedBox(height: 5.0),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            TextButton(
-                                onPressed: _shareRecipt,
-                                child: Row(
-                                  children: [
-                                    Text("Share "),
-                                    Icon(Icons.share, size: 17.0)
-                                  ],
-                                )),
-                            TextButton(
-                                onPressed: _saveRecipt,
-                                child: Row(
-                                  children: [
-                                    Text("Save "),
-                                    Icon(Icons.save, size: 17.0)
-                                  ],
-                                )),
-                          ],
-                        ),
-                        const SizedBox(height: 5.0),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 25),
-                          color: Colors.grey[100],
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Text('Securely paid via'),
-                                Image.asset('assets/stripe.png', height: 28.0)
+                                TextButton(
+                                    onPressed: _shareRecipt,
+                                    child: Row(
+                                      children: [
+                                        Text("Share "),
+                                        Icon(Icons.share, size: 17.0)
+                                      ],
+                                    )),
+                                TextButton(
+                                    onPressed: _saveRecipt,
+                                    child: Row(
+                                      children: [
+                                        Text("Save "),
+                                        Icon(Icons.save, size: 17.0)
+                                      ],
+                                    )),
                               ],
                             ),
-                          ),
-                        )
-                      ],
+                            const SizedBox(height: 5.0),
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 25),
+                              color: Colors.grey[100],
+                              child: Center(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Securely paid via',
+                                      style: TextStyle(
+                                        color: _theme.darkTheme
+                                            ? Colors.black
+                                            : kPrimaryBlueColor,
+                                      ),
+                                    ),
+                                    Image.asset('assets/stripe.png',
+                                        height: 28.0)
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
+        });
   }
 
   void _shareRecipt() async {

@@ -131,10 +131,6 @@ class _FAQViewState extends State<FAQView> {
                     ),
                   )),
                 ),
-                // SvgPicture.asset(
-                //   'assets/faq.svg',
-                //   height: 100.0,
-                // ),
                 SizedBox(height: 20.0),
                 for (int i = 0; i < _questionsLength; i++)
                   ExpansionTile(
@@ -145,10 +141,6 @@ class _FAQViewState extends State<FAQView> {
                     ),
                     expandedAlignment: Alignment.centerLeft,
                     expandedCrossAxisAlignment: CrossAxisAlignment.start,
-
-                    // iconColor: _themeProvider.darkTheme
-                    //     ? Colors.white
-                    //     : Theme.of(context).primaryColor,
                     title: Text(
                       _currentIndex == 0
                           ? _topQuestions[i]
@@ -174,27 +166,8 @@ class _FAQViewState extends State<FAQView> {
                                     ? _accountAnswers[i]
                                     : _subscriptionAnswers[i],
                       ),
-                      SizedBox(height: 15.0),
-                      Row(
-                        children: [
-                          Text(
-                            "Was this question helpful?",
-                          ),
-                          Expanded(child: Container()),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextButton(
-                                onPressed: () {},
-                                child: Text("Yes"),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: Text("No"),
-                              ),
-                            ],
-                          ),
-                        ],
+                      const SizedBox(
+                        height: 10.0,
                       )
                     ],
                   ),

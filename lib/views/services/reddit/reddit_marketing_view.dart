@@ -162,76 +162,78 @@ class _RedditMarketingViewState extends State<RedditMarketingView> {
                                 ),
                         )
                       : Container(),
-                  const SizedBox(height: 25.0),
+                  const SizedBox(height: 15.0),
                   !_dataScraped
                       ? Container()
-                      : Text(
-                          "Target Audience: ${_scrapedUsersData.length}",
-                          style: Theme.of(context).textTheme.headline2,
-                        ),
-                  const SizedBox(height: 5.0),
-                  !_dataScraped
-                      ? Container()
-                      : Text(
-                          "Tap the profile picture to select individual target audience",
-                        ),
-                  const SizedBox(height: 5.0),
-                  _dataScraped
-                      ? SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: _usernames
-                                .map(
-                                  (e) => AudienceChip(
-                                    username: e,
-                                    onDelete: () {
-                                      setState(() {
-                                        _usernames.remove(e);
-                                      });
-                                      AudienceUtils.targetRemoved(e, context);
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        )
-                      : Container(),
-                  const SizedBox(height: 5.0),
-                  !_dataScraped
-                      ? Container()
-                      : ListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: List.generate(
-                            _scrapedUsersData.length,
-                            (index) => RedditScrapedDataCard(
-                              redditScrapedData: _scrapedUsersData[index],
-                              usernames: _usernames,
-                              markForMessage: () {
-                                if (!_usernames.contains(
-                                    _scrapedUsersData[index].username)) {
-                                  setState(() {
-                                    _usernames
-                                        .add(_scrapedUsersData[index].username);
-                                  });
-                                  AudienceUtils.targetAdded(
-                                      _scrapedUsersData[index].username,
-                                      context);
-                                } else if (_usernames.contains(
-                                    _scrapedUsersData[index].username)) {
-                                  setState(() {
-                                    _usernames.remove(
-                                        _scrapedUsersData[index].username);
-                                  });
-                                  AudienceUtils.targetRemoved(
-                                      _scrapedUsersData[index].username,
-                                      context);
-                                }
-                                print(_usernames);
-                              },
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 10),
+                            Text(
+                              "Target Audience: ${_scrapedUsersData.length}",
+                              style: Theme.of(context).textTheme.headline2,
                             ),
-                          ),
-                        ),
+                            const SizedBox(height: 5.0),
+                            Text(
+                              "Tap the profile picture to select individual target audience",
+                            ),
+                            const SizedBox(height: 5.0),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: _usernames
+                                    .map(
+                                      (e) => AudienceChip(
+                                        username: e,
+                                        onDelete: () {
+                                          setState(() {
+                                            _usernames.remove(e);
+                                          });
+                                          AudienceUtils.targetRemoved(
+                                              e, context);
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                            const SizedBox(height: 5.0),
+                            ListView(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              children: List.generate(
+                                _scrapedUsersData.length,
+                                (index) => RedditScrapedDataCard(
+                                  redditScrapedData: _scrapedUsersData[index],
+                                  usernames: _usernames,
+                                  markForMessage: () {
+                                    if (!_usernames.contains(
+                                        _scrapedUsersData[index].username)) {
+                                      setState(() {
+                                        _usernames.add(
+                                            _scrapedUsersData[index].username);
+                                      });
+                                      AudienceUtils.targetAdded(
+                                          _scrapedUsersData[index].username,
+                                          context);
+                                    } else if (_usernames.contains(
+                                        _scrapedUsersData[index].username)) {
+                                      setState(() {
+                                        _usernames.remove(
+                                            _scrapedUsersData[index].username);
+                                      });
+                                      AudienceUtils.targetRemoved(
+                                          _scrapedUsersData[index].username,
+                                          context);
+                                    }
+                                    print(_usernames);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
                 ],
               ),
             ),

@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:adam/controller/service_controller.dart';
+import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
 import 'package:flutter/material.dart';
 import 'package:adam/constants.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
@@ -23,6 +25,24 @@ class _StatsViewState extends State<StatsView> {
     "Twitter Marketing",
   ];
 
+  // data
+  // subscribed services
+  List _subscribedServices = [];
+
+  Future<void> _getServices() async {
+    SubscribedServices service =
+        await ServiceController().getSubscribedServices();
+    setState(() {
+      _subscribedServices = service.subscribedServices;
+    });
+  }
+
+  @override
+  void initState() {
+    _getServices();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,11 +65,11 @@ class _StatsViewState extends State<StatsView> {
                     });
                     _generateDummyFollowers();
                   },
-                  itemBuilder: (context) => _services
+                  itemBuilder: (context) => _subscribedServices
                       .map(
                         (ser) => PopupMenuItem(
-                          value: ser,
-                          child: Text(ser),
+                          value: ser['serviceData']['service_name'],
+                          child: Text(ser['serviceData']['service_name']),
                         ),
                       )
                       .toList(),

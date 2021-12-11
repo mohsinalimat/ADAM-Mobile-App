@@ -139,8 +139,8 @@ class _ReportProblemViewState extends State<ReportProblemView> {
 
       var value = await ServiceController()
           .reportAProblem(
-        _subjectFieldController.text.trim(),
-        _detailsFieldController.text.trim(),
+        _subjectFieldController.text.trim().trimLeft(),
+        _detailsFieldController.text.trim().trimLeft(),
       )
           .whenComplete(() {
         setState(() {

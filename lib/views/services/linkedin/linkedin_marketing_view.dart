@@ -204,22 +204,27 @@ class _LinkedinMarketingViewState extends State<LinkedinMarketingView> {
                     const SizedBox(height: 25.0),
                     !_dataScraped
                         ? Container()
-                        : Text(
-                            "Target audience: ${_scrapedUsersData.length}",
-                            style: Theme.of(context).textTheme.headline2,
-                          ),
-                    const SizedBox(height: 10.0),
-                    !_dataScraped
-                        ? Container()
-                        : ListView(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: List.generate(
-                              _scrapedUsersData.length,
-                              (index) => LinkedInScrapedUserDataCard(
-                                linkedinScrapedUser: _scrapedUsersData[index],
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                "Target audience: ${_scrapedUsersData.length}",
+                                style: Theme.of(context).textTheme.headline2,
                               ),
-                            ),
+                              const SizedBox(height: 10.0),
+                              ListView(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                children: List.generate(
+                                  _scrapedUsersData.length,
+                                  (index) => LinkedInScrapedUserDataCard(
+                                    linkedinScrapedUser:
+                                        _scrapedUsersData[index],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                   ],
                 ),

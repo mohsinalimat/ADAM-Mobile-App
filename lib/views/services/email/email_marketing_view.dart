@@ -389,10 +389,11 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
 
       var value = await EmailMarketing()
           .emailFromCSV(
-              _emailData,
-              _subjectController.text.trim(),
-              _emailBodyController.text.trim(),
-              _brandNameController.text.trim())
+        _emailData,
+        _subjectController.text.trim(),
+        _emailBodyController.text.trim().trimLeft(),
+        _brandNameController.text.trim(),
+      )
           .whenComplete(() {
         setState(() {
           _sendingEmail = false;
@@ -458,7 +459,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
       var value = await EmailMarketing()
           .emailFromDataBank(
               _subjectController.text.trim(),
-              _emailBodyController.text.trim(),
+              _emailBodyController.text.trim().trimLeft(),
               _brandNameController.text.trim())
           .whenComplete(() {
         setState(() {
@@ -522,7 +523,7 @@ class _EmailMarketingViewState extends State<EmailMarketingView> {
           .emailFromCSV(
               _emailData,
               _subjectController.text.trim(),
-              _emailBodyController.text.trim(),
+              _emailBodyController.text.trim().trimLeft(),
               _brandNameController.text.trim())
           .whenComplete(() {
         setState(() {

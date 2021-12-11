@@ -7,8 +7,14 @@ import 'package:adam/views/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
   final _drawerOptions = [
     "Account",
     "Subscription History",
@@ -89,8 +95,14 @@ class CustomDrawer extends StatelessWidget {
                             _drawerOptions[index],
                             style: TextStyle(color: Colors.white),
                           ),
-                          onTap: () => Navigator.pushNamed(
-                              context, _drawerOptionsFtn[index]),
+                          onTap: () {
+                            if (index == 2) {
+                              launch('https://adam-live-chat.herokuapp.com/');
+                            } else {
+                              Navigator.pushNamed(
+                                  context, _drawerOptionsFtn[index]);
+                            }
+                          },
                         ),
                       ListTile(
                         minLeadingWidth: 10.0,
@@ -155,7 +167,7 @@ class CustomDrawer extends StatelessWidget {
   void _signOut(BuildContext context) async {
     customSnackBar(
       context,
-      Colors.green,
+      kSecondaryBlueColor,
       Row(
         children: [
           Icon(Icons.check, color: Colors.white),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -29,12 +30,19 @@ class _StripePaymentCheckoutState extends State<StripePaymentCheckout> {
 
   <body>
       <div style="position: absolute; text-align: center; width:100%; height:100%; top:50%;">
-          <p>Loading Stripe...!</p>
+          <h1>Loading Stripe...!</h1>
       </div>
   </body>
 
   </html>
   ''';
+  
+  @override
+  void initState() {
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
