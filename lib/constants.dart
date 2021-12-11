@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 const String kHerokuURL = "https://adam-web-api.herokuapp.com";
 const String kLocalHostIP = "http://10.113.62.78";
 const String kAzureIP = "http://13.72.68.224";
-const String kMyLocalIP = "http://192.168.2.15";
+const String kMyLocalIP = "http://172.20.52.91";
 
 // Colors
 const Color kLightGreenColor = Color(0xff5bdb5b);

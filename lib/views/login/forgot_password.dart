@@ -106,8 +106,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             });
 
                             var result = await UserAuth.forgotPassword(
-                                    forgorEmailTextController.text.trim())
-                                .whenComplete(() {
+                              forgorEmailTextController.text.trim().trimLeft(),
+                            ).whenComplete(() {
                               setState(() {
                                 _isLoading = false;
                               });

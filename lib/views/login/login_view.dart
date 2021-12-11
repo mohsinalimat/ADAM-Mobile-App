@@ -171,8 +171,8 @@ class _LoginViewState extends State<LoginView> {
       });
 
       int result = await UserAuth.login(
-        email: emailTextController.text.trim(),
-        password: passwordTextController.text.trim(),
+        email: emailTextController.text.trim().trimLeft(),
+        password: passwordTextController.text.trim().trimLeft(),
       ).whenComplete(() {
         setState(() {
           _isLoading = false;

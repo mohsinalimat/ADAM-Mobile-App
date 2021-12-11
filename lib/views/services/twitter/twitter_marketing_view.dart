@@ -30,6 +30,14 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
 
   List<String> _usernames = [];
 
+  // sorting
+  int _sortIndex = 0;
+  List<String> _sortBy = [
+    "Default",
+    "Followers",
+    "Following",
+  ];
+
   @override
   void initState() {
     _marketingMsg.text =
@@ -162,75 +170,130 @@ class _TwitterMarketingViewState extends State<TwitterMarketingView> {
                                 ),
                         )
                       : Container(),
-                  const SizedBox(height: 25.0),
+                  const SizedBox(height: 15.0),
                   !_dataScraped
                       ? Container()
-                      : Text(
-                          "Target audience: ${_scrapedUsersData.length}",
-                          style: Theme.of(context).textTheme.headline2,
-                        ),
-                  const SizedBox(height: 5.0),
-                  !_dataScraped
-                      ? Container()
-                      : Text(
-                          "Tap the profile picture to select individual target audience",
-                        ),
-                  const SizedBox(height: 5.0),
-                  _dataScraped
-                      ? SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: _usernames
-                                .map(
-                                  (e) => AudienceChip(
-                                    username: e,
-                                    onDelete: () {
-                                      setState(() {
-                                        _usernames.remove(e);
-                                      });
-                                      AudienceUtils.targetRemoved(e, context);
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        )
-                      : Container(),
-                  const SizedBox(height: 5.0),
-                  !_dataScraped
-                      ? Container()
-                      : ListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: List.generate(
-                            _scrapedUsersData.length,
-                            (index) => TwitterScrapedUserDataCard(
-                              twitterScrapedUser: _scrapedUsersData[index],
-                              usernames: _usernames,
-                              markForMessage: () {
-                                if (!_usernames.contains(
-                                    _scrapedUsersData[index].username)) {
-                                  setState(() {
-                                    _usernames
-                                        .add(_scrapedUsersData[index].username);
-                                  });
-                                  AudienceUtils.targetAdded(
-                                      _scrapedUsersData[index].username,
-                                      context);
-                                } else if (_usernames.contains(
-                                    _scrapedUsersData[index].username)) {
-                                  setState(() {
-                                    _usernames.remove(
-                                        _scrapedUsersData[index].username);
-                                  });
-                                  AudienceUtils.targetRemoved(
-                                      _scrapedUsersData[index].username,
-                                      context);
-                                }
-                                print(_usernames);
-                              },
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              "Sort by:",
+                              style: Theme.of(context).textTheme.headline2,
                             ),
-                          ),
+                            const SizedBox(height: 7),
+                            Row(
+                              children: List.generate(
+                                _sortBy.length,
+                                (index) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 3.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _sortIndex = index;
+                                        if (_sortIndex == 1) {
+                                          _scrapedUsersData.sort(
+                                            (a, b) => b.followers
+                                                .compareTo(a.followers),
+                                          );
+                                        } else if (_sortIndex == 2) {
+                                          _scrapedUsersData.sort(
+                                            (a, b) => b.following
+                                                .compareTo(a.following),
+                                          );
+                                        } else {
+                                          _scrapedUsersData.sort(
+                                            (a, b) => a.username
+                                                .compareTo(b.username),
+                                          );
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        color: _sortIndex == index
+                                            ? kPrimaryBlueColor
+                                            : Colors.grey.withOpacity(0.65),
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          _sortBy[index],
+                                          style: kBtnTextStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "Target audience: ${_scrapedUsersData.length}",
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                            const SizedBox(height: 5.0),
+                            Text(
+                              "Tap the profile picture to select individual target audience",
+                            ),
+                            const SizedBox(height: 5.0),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: _usernames
+                                    .map(
+                                      (e) => AudienceChip(
+                                        username: e,
+                                        onDelete: () {
+                                          setState(() {
+                                            _usernames.remove(e);
+                                          });
+                                          AudienceUtils.targetRemoved(
+                                              e, context);
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                            const SizedBox(height: 5.0),
+                            ListView(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              children: List.generate(
+                                _scrapedUsersData.length,
+                                (index) => TwitterScrapedUserDataCard(
+                                  twitterScrapedUser: _scrapedUsersData[index],
+                                  usernames: _usernames,
+                                  markForMessage: () {
+                                    if (!_usernames.contains(
+                                        _scrapedUsersData[index].username)) {
+                                      setState(() {
+                                        _usernames.add(
+                                            _scrapedUsersData[index].username);
+                                      });
+                                      AudienceUtils.targetAdded(
+                                          _scrapedUsersData[index].username,
+                                          context);
+                                    } else if (_usernames.contains(
+                                        _scrapedUsersData[index].username)) {
+                                      setState(() {
+                                        _usernames.remove(
+                                            _scrapedUsersData[index].username);
+                                      });
+                                      AudienceUtils.targetRemoved(
+                                          _scrapedUsersData[index].username,
+                                          context);
+                                    }
+                                    print(_usernames);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                 ],
               ),

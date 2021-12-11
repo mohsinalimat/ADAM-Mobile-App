@@ -39,7 +39,10 @@ class TwitterMarketing {
   }
 
   // sending DMs
-  static Future sendDMs(String msg, List<String> usernames) async {
+  static Future sendDMs(
+    String msg,
+    List<String> usernames,
+  ) async {
     try {
       String url = "$kAzureIP:3030/twitter/marketing";
 

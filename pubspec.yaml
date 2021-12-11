@@ -49,7 +49,7 @@ dependencies:
   provider: ^5.0.0
 
   # stripe payments
-  webview_flutter: ^2.0.8
+  webview_flutter: ^3.0.0
   dio: ^4.0.0
   http: ^0.13.3
   js: ^0.6.3

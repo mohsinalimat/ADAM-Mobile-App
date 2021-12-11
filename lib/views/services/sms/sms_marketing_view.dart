@@ -282,7 +282,10 @@ class _SMSMarketingViewState extends State<SMSMarketingView> {
       });
 
       var value = await SMSMarketing()
-          .smsFromCSV(_phoneNumbersData, _messageContentController.text.trim())
+          .smsFromCSV(
+        _phoneNumbersData,
+        _messageContentController.text.trim().trimLeft(),
+      )
           .whenComplete(() {
         setState(() {
           _sendingSMS = false;
@@ -343,7 +346,9 @@ class _SMSMarketingViewState extends State<SMSMarketingView> {
       });
 
       var value = await SMSMarketing()
-          .smsFromDataBank(_messageContentController.text.trim())
+          .smsFromDataBank(
+        _messageContentController.text.trim().trimLeft(),
+      )
           .whenComplete(() {
         setState(() {
           _sendingSMS = false;

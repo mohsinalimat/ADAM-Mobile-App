@@ -5,6 +5,7 @@ import 'package:adam/model/service/service_type.dart';
 import 'package:adam/model/service/services_list.dart';
 import 'package:adam/model/subscribed_services/subscribed_services.dart';
 import 'package:adam/model/subscribed_services/subscribed_services_list.dart';
+import 'package:adam/views/chat/webview_chat.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -89,6 +90,7 @@ class _MyAppState extends State<MyApp> {
             AppRoutes.changePassword: (context) => ChangePasswordView(),
             AppRoutes.changeEmail: (context) => ChangeEmailView(),
             AppRoutes.chat: (context) => ChatView(),
+            AppRoutes.chatWeb: (context) => ChatWebView(),
             AppRoutes.subscriptionHistory: (context) =>
                 SubscriptionHistoryView(),
             AppRoutes.account: (context) => AccountView(),

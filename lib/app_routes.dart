@@ -8,6 +8,7 @@ class AppRoutes {
   static final changePassword = "/changePassword";
   static final changeEmail = "/changeEmail";
   static final chat = "/chat";
+  static final chatWeb = "/chatWeb";
   static final subscriptionHistory = "/subscriptionHistory";
   static final account = "/account";
   static final notifications = "/notifications";
