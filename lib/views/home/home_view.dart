@@ -60,13 +60,18 @@ class _HomeViewState extends State<HomeView> {
   // getting image locally
   String _photo;
 
+  // runner method
+  Future<void> _runnerUserData() async {
+    await _getLocalUserData();
+    await _getLocalPhoto();
+    await _getServices();
+    await _getSubscribedServicesList();
+    _servicesSubscribedFuture = serviceController.getSubscribedServices();
+  }
+
   @override
   void initState() {
-    _getLocalPhoto();
-    _servicesSubscribedFuture = serviceController.getSubscribedServices();
-    _getServices();
-    _getSubscribedServicesList();
-    _getLocalUserData();
+    _runnerUserData();
     super.initState();
   }
 
@@ -288,8 +293,9 @@ class _HomeViewState extends State<HomeView> {
   // getting list of subscribed services of current user
   Future<void> _getSubscribedServicesList(
       {bool newServiceCheck = false}) async {
-    List _cacheServices = await _hivebox.get('services');
+    List _cacheServices = await _hivebox.get(_userData.userId);
     if (_cacheServices == null || _cacheServices.isEmpty || newServiceCheck) {
+      _servicesSubscribedFuture = serviceController.getSubscribedServices();
       SubscribedServices value = await _servicesSubscribedFuture;
       if (mounted) {
         setState(() {

@@ -85,17 +85,16 @@ class ServiceController {
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> _ids = response.data['subscribedServices'];
+        List<dynamic> _subscribedServices = response.data['subscribedServices'];
         List<String> _stringIds = [];
 
-        for (int i = 0; i < _ids.length; i++) {
-          _stringIds.add(_ids[i]['serviceData']['_id'].toString());
+        for (int i = 0; i < _subscribedServices.length; i++) {
+          _stringIds
+              .add(_subscribedServices[i]['serviceData']['_id'].toString());
         }
 
-        prefs.setStringList('services', _stringIds);
-
         // cache in Hive
-        await _hiveBox.put('services', _ids);
+        await _hiveBox.put(_userId, _subscribedServices);
 
         return SubscribedServices.fromJson(response.data);
       } else {
