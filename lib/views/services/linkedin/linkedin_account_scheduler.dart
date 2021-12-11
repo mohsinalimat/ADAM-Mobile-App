@@ -260,9 +260,10 @@ class _LinkedinAccountSchedulerState extends State<LinkedinAccountScheduler> {
                         ? kLoaderWhite
                         : const Text('Schedule Post', style: kBtnTextStyle),
                   ),
-                  const SizedBox(height: 5.0),
-                  TextButton(
-                      onPressed: () {}, child: const Text("Save as Draft")),
+                  Divider(
+                    color: Colors.grey.withAlpha(150),
+                    height: 30.0,
+                  ),
                   Text(
                     "Scheduled Posts",
                     style: Theme.of(context).textTheme.headline1,

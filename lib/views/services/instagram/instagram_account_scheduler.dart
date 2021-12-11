@@ -417,10 +417,10 @@ class _InstagramAccountSchedulerState extends State<InstagramAccountScheduler> {
                                 : "Scheduled Story",
                             style: kBtnTextStyle),
                   ),
-                  const SizedBox(height: 5.0),
-                  TextButton(
-                      onPressed: () {}, child: const Text("Save as Draft")),
-                  const SizedBox(height: 10.0),
+                  Divider(
+                    color: Colors.grey.withAlpha(150),
+                    height: 30.0,
+                  ),
                   Text(
                     _scheduleType == ScheduleType.postImage ||
                             _scheduleType == ScheduleType.postVideo

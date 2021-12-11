@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:adam/constants.dart';
 import 'package:adam/controller/service_controller.dart';
 import 'package:adam/controller/theme_controller/theme_provider.dart';
 import 'package:adam/model/service/service.dart';
 import 'package:adam/model/service/service_type.dart';
+import 'package:adam/model/user.dart';
 import 'package:adam/utils/custom_snackbar.dart';
 import 'package:adam/views/services/user_all_reviews.dart';
 import 'package:adam/views/stripe/stripe_payment.dart';
@@ -17,13 +20,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceSubscriptionView extends StatefulWidget {
   final Service service;
 
   ServiceSubscriptionView({
     Key key,
-    this.service,
+    @required this.service,
   }) : super(key: key);
 
   @override
@@ -39,6 +43,18 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
   // local IDs of subscribed services
   List<String> _localServicesIDs = [];
+
+  // get local user object
+  User _userData;
+
+  Future<void> _getLocalUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map userDataObject = jsonDecode(prefs.getString("userData"));
+    User userData = User.fromJSON(userDataObject);
+    setState(() {
+      _userData = userData;
+    });
+  }
 
   // for reviews
   String firstName = "";
@@ -71,6 +87,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
       },
     );
     _getLocalSubServicesID();
+    _getLocalUserData();
     super.initState();
   }
 
@@ -356,23 +373,27 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
   }
 
   // get local IDs
-  void _getLocalSubServicesID() async {
-    List _cacheServices = _hiveBox.get('services');
-    if (_cacheServices == null || _cacheServices.isEmpty) {
-      setState(() {
-        _localServicesIDs = [];
+  void _getLocalSubServicesID() {
+    if (_userData == null) {
+      Future.delayed(Duration(seconds: 2), () async {
+        List _cacheServices = _hiveBox.get(_userData.userId);
+        if (_cacheServices == null || _cacheServices.isEmpty) {
+          setState(() {
+            _localServicesIDs = [];
+          });
+        } else {
+          for (int i = 0; i < _cacheServices.length; i++) {
+            _localServicesIDs.add(_cacheServices[i]['serviceData']['_id']);
+          }
+          setState(() {});
+        }
       });
-    } else {
-      for (int i = 0; i < _cacheServices.length; i++) {
-        _localServicesIDs.add(_cacheServices[i]['serviceData']['_id']);
-      }
-      setState(() {});
     }
   }
 
   // store ID in local
   void _storeServiceID() async {
-    List _cacheServices = _hiveBox.get('services');
+    List _cacheServices = _hiveBox.get(_userData.userId);
 
     setState(() {
       _localServicesIDs.add(widget.service.serviceId);
@@ -381,7 +402,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
 
     // store IDs locally
     await _hiveBox.put(
-      'services',
+      _userData.userId,
       _cacheServices,
     );
   }
@@ -517,7 +538,7 @@ class _ServiceSubscriptionViewState extends State<ServiceSubscriptionView> {
     } else {
       _reviewController.clear();
       Navigator.of(context).pop();
-      customSnackBar(context, Colors.red, Text("Something went wrong!"));
+      customSnackBar(context, Colors.red, Text("Review already submitted!"));
     }
   }
 

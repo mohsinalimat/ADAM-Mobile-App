@@ -328,10 +328,10 @@ class _RedditAccountSchedulerState extends State<RedditAccountScheduler> {
                             style: kBtnTextStyle,
                           ),
                   ),
-                  const SizedBox(height: 5.0),
-                  TextButton(
-                      onPressed: () {}, child: const Text("Save as Draft")),
-                  const SizedBox(height: 10.0),
+                  Divider(
+                    color: Colors.grey.withAlpha(150),
+                    height: 30.0,
+                  ),
                   Text(
                     "Scheduled Posts",
                     style: Theme.of(context).textTheme.headline1,

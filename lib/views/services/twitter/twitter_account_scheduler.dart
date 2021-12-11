@@ -298,10 +298,11 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                     ),
                     format: formatTime,
                     onShowPicker: (context, currentValue) async {
-                      final time = await showTimePicker(
+                      TimeOfDay time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.fromDateTime(
-                            currentValue ?? DateTime.now()),
+                          currentValue ?? DateTime.now(),
+                        ),
                       );
                       return DateTimeField.convert(time);
                     },
@@ -318,9 +319,10 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
                         ? kLoaderWhite
                         : const Text('Schedule Tweet', style: kBtnTextStyle),
                   ),
-                  const SizedBox(height: 5.0),
-                  TextButton(
-                      onPressed: () {}, child: const Text("Save as Draft")),
+                  Divider(
+                    color: Colors.grey.withAlpha(150),
+                    height: 30.0,
+                  ),
                   Text(
                     "Scheduled Tweets",
                     style: Theme.of(context).textTheme.headline1,
@@ -569,7 +571,7 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
             children: [
               const Icon(Icons.info, color: Colors.white),
               const SizedBox(width: 8.0),
-              Text(value),
+              Flexible(child: Text(value)),
             ],
           ),
         );
@@ -601,75 +603,6 @@ class _TwitterAccountSchedulerState extends State<TwitterAccountScheduler> {
       }
     }
   }
-
-  // Future<void> _tweetVideo() async {
-  //   if (someFile == null && _mediaType == MediaType.video) {
-  //     customSnackBar(
-  //       context,
-  //       Colors.red,
-  //       Row(
-  //         children: [
-  //           const Icon(Icons.video_camera_back, color: Colors.white),
-  //           const SizedBox(width: 8.0),
-  //           const Text('Please select video file!'),
-  //         ],
-  //       ),
-  //     );
-  //   } else if (_formKey.currentState.validate()) {
-  //     print("VALID!");
-  //     setState(() {
-  //       _isUpdating = true;
-  //     });
-  //     var value = await TwitterMarketing.tweetVideo(
-  //       _contentController.text.trim(),
-  //       _urlMedia,
-  //       "${_dateController.text.trim()} ${_timeController.text.trim()}",
-  //     ).whenComplete(() {
-  //       setState(() {
-  //         _isUpdating = false;
-  //       });
-  //     });
-
-  //     if (value is String) {
-  //       customSnackBar(
-  //         context,
-  //         Colors.red,
-  //         Row(
-  //           children: [
-  //             const Icon(Icons.info, color: Colors.white),
-  //             const SizedBox(width: 8.0),
-  //             Text(value),
-  //           ],
-  //         ),
-  //       );
-  //     } else {
-  //       setState(() {
-  //         _fileUploaded = false;
-  //       });
-  //       customSnackBar(
-  //         context,
-  //         kSecondaryBlueColor,
-  //         Row(
-  //           children: [
-  //             const Icon(Icons.check, color: Colors.white),
-  //             const SizedBox(width: 8.0),
-  //             const Text("Video Tweet has been scheduled!"),
-  //           ],
-  //         ),
-  //       );
-  //       scheduledPosts.insert(
-  //           0,
-  //           ScheduledPostCard(
-  //             date: _dateController.text.trim(),
-  //             time: _timeController.text.trim(),
-  //             caption: _contentController.text.trim(),
-  //           ));
-  //       _contentController.clear();
-  //       _dateController.clear();
-  //       _timeController.clear();
-  //     }
-  //   }
-  // }
 
   // upload and get URL from firestorage
   // IMAGE
